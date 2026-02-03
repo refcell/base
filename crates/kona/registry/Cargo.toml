@@ -1,0 +1,59 @@
+[package]
+name = "base-registry"
+version = "0.0.0"
+description = "A registry of superchain configs"
+
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+exclude.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# Workspace
+base-genesis = { workspace = true, features = ["serde"] }
+
+# Alloy
+alloy-primitives = { workspace = true, features = ["map"] }
+alloy-genesis.workspace = true
+alloy-eips.workspace = true
+alloy-hardforks.workspace = true
+alloy-chains = { workspace = true, features = ["serde"] }
+alloy-op-hardforks.workspace = true
+
+# `serde`
+serde = { workspace = true, features = ["derive", "alloc"] }
+serde_json.workspace = true
+
+# misc
+lazy_static.workspace = true
+
+# `tabled` feature
+tabled = { version = "0.17", features = ["derive"], optional = true }
+
+[build-dependencies]
+toml = { version = "0.8", features = ["parse"] }
+serde.workspace = true
+serde_json.workspace = true
+base-genesis = { workspace = true, features = ["serde"] }
+
+[dev-dependencies]
+alloy-eips.workspace = true
+
+[features]
+default = []
+tabled = ["dep:tabled", "std"]
+std = [
+	"alloy-chains/std",
+	"alloy-eips/std",
+	"alloy-genesis/std",
+	"alloy-primitives/std",
+	"base-genesis/std",
+	"serde/std",
+	"serde_json/std",
+	"tabled?/std",
+]

@@ -15,18 +15,18 @@ workspace = true
 # Shared
 base-jwt = { workspace = true, features = ["engine-validation"] }
 
-# Kona
-kona-rpc.workspace = true
-kona-node-service.workspace = true
-kona-genesis.workspace = true
-kona-derive.workspace = true
-kona-disc.workspace = true
-kona-gossip.workspace = true
-kona-peers.workspace = true
-kona-sources.workspace = true
-kona-providers-alloy.workspace = true
-kona-cli = { workspace = true, features = ["secrets"] }
-kona-registry.workspace = true
+# Base (ported from kona)
+base-rpc.workspace = true
+base-node-service.workspace = true
+base-genesis.workspace = true
+base-derive.workspace = true
+base-disc.workspace = true
+base-gossip.workspace = true
+base-peers.workspace = true
+base-sources.workspace = true
+base-providers-alloy.workspace = true
+base-cli = { workspace = true, features = ["secrets"] }
+base-registry.workspace = true
 
 # Serde
 serde_json.workspace = true

@@ -7,9 +7,9 @@ use base_cli_utils::{CliStyles, GlobalArgs, LogConfig, RuntimeManager};
 use base_client_cli::{
     L1ClientArgs, L1ConfigFile, L2ClientArgs, L2ConfigFile, P2PArgs, RpcArgs, SequencerArgs,
 };
+use base_engine::RollupBoostServerArgs;
+use base_node_service::{EngineConfig, L1ConfigBuilder, NodeMode, RollupNodeBuilder};
 use clap::Parser;
-use kona_engine::RollupBoostServerArgs;
-use kona_node_service::{EngineConfig, L1ConfigBuilder, NodeMode, RollupNodeBuilder};
 use rollup_boost::ExecutionMode;
 use strum::IntoEnumIterator;
 use tracing::{error, info};
@@ -79,12 +79,12 @@ impl Cli {
 
         // Initialize unified metrics
         self.global.metrics.init_with(|| {
-            kona_gossip::Metrics::init();
-            kona_disc::Metrics::init();
-            kona_engine::Metrics::init();
-            kona_node_service::Metrics::init();
-            kona_derive::Metrics::init();
-            kona_providers_alloy::Metrics::init();
+            base_gossip::Metrics::init();
+            base_disc::Metrics::init();
+            base_engine::Metrics::init();
+            base_node_service::Metrics::init();
+            base_derive::Metrics::init();
+            base_providers_alloy::Metrics::init();
             base_cli_utils::register_version_metrics!();
         })?;
 

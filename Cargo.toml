@@ -9,8 +9,31 @@ exclude = [".github/"]
 
 [workspace]
 resolver = "2"
-members = ["bin/*", "crates/client/*", "crates/shared/*", "crates/builder/*"]
+members = [
+    "bin/*",
+    "crates/alloy/*",
+    "crates/builder/*",
+    "crates/client/*",
+    "crates/kona/cli",
+    "crates/kona/disc",
+    "crates/kona/engine",
+    "crates/kona/genesis",
+    "crates/kona/gossip",
+    "crates/kona/hardforks",
+    "crates/kona/macros",
+    "crates/kona/peers",
+    "crates/kona/protocol",
+    "crates/kona/registry",
+    "crates/kona/derive",
+    "crates/kona/sources",
+    "crates/kona/providers-alloy",
+    "crates/kona/rpc",
+    "crates/kona/node-service",
+    "crates/shared/*",
+]
 default-members = ["bin/node", "bin/consensus", "bin/builder"]
+
+# TODO: Add crates/consensus/* once first consensus crate is created
 
 [workspace.metadata.cargo-udeps.ignore]
 normal = ["rustls-platform-verifier"]
@@ -248,6 +271,32 @@ op-alloy-consensus = { version = "0.23.1", default-features = false }
 op-alloy-rpc-jsonrpsee = { version = "0.23.1", default-features = false }
 op-alloy-rpc-types-engine = { version = "0.23.1", default-features = false }
 
+# base-alloy (ported from op-alloy)
+base-alloy-consensus = { path = "crates/alloy/consensus", default-features = false }
+base-alloy-network = { path = "crates/alloy/network", default-features = false }
+base-alloy-provider = { path = "crates/alloy/provider", default-features = false }
+base-alloy-rpc-types = { path = "crates/alloy/rpc-types", default-features = false }
+base-alloy-rpc-types-engine = { path = "crates/alloy/rpc-types-engine", default-features = false }
+base-alloy-rpc-jsonrpsee = { path = "crates/alloy/rpc-jsonrpsee", default-features = false }
+base-alloy = { path = "crates/alloy/base-alloy", default-features = false }
+
+# base-kona (ported from kona)
+base-cli = { path = "crates/kona/cli", default-features = false }
+base-disc = { path = "crates/kona/disc", default-features = false }
+base-engine = { path = "crates/kona/engine", default-features = false }
+base-genesis = { path = "crates/kona/genesis", default-features = false }
+base-hardforks = { path = "crates/kona/hardforks", default-features = false }
+base-protocol = { path = "crates/kona/protocol", default-features = false }
+base-registry = { path = "crates/kona/registry", default-features = false }
+base-peers = { path = "crates/kona/peers", default-features = false }
+base-macros = { path = "crates/kona/macros", default-features = false }
+base-derive = { path = "crates/kona/derive", default-features = false }
+base-sources = { path = "crates/kona/sources", default-features = false }
+base-providers-alloy = { path = "crates/kona/providers-alloy", default-features = false }
+base-gossip = { path = "crates/kona/gossip", default-features = false }
+base-rpc = { path = "crates/kona/rpc", default-features = false }
+base-node-service = { path = "crates/kona/node-service", default-features = false }
+
 # rollup-boost version that matches kona's dependency (used for consensus binary)
 rollup-boost = "0.7.13"
 
@@ -266,6 +315,7 @@ futures = "0.3.31"
 reqwest = "0.12.25"
 futures-util = "0.3.31"
 async-trait = "0.1.83"
+async-stream = "0.3"
 
 # rpc
 jsonrpsee = "0.26.0"
@@ -291,11 +341,15 @@ metrics-process = { version = "2.4.2", default-features = false }
 metrics-exporter-prometheus = { version = "0.18.1", default-features = false }
 
 # misc
+arbitrary = { version = "1.4", features = ["derive"] }
+arbtest = "0.3"
 criterion = "0.5"
 hex = "0.4"
 tar = "0.4"
 http = "1.0"
+sha2 = "0.10"
 sha3 = "0.10"
+snap = "1.1"
 tower = "0.5"
 anyhow = "1"
 discv5 = "0.10"
@@ -317,6 +371,7 @@ backon = "1.6.0"
 brotli = "8.0.2"
 bytes = "1.11.0"
 rstest = "0.26.1"
+similar-asserts = "1.7"
 chrono = "0.4.42"
 rustls = "0.23.35"
 thiserror = "2.0"
@@ -341,6 +396,7 @@ shellexpand = "3.1"
 ethereum_ssz = "0.9.0"
 http-body-util = "0.1.3"
 libp2p-identity = "0.2.12"
+libp2p-stream = "0.4.0-alpha"
 testcontainers = "0.24.0"
 concurrent-queue = "2.5.0"
 tikv-jemallocator = "0.6"
@@ -350,3 +406,8 @@ hyper = "1.7.0"
 either = { version = "1.15.0", default-features = false }
 opentelemetry = "0.31"
 time = "0.3.44"
+notify = "8.0.0"
+c-kzg = "2.1.0"
+ipnet = "2.11.0"
+getrandom = "0.3.3"
+mockall = "0.13"

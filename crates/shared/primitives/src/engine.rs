@@ -10,12 +10,12 @@ use alloy_rpc_types_engine::{
 };
 /// Response type for EIP-1186 account proofs.
 pub use alloy_rpc_types_eth::EIP1186AccountProofResponse;
-use kona_genesis::RollupConfig;
-use op_alloy_network::Optimism;
-use op_alloy_rpc_types_engine::{
+use base_alloy_network::Optimism;
+use base_alloy_rpc_types_engine::{
     OpExecutionPayloadEnvelopeV3, OpExecutionPayloadEnvelopeV4, OpExecutionPayloadV4,
     OpPayloadAttributes,
 };
+use base_genesis::RollupConfig;
 
 /// A storage key for proof queries.
 pub type StorageKey = B256;

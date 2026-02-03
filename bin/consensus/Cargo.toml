@@ -17,14 +17,14 @@ workspace = true
 base-cli-utils.workspace = true
 base-client-cli.workspace = true
 
-# Kona
-kona-disc = { workspace = true, features = ["metrics"] }
-kona-derive = { workspace = true, features = ["metrics"] }
-kona-engine = { workspace = true, features = ["metrics"] }
-kona-genesis.workspace = true
-kona-gossip = { workspace = true, features = ["metrics"] }
-kona-node-service = { workspace = true, features = ["metrics"] }
-kona-providers-alloy = { workspace = true, features = ["metrics"] }
+# Base (ported from kona)
+base-disc = { workspace = true, features = ["metrics"] }
+base-derive = { workspace = true, features = ["metrics"] }
+base-engine = { workspace = true, features = ["metrics"] }
+base-genesis.workspace = true
+base-gossip = { workspace = true, features = ["metrics"] }
+base-node-service = { workspace = true, features = ["metrics"] }
+base-providers-alloy = { workspace = true, features = ["metrics"] }
 rollup-boost.workspace = true
 
 # Alloy

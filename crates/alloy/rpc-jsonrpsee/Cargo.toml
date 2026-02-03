@@ -1,0 +1,24 @@
+[package]
+name = "base-alloy-rpc-jsonrpsee"
+description = "Low-level OP Stack JSON-RPC server and client implementations"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# Alloy
+alloy-primitives = { workspace = true, features = ["serde"] }
+
+jsonrpsee = { workspace = true, features = ["server", "macros"] }
+
+[features]
+client = [
+    "jsonrpsee/client",
+    "jsonrpsee/async-client",
+]

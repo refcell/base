@@ -1,0 +1,70 @@
+[package]
+name = "base-alloy-rpc-types-engine"
+description = "OP Stack RPC types for the engine namespace for Base"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# Workspace
+base-alloy-consensus = { path = "../consensus" }
+
+# Alloy
+alloy-consensus.workspace = true
+alloy-eips.workspace = true
+alloy-primitives.workspace = true
+alloy-rlp.workspace = true
+alloy-rpc-types-engine.workspace = true
+
+# Encoding
+ethereum_ssz = { workspace = true, optional = true }
+ethereum_ssz_derive = { workspace = true, optional = true }
+snap = { workspace = true, optional = true }
+
+# serde
+alloy-serde = { workspace = true, optional = true }
+serde = { workspace = true, optional = true }
+
+# misc
+arbitrary = { workspace = true, features = ["derive"], optional = true }
+derive_more = { workspace = true, features = ["as_ref", "deref_mut", "display", "from"] }
+sha2.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+alloy-primitives = { workspace = true, features = ["arbitrary", "getrandom"] }
+arbtest.workspace = true
+arbitrary = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+
+[features]
+default = ["std", "serde"]
+std = [
+    "alloy-primitives/std",
+    "alloy-rpc-types-engine/ssz",
+    "alloy-rpc-types-engine/std",
+    "base-alloy-consensus/std",
+    "dep:ethereum_ssz",
+    "dep:ethereum_ssz_derive",
+    "dep:snap",
+]
+serde = [
+    "dep:alloy-serde",
+    "dep:serde",
+    "alloy-rpc-types-engine/serde",
+    "base-alloy-consensus/serde",
+]
+k256 = ["base-alloy-consensus/k256"]
+arbitrary = [
+    "std",
+    "dep:arbitrary",
+    "alloy-primitives/arbitrary",
+    "alloy-primitives/rand",
+    "base-alloy-consensus/arbitrary",
+]

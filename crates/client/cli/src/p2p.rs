@@ -14,16 +14,16 @@ use std::{
 use alloy_primitives::{B256, b256};
 use alloy_provider::Provider;
 use alloy_signer_local::PrivateKeySigner;
+use base_derive::ChainProvider;
+use base_disc::LocalNode;
+use base_genesis::RollupConfig;
+use base_gossip::GaterConfig;
+use base_node_service::NetworkConfig;
+use base_peers::{BootNode, BootStoreFile, PeerMonitoring, PeerScoreLevel};
+use base_providers_alloy::AlloyChainProvider;
 use clap::Parser;
 use discv5::enr::k256;
 use eyre::Result;
-use kona_derive::ChainProvider;
-use kona_disc::LocalNode;
-use kona_genesis::RollupConfig;
-use kona_gossip::GaterConfig;
-use kona_node_service::NetworkConfig;
-use kona_peers::{BootNode, BootStoreFile, PeerMonitoring, PeerScoreLevel};
-use kona_providers_alloy::AlloyChainProvider;
 use libp2p::identity::Keypair;
 use tokio::time::Duration;
 use url::Url;
@@ -430,7 +430,7 @@ impl P2PArgs {
 
         let discovery_address =
             LocalNode::new(local_node_key, advertise_ip, advertise_tcp_port, advertise_udp_port);
-        let gossip_config = kona_gossip::default_config_builder()
+        let gossip_config = base_gossip::default_config_builder()
             .mesh_n(self.gossip_mesh_d)
             .mesh_n_low(self.gossip_mesh_dlo)
             .mesh_n_high(self.gossip_mesh_dhi)
@@ -506,7 +506,7 @@ impl P2PArgs {
         // Attempt the parse the private key if specified.
         if let Some(mut private_key) = self.private_key {
             let keypair =
-                kona_cli::SecretKeyLoader::parse(&mut private_key.0).map_err(|e| eyre::eyre!(e))?;
+                base_cli::SecretKeyLoader::parse(&mut private_key.0).map_err(|e| eyre::eyre!(e))?;
             tracing::info!(
                 target: "p2p::config",
                 peer_id = %keypair.public().to_peer_id(),
@@ -519,7 +519,7 @@ impl P2PArgs {
             eyre::bail!("Neither a raw private key nor a private key file path was provided.");
         };
 
-        kona_cli::SecretKeyLoader::load(key_path).map_err(|e| eyre::eyre!(e))
+        base_cli::SecretKeyLoader::load(key_path).map_err(|e| eyre::eyre!(e))
     }
 }
 
@@ -527,7 +527,7 @@ impl P2PArgs {
 mod tests {
     use alloy_primitives::b256;
     use clap::Parser;
-    use kona_peers::NodeRecord;
+    use base_peers::NodeRecord;
 
     use super::*;
 

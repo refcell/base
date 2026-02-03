@@ -6,8 +6,8 @@
 use std::{fs::File, path::PathBuf};
 
 use alloy_chains::Chain;
-use kona_genesis::{L1ChainConfig, RollupConfig};
-use kona_registry::{L1Config, scr_rollup_config_by_alloy_ident};
+use base_genesis::{L1ChainConfig, RollupConfig};
+use base_registry::{L1Config, scr_rollup_config_by_alloy_ident};
 use serde_json::from_reader;
 use tracing::debug;
 

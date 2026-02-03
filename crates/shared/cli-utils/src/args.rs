@@ -3,8 +3,8 @@
 use std::path::PathBuf;
 
 use alloy_primitives::Address;
+use base_registry::OPCHAINS;
 use clap::{ArgAction, Parser};
-use kona_registry::OPCHAINS;
 
 use crate::{
     FileLogConfig, LogConfig, LogFormat, LogRotation, MetricsArgs, StdoutLogConfig,

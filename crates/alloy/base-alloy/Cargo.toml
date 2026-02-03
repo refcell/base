@@ -1,0 +1,69 @@
+[package]
+name = "base-alloy"
+description = "Connect applications to the OP Stack"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[lints]
+workspace = true
+
+[dependencies]
+base-alloy-consensus = { workspace = true, optional = true }
+base-alloy-provider = { workspace = true, optional = true }
+base-alloy-network = { workspace = true, optional = true }
+base-alloy-rpc-jsonrpsee = { workspace = true, optional = true }
+base-alloy-rpc-types-engine = { workspace = true, optional = true }
+base-alloy-rpc-types = { workspace = true, optional = true }
+
+[features]
+default = ["std", "k256", "serde"]
+
+std = [
+    "base-alloy-consensus?/std",
+    "base-alloy-rpc-types?/std",
+    "base-alloy-rpc-types-engine?/std",
+    "base-alloy-network?/std",
+    "base-alloy-provider?/std"
+]
+
+full = [
+    "consensus",
+    "network",
+    "provider",
+    "rpc-types",
+    "rpc-types-engine",
+    "rpc-jsonrpsee",
+]
+
+k256 = [
+    "base-alloy-consensus?/k256",
+]
+
+arbitrary = [
+    "base-alloy-consensus?/arbitrary",
+    "base-alloy-rpc-types?/arbitrary",
+    "base-alloy-rpc-types-engine?/arbitrary",
+]
+
+serde = [
+    "base-alloy-consensus?/serde",
+    "base-alloy-rpc-types-engine?/serde",
+    "base-alloy-network?/serde",
+    "base-alloy-provider?/serde",
+    "base-alloy-rpc-types?/serde"
+]
+
+consensus = ["dep:base-alloy-consensus"]
+rpc-types = ["dep:base-alloy-rpc-types"]
+rpc-types-engine = ["dep:base-alloy-rpc-types-engine"]
+network = ["dep:base-alloy-network"]
+rpc-jsonrpsee = ["dep:base-alloy-rpc-jsonrpsee"]
+provider = ["dep:base-alloy-provider"]

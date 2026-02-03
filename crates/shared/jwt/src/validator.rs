@@ -76,9 +76,9 @@ impl JwtValidator {
         use alloy_provider::RootProvider;
         use alloy_transport_http::Http;
         use backon::{ExponentialBuilder, Retryable};
-        use kona_engine::{HyperAuthClient, OpEngineClient};
-        use op_alloy_network::Optimism;
-        use op_alloy_provider::ext::engine::OpEngineApi;
+        use base_alloy_network::Optimism;
+        use base_alloy_provider::ext::engine::OpEngineApi;
+        use base_engine::{HyperAuthClient, OpEngineClient};
         use tracing::{debug, error};
 
         // Convert WebSocket URLs to HTTP for validation.

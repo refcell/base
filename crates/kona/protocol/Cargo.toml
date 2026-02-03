@@ -1,0 +1,163 @@
+[package]
+name = "base-protocol"
+version = "0.0.0"
+description = "Base protocol types"
+
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+exclude.workspace = true
+
+[lints.rust]
+missing-debug-implementations = "warn"
+missing-docs = "warn"
+unreachable-pub = "warn"
+unused-must-use = "deny"
+rust-2018-idioms = "deny"
+unnameable-types = "warn"
+
+[lints.rustdoc]
+all = "warn"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+missing-const-for-fn = "warn"
+redundant-clone = "warn"
+clone-on-ref-ptr = "warn"
+unnecessary-to-owned = "warn"
+flat-map-option = "warn"
+implicit-clone = "warn"
+or-fun-call = "warn"
+use-self = "warn"
+option-if-let-else = "warn"
+uninlined-format-args = "warn"
+manual-string-new = "warn"
+single-char-pattern = "warn"
+undocumented-unsafe-blocks = "warn"
+dbg-macro = "warn"
+branches-sharing-code = "warn"
+iter-with-drain = "warn"
+needless-pass-by-ref-mut = "warn"
+string-lit-as-bytes = "warn"
+doc-markdown = "allow"
+redundant-else = "allow"
+explicit-iter-loop = "allow"
+match-same-arms = "allow"
+derive-partial-eq-without-eq = "allow"
+cloned-instead-of-copied = "allow"
+manual-is-multiple-of = "allow"
+
+[dependencies]
+# Workspace (base)
+base-genesis = { workspace = true }
+
+# Base Alloy
+base-alloy-consensus.workspace = true
+base-alloy-rpc-types.workspace = true
+base-alloy-rpc-types-engine.workspace = true
+
+# Alloy
+alloy-primitives = { workspace = true, features = ["map"] }
+alloy-rlp.workspace = true
+alloy-hardforks.workspace = true
+alloy-eips.workspace = true
+alloy-consensus.workspace = true
+alloy-rpc-types-eth.workspace = true
+alloy-rpc-types-engine.workspace = true
+
+# Misc
+tracing.workspace = true
+thiserror.workspace = true
+async-trait.workspace = true
+unsigned-varint = { version = "0.8", default-features = false }
+derive_more = { workspace = true, features = ["display"] }
+
+# Compression
+brotli.workspace = true
+miniz_oxide = { version = "0.8", default-features = false, features = ["with-alloc"] }
+alloc-no-stdlib = { version = "2.0", default-features = false }
+
+# `arbitrary` feature
+arbitrary = { workspace = true, features = ["derive"], optional = true }
+
+# `serde` feature
+serde = { workspace = true, optional = true }
+alloy-serde = { workspace = true, optional = true }
+
+# `test-utils` feature
+spin = { version = "0.9", default-features = false, optional = true }
+tracing-subscriber = { workspace = true, features = ["fmt"], optional = true }
+ambassador = "0.4.2"
+
+[dev-dependencies]
+brotli = { workspace = true, features = ["std"] }
+spin = { version = "0.9", features = ["std"] }
+rand = { workspace = true, features = ["std", "std_rng"] }
+rstest.workspace = true
+proptest = { version = "1.6", default-features = false, features = ["std"] }
+serde_json.workspace = true
+alloy-sol-types.workspace = true
+tokio = { workspace = true, features = ["full"] }
+arbitrary = { workspace = true, features = ["derive"] }
+tracing-subscriber = { workspace = true, features = ["fmt"] }
+alloy-primitives = { workspace = true, features = ["arbitrary"] }
+base-alloy-consensus.workspace = true
+alloy-rpc-types-eth.workspace = true
+base-alloy-rpc-types.workspace = true
+
+[features]
+default = []
+std = [
+	"alloy-consensus/std",
+	"alloy-eips/std",
+	"alloy-primitives/std",
+	"alloy-rlp/std",
+	"alloy-rpc-types-engine/std",
+	"alloy-rpc-types-eth/std",
+	"alloy-serde?/std",
+	"brotli/std",
+	"derive_more/std",
+	"base-genesis/std",
+	"miniz_oxide/std",
+	"base-alloy-consensus/std",
+	"base-alloy-rpc-types-engine/std",
+	"base-alloy-rpc-types/std",
+	"serde?/std",
+	"spin?/std",
+	"thiserror/std",
+	"tracing/std",
+	"unsigned-varint/std",
+]
+test-utils = ["dep:spin", "dep:tracing-subscriber"]
+arbitrary = [
+	"alloy-consensus/arbitrary",
+	"alloy-eips/arbitrary",
+	"alloy-primitives/arbitrary",
+	"alloy-primitives/rand",
+	"alloy-rpc-types-engine/arbitrary",
+	"alloy-rpc-types-eth/arbitrary",
+	"alloy-serde?/arbitrary",
+	"dep:arbitrary",
+	"base-genesis/arbitrary",
+	"base-alloy-consensus/arbitrary",
+	"base-alloy-rpc-types-engine/arbitrary",
+	"base-alloy-rpc-types/arbitrary",
+	"std",
+]
+serde = [
+	"alloy-consensus/serde",
+	"alloy-eips/serde",
+	"alloy-hardforks/serde",
+	"alloy-primitives/serde",
+	"alloy-rpc-types-engine/serde",
+	"alloy-rpc-types-eth/serde",
+	"dep:alloy-serde",
+	"dep:serde",
+	"base-genesis/serde",
+	"base-alloy-consensus/serde",
+	"base-alloy-rpc-types-engine/serde",
+	"base-alloy-rpc-types/serde",
+	"tracing-subscriber?/serde",
+]

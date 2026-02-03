@@ -8,9 +8,9 @@ use std::{path::PathBuf, str::FromStr};
 use alloy_primitives::{Address, B256};
 use alloy_signer::{Signer, k256::ecdsa};
 use alloy_signer_local::PrivateKeySigner;
+use base_cli::SecretKeyLoader;
+use base_sources::{BlockSigner, ClientCert, RemoteSigner};
 use clap::Parser;
-use kona_cli::SecretKeyLoader;
-use kona_sources::{BlockSigner, ClientCert, RemoteSigner};
 use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
 use url::Url;
 
@@ -92,7 +92,7 @@ pub enum SignerArgsParseError {
     SequencerKeyInvalid(#[from] ecdsa::Error),
     /// Failed to load sequencer key from file.
     #[error("Failed to load sequencer key from file")]
-    SequencerKeyFileError(#[from] kona_cli::KeypairError),
+    SequencerKeyFileError(#[from] base_cli::KeypairError),
     /// The address is required if `signer.endpoint` is provided.
     #[error("The address is required if `signer.endpoint` is provided.")]
     AddressRequired,

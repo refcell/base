@@ -1,0 +1,83 @@
+[package]
+name = "base-rpc"
+version = "0.0.0"
+description = "Base RPC Types and API"
+
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+exclude.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# Workspace
+base-protocol = { workspace = true, features = ["serde", "std"] }
+base-gossip.workspace = true
+base-engine.workspace = true
+base-macros.workspace = true
+base-genesis = { workspace = true, features = ["serde", "std"] }
+
+# Base Alloy
+base-alloy-consensus.workspace = true
+base-alloy-rpc-types-engine = { workspace = true, features = ["serde", "std"] }
+base-alloy-rpc-types.workspace = true
+base-alloy-rpc-jsonrpsee.workspace = true
+
+# Alloy
+alloy-eips = { workspace = true, features = ["serde", "std"] }
+alloy-rpc-types-engine = { workspace = true, features = ["serde", "std"] }
+alloy-primitives = { workspace = true, features = ["map", "rlp", "serde", "std"] }
+
+# Misc
+libp2p.workspace = true
+tracing.workspace = true
+thiserror.workspace = true
+derive_more = { workspace = true, features = [
+    "display",
+    "from",
+    "constructor",
+    "std",
+] }
+async-trait.workspace = true
+tokio = { workspace = true, features = ["time"] }
+ipnet.workspace = true
+backon.workspace = true
+
+# `serde`
+serde = { workspace = true, features = ["std"] }
+
+# `jsonrpsee`
+jsonrpsee = { workspace = true, features = ["macros", "server"] }
+getrandom = { workspace = true, features = ["wasm_js"] }
+
+# `reqwest` feature
+alloy-rpc-client = { workspace = true, features = ["reqwest"], optional = true }
+
+# `metrics` feature
+metrics = { workspace = true, optional = true }
+
+# `rollup-boost` feature
+rollup-boost.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
+
+[features]
+default = []
+reqwest = ["client", "dep:alloy-rpc-client"]
+client = [
+    "jsonrpsee/async-client",
+    "jsonrpsee/client",
+    "base-alloy-rpc-jsonrpsee/client",
+    "base-alloy-rpc-types/jsonrpsee",
+]
+metrics = [
+    "dep:metrics",
+    "base-engine/metrics",
+    "base-gossip/metrics",
+    "libp2p/metrics",
+]

@@ -22,8 +22,8 @@ serde = { workspace = true, features = ["derive"] }
 alloy-primitives.workspace = true
 alloy-chains.workspace = true
 
-# Kona
-kona-registry.workspace = true
+# Base (ported from kona)
+base-registry.workspace = true
 
 # Tracing
 tracing.workspace = true

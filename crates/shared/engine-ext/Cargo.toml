@@ -23,7 +23,7 @@ alloy-eips.workspace = true
 alloy-primitives.workspace = true
 alloy-rpc-types-engine.workspace = true
 
-# op-alloy
+# op-alloy (uses reth's internal op-alloy types for interop)
 op-alloy-rpc-types-engine.workspace = true
 
 # misc
