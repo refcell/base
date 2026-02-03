@@ -1,8 +1,8 @@
 use alloy_consensus::{Transaction, Typed2718, constants::KECCAK_EMPTY, transaction::Recovered};
 use alloy_eips::Encodable2718;
 use alloy_primitives::U256;
+use base_alloy_consensus::CROSS_L2_INBOX_ADDRESS;
 use derive_more::Display;
-use op_alloy_consensus::interop::CROSS_L2_INBOX_ADDRESS;
 use op_revm::{OpSpecId, l1block::L1BlockInfo};
 use reth_primitives_traits::Account;
 use tracing::warn;

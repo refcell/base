@@ -35,7 +35,7 @@ use base_flashtypes::{
 };
 use derive_more::Deref;
 use eyre::Result;
-use op_alloy_consensus::OpDepositReceipt;
+use base_alloy_consensus::OpDepositReceipt;
 use reth_chain_state::CanonStateSubscriptions;
 use reth_chainspec::EthChainSpec;
 use reth_optimism_chainspec::OpChainSpec;

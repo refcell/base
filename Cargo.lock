@@ -1723,18 +1723,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "base-alloy"
-version = "0.0.0"
-dependencies = [
- "base-alloy-consensus",
- "base-alloy-network",
- "base-alloy-provider",
- "base-alloy-rpc-jsonrpsee",
- "base-alloy-rpc-types",
- "base-alloy-rpc-types-engine",
-]
-
-[[package]]
 name = "base-alloy-consensus"
 version = "0.0.0"
 dependencies = [
@@ -1752,6 +1740,13 @@ dependencies = [
  "serde_json",
  "serde_with",
  "thiserror 2.0.17",
+]
+
+[[package]]
+name = "base-alloy-flz"
+version = "0.0.0"
+dependencies = [
+ "fastlz",
 ]
 
 [[package]]
@@ -1863,8 +1858,8 @@ dependencies = [
  "alloy-provider",
  "alloy-serde",
  "alloy-signer-local",
+ "base-alloy-flz",
  "op-alloy-consensus",
- "op-alloy-flz",
  "op-alloy-rpc-types",
  "serde",
  "serde_json",
@@ -2004,6 +1999,8 @@ dependencies = [
  "alloy-rpc-types",
  "alloy-rpc-types-engine",
  "alloy-signer",
+ "base-alloy-network",
+ "base-alloy-rpc-types-engine",
  "base-cli-utils",
  "base-client-engine",
  "base-primitives",
@@ -2012,8 +2009,6 @@ dependencies = [
  "eyre",
  "futures-util",
  "jsonrpsee",
- "op-alloy-network",
- "op-alloy-rpc-types-engine",
  "reth-chainspec",
  "reth-db",
  "reth-evm",
@@ -2246,6 +2241,9 @@ dependencies = [
  "alloy-rpc-types-eth",
  "alloy-sol-macro",
  "alloy-sol-types",
+ "base-alloy-consensus",
+ "base-alloy-network",
+ "base-alloy-rpc-types",
  "base-client-engine",
  "base-client-node",
  "base-flashblocks",
@@ -2256,9 +2254,6 @@ dependencies = [
  "eyre",
  "futures-util",
  "once_cell",
- "op-alloy-consensus",
- "op-alloy-network",
- "op-alloy-rpc-types",
  "rand 0.9.2",
  "rayon",
  "reth-chain-state",
@@ -2409,6 +2404,7 @@ dependencies = [
  "alloy-primitives",
  "alloy-rpc-client",
  "arc-swap",
+ "base-alloy-consensus",
  "base-bundles",
  "base-client-node",
  "base-flashblocks",
@@ -2548,8 +2544,6 @@ dependencies = [
  "base-alloy-rpc-types-engine",
  "base-genesis",
  "eyre",
- "op-alloy-network",
- "op-alloy-rpc-types",
  "serde_json",
 ]
 
@@ -2747,6 +2741,8 @@ dependencies = [
  "alloy-eips",
  "alloy-primitives",
  "alloy-rpc-types-engine",
+ "base-alloy-consensus",
+ "base-alloy-rpc-types",
  "base-client-node",
  "base-flashblocks",
  "base-flashblocks-node",
@@ -2760,8 +2756,6 @@ dependencies = [
  "lru 0.16.3",
  "metrics",
  "metrics-derive",
- "op-alloy-consensus",
- "op-alloy-rpc-types",
  "reth-node-api",
  "reth-optimism-primitives",
  "reth-primitives-traits",
@@ -4633,6 +4627,24 @@ checksum = "7cd915d99f24784cdc19fd37ef22b97e3ff0ae756c7e492e9fbfe897d61e2aec"
 dependencies = [
  "indenter",
  "once_cell",
+]
+
+[[package]]
+name = "fastlz"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a44c8ced14f9137fbda9602c6c9a29bbfed9d82c2a809d37d4959ebff3a0e988"
+dependencies = [
+ "fastlz-sys",
+]
+
+[[package]]
+name = "fastlz-sys"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "20de788b4299495a08d2382146bd11ce9c7f6c2f53d3750d9ef49dc558cf5a39"
+dependencies = [
+ "cc",
 ]
 
 [[package]]
@@ -7672,6 +7684,7 @@ dependencies = [
  "anyhow",
  "async-trait",
  "base-access-lists",
+ "base-alloy-flz",
  "base-builder-cli",
  "base-bundles",
  "base-cli-utils",
@@ -7701,7 +7714,6 @@ dependencies = [
  "moka",
  "nanoid",
  "op-alloy-consensus",
- "op-alloy-flz",
  "op-alloy-network",
  "op-alloy-rpc-types",
  "op-alloy-rpc-types-engine",

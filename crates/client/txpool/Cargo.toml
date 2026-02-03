@@ -52,8 +52,8 @@ reth-transaction-pool = { workspace = true, features = ["test-utils"] }
 base-flashblocks-node = { workspace = true, features = ["test-utils"] }
 alloy-consensus.workspace = true
 alloy-eips.workspace = true
-op-alloy-consensus.workspace = true
-op-alloy-rpc-types.workspace = true
+base-alloy-consensus.workspace = true
+base-alloy-rpc-types.workspace = true
 reth-optimism-primitives.workspace = true
 revm-database.workspace = true
 base-flashtypes.workspace = true

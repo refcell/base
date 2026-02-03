@@ -23,10 +23,8 @@ alloy-sol-types = { workspace = true, optional = true }
 alloy-consensus = { workspace = true, features = ["std"], optional = true }
 alloy-primitives = { workspace = true, features = ["serde"], optional = true }
 base-alloy-network = { workspace = true, optional = true }
-op-alloy-network = { workspace = true, optional = true }
 alloy-signer-local = { workspace = true, optional = true }
 base-alloy-rpc-types = { workspace = true, optional = true }
-op-alloy-rpc-types = { workspace = true, optional = true }
 
 # Engine API dependencies
 alloy-provider = { workspace = true, optional = true }
@@ -58,7 +56,7 @@ test-utils = [
 	"dep:alloy-sol-macro",
 	"dep:alloy-sol-types",
 	"dep:eyre",
-	"dep:op-alloy-network",
-	"dep:op-alloy-rpc-types",
+	"dep:base-alloy-network",
+	"dep:base-alloy-rpc-types",
 	"dep:serde_json",
 ]

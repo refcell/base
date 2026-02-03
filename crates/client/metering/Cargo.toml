@@ -32,7 +32,12 @@ revm-database.workspace = true
 
 # op
 op-revm.workspace = true
+
+# op-alloy (required for reth compatibility - reth uses op-alloy types internally)
 op-alloy-consensus.workspace = true
+
+# base-alloy (needed for CROSS_L2_INBOX_ADDRESS constant)
+base-alloy-consensus.workspace = true
 
 # alloy
 alloy-primitives.workspace = true

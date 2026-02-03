@@ -21,9 +21,11 @@ alloy-primitives = { workspace = true, features = ["serde"] }
 alloy-consensus = { workspace = true, features = ["std"] }
 alloy-provider = { workspace = true, features = ["reqwest"] }
 
-# op-alloy
-op-alloy-flz.workspace = true
+# op-alloy (required for reth compatibility - reth uses op-alloy types internally)
 op-alloy-consensus = { workspace = true, features = ["std", "k256", "serde"] }
+
+# base-alloy (only flz for tx size estimation)
+base-alloy-flz.workspace = true
 
 # misc
 uuid = { workspace = true, features = ["v4", "serde"] }

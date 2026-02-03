@@ -696,7 +696,7 @@ mod tests {
         // Create a transaction with cross-L2 interop address in access list
         let to = Address::random();
         let access_list = AccessList::from(vec![AccessListItem {
-            address: op_alloy_consensus::interop::CROSS_L2_INBOX_ADDRESS,
+            address: base_alloy_consensus::CROSS_L2_INBOX_ADDRESS,
             storage_keys: vec![],
         }]);
 

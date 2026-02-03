@@ -53,9 +53,9 @@ alloy-provider = { workspace = true, optional = true }
 alloy-rpc-client = { workspace = true, optional = true }
 alloy-signer = { workspace = true, optional = true }
 
-# op-alloy
-op-alloy-rpc-types-engine = { workspace = true, optional = true }
-op-alloy-network = { workspace = true, optional = true }
+# base-alloy
+base-alloy-rpc-types-engine = { workspace = true, optional = true }
+base-alloy-network = { workspace = true, optional = true }
 
 # tokio
 tokio.workspace = true
@@ -90,8 +90,8 @@ test-utils = [
 	"dep:base-primitives",
 	"dep:chrono",
 	"dep:jsonrpsee",
-	"dep:op-alloy-network",
-	"dep:op-alloy-rpc-types-engine",
+	"dep:base-alloy-network",
+	"dep:base-alloy-rpc-types-engine",
 	"dep:reth-chainspec",
 	"dep:reth-ipc",
 	"dep:reth-node-core",

@@ -16,7 +16,7 @@ use base_flashtypes::{
     ExecutionPayloadBaseV1, ExecutionPayloadFlashblockDeltaV1, Flashblock, Metadata,
 };
 use eyre::Result;
-use op_alloy_network::ReceiptResponse;
+use base_alloy_network::ReceiptResponse;
 
 /// Cumulative gas used after the base flashblock (deposit tx + contract deployment)
 /// This value must be used as the starting point for subsequent flashblocks.
@@ -46,7 +46,7 @@ impl TestSetup {
         self.harness.send_flashblock(flashblock).await
     }
 
-    fn provider(&self) -> alloy_provider::RootProvider<op_alloy_network::Optimism> {
+    fn provider(&self) -> alloy_provider::RootProvider<base_alloy_network::Optimism> {
         self.harness.provider()
     }
 }

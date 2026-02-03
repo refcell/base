@@ -131,20 +131,6 @@ base-flashblocks = { path = "crates/client/flashblocks" }
 op-rbuilder = { path = "crates/builder/op-rbuilder" }
 base-builder-cli = { path = "crates/builder/base-builder-cli" }
 
-# Kona
-kona-cli = { git = "https://github.com/ethereum-optimism/optimism", rev = "238012d2d96d5cebbdc390c9199bd63722115a42", default-features = false }
-kona-rpc = { git = "https://github.com/ethereum-optimism/optimism", rev = "238012d2d96d5cebbdc390c9199bd63722115a42", default-features = false }
-kona-disc = { git = "https://github.com/ethereum-optimism/optimism", rev = "238012d2d96d5cebbdc390c9199bd63722115a42", default-features = false }
-kona-peers = { git = "https://github.com/ethereum-optimism/optimism", rev = "238012d2d96d5cebbdc390c9199bd63722115a42", default-features = false }
-kona-engine = { git = "https://github.com/ethereum-optimism/optimism", rev = "238012d2d96d5cebbdc390c9199bd63722115a42", default-features = false }
-kona-derive = { git = "https://github.com/ethereum-optimism/optimism", rev = "238012d2d96d5cebbdc390c9199bd63722115a42", default-features = false }
-kona-gossip = { git = "https://github.com/ethereum-optimism/optimism", rev = "238012d2d96d5cebbdc390c9199bd63722115a42", default-features = false }
-kona-genesis = { git = "https://github.com/ethereum-optimism/optimism", rev = "238012d2d96d5cebbdc390c9199bd63722115a42", default-features = false }
-kona-sources = { git = "https://github.com/ethereum-optimism/optimism", rev = "238012d2d96d5cebbdc390c9199bd63722115a42", default-features = false }
-kona-registry = { git = "https://github.com/ethereum-optimism/optimism", rev = "238012d2d96d5cebbdc390c9199bd63722115a42", default-features = false }
-kona-node-service = { git = "https://github.com/ethereum-optimism/optimism", rev = "238012d2d96d5cebbdc390c9199bd63722115a42", default-features = false }
-kona-providers-alloy = { git = "https://github.com/ethereum-optimism/optimism", rev = "238012d2d96d5cebbdc390c9199bd63722115a42", default-features = false }
-
 # reth
 reth-db = { git = "https://github.com/paradigmxyz/reth", tag = "v1.10.2" }
 reth-cli = { git = "https://github.com/paradigmxyz/reth", tag = "v1.10.2" }
@@ -260,25 +246,22 @@ alloy-rpc-types-engine = "1.4.3"
 alloy-primitives = { version = "1.5.0", default-features = false }
 alloy-provider = "1.4.3"
 
-# op-alloy
+# op-alloy (needed for reth integration - reth uses op-alloy types internally)
 alloy-op-hardforks = "0.4.4"
 alloy-op-evm = { version = "0.26.3", default-features = false }
-op-alloy-flz = { version = "0.13.1", default-features = false }
-op-alloy-network = { version = "0.23.1", default-features = false }
-op-alloy-provider = { version = "0.23.1", default-features = false }
-op-alloy-rpc-types = { version = "0.23.1", default-features = false }
 op-alloy-consensus = { version = "0.23.1", default-features = false }
-op-alloy-rpc-jsonrpsee = { version = "0.23.1", default-features = false }
+op-alloy-network = { version = "0.23.1", default-features = false }
+op-alloy-rpc-types = { version = "0.23.1", default-features = false }
 op-alloy-rpc-types-engine = { version = "0.23.1", default-features = false }
 
 # base-alloy (ported from op-alloy)
+base-alloy-flz = { path = "crates/alloy/flz", default-features = false }
 base-alloy-consensus = { path = "crates/alloy/consensus", default-features = false }
 base-alloy-network = { path = "crates/alloy/network", default-features = false }
 base-alloy-provider = { path = "crates/alloy/provider", default-features = false }
 base-alloy-rpc-types = { path = "crates/alloy/rpc-types", default-features = false }
 base-alloy-rpc-types-engine = { path = "crates/alloy/rpc-types-engine", default-features = false }
 base-alloy-rpc-jsonrpsee = { path = "crates/alloy/rpc-jsonrpsee", default-features = false }
-base-alloy = { path = "crates/alloy/base-alloy", default-features = false }
 
 # base-kona (ported from kona)
 base-cli = { path = "crates/kona/cli", default-features = false }

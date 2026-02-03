@@ -378,7 +378,7 @@ impl OpPayloadBuilderCtx {
             info.cumulative_gas_used += gas_used;
 
             if !sequencer_tx.is_deposit() {
-                info.cumulative_da_bytes_used += op_alloy_flz::tx_estimated_size_fjord_bytes(
+                info.cumulative_da_bytes_used += base_alloy_flz::tx_estimated_size_fjord_bytes(
                     sequencer_tx.encoded_2718().as_slice(),
                 );
             }
