@@ -38,3 +38,6 @@ pub use flashblock::{
     OpFlashblockError, OpFlashblockPayload, OpFlashblockPayloadBase, OpFlashblockPayloadDelta,
     OpFlashblockPayloadMetadata,
 };
+
+#[cfg(feature = "reth-compat")]
+mod reth_compat;

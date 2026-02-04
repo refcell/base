@@ -31,6 +31,9 @@ snap = { workspace = true, optional = true }
 alloy-serde = { workspace = true, optional = true }
 serde = { workspace = true, optional = true }
 
+# reth
+reth-payload-primitives = { workspace = true, optional = true }
+
 # misc
 arbitrary = { workspace = true, features = ["derive"], optional = true }
 derive_more = { workspace = true, features = ["as_ref", "deref_mut", "display", "from"] }
@@ -68,3 +71,4 @@ arbitrary = [
     "alloy-primitives/rand",
     "base-alloy-consensus/arbitrary",
 ]
+reth-compat = ["dep:reth-payload-primitives", "serde"]

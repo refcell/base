@@ -31,6 +31,17 @@ serde_with = { workspace = true, optional = true }
 # arbitrary
 arbitrary = { workspace = true, features = ["derive"], optional = true }
 
+# reth (optional, for trait compatibility)
+reth-primitives-traits = { workspace = true, optional = true }
+reth-codecs = { workspace = true, optional = true }
+reth-zstd-compressors = { workspace = true, optional = true }
+bytes = { workspace = true, optional = true }
+
+# evm-compat
+alloy-evm = { workspace = true, optional = true }
+op-revm = { workspace = true, optional = true }
+revm = { workspace = true, optional = true }
+
 [dev-dependencies]
 serde_json.workspace = true
 rand.workspace = true
@@ -52,7 +63,7 @@ serde = [
     "alloy-eips/serde",
     "alloy-primitives/serde",
 ]
-serde-bincode-compat = ["serde", "serde_with", "alloy-consensus/serde-bincode-compat"]
+serde-bincode-compat = ["serde", "serde_with", "alloy-consensus/serde-bincode-compat", "reth-primitives-traits?/serde-bincode-compat"]
 k256 = ["alloy-consensus/k256", "alloy-primitives/k256"]
 arbitrary = [
     "std",
@@ -63,3 +74,5 @@ arbitrary = [
     "alloy-primitives/rand",
 ]
 alloy-compat = ["serde", "dep:alloy-network", "dep:alloy-rpc-types-eth"]
+reth-compat = ["dep:reth-primitives-traits", "dep:reth-codecs", "dep:reth-zstd-compressors", "dep:bytes", "k256", "serde-bincode-compat"]
+evm-compat = ["dep:alloy-evm", "dep:op-revm", "dep:revm"]

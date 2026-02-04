@@ -1,0 +1,85 @@
+[package]
+name = "base-evm"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# Reth
+reth-chainspec.workspace = true
+reth-evm = { workspace = true, features = ["op"] }
+reth-primitives-traits.workspace = true
+reth-execution-errors.workspace = true
+reth-execution-types.workspace = true
+reth-storage-errors.workspace = true
+reth-ethereum-primitives = { workspace = true, features = ["serde", "serde-bincode-compat"] }
+op-alloy-consensus.workspace = true
+
+reth-rpc-eth-api = { workspace = true, optional = true }
+
+# ethereum
+alloy-eips.workspace = true
+alloy-evm.workspace = true
+alloy-primitives.workspace = true
+alloy-op-evm.workspace = true
+base-alloy-consensus = { path = "../../alloy/consensus" }
+base-alloy-rpc-types-engine = { path = "../../alloy/rpc-types-engine" }
+alloy-consensus.workspace = true
+
+# Optimism
+base-chainspec = { path = "../chainspec" }
+base-execution-consensus = { path = "../consensus" }
+base-forks = { path = "../hardforks" }
+base-reth-primitives = { path = "../primitives" }
+
+# revm
+revm.workspace = true
+op-revm.workspace = true
+
+# misc
+thiserror.workspace = true
+
+[dev-dependencies]
+reth-evm = { workspace = true, features = ["test-utils"] }
+reth-revm = { workspace = true, features = ["test-utils"] }
+alloy-genesis.workspace = true
+base-reth-primitives = { path = "../primitives", features = ["arbitrary"] }
+
+[features]
+default = ["std"]
+std = [
+    "reth-revm/std",
+    "alloy-consensus/std",
+    "alloy-eips/std",
+    "alloy-genesis/std",
+    "alloy-primitives/std",
+    "reth-primitives-traits/std",
+    "revm/std",
+    "base-reth-primitives/std",
+    "base-forks/std",
+    "thiserror/std",
+    "base-alloy-consensus/std",
+    "reth-chainspec/std",
+    "base-execution-consensus/std",
+    "base-chainspec/std",
+    "reth-execution-errors/std",
+    "reth-execution-types/std",
+    "alloy-evm/std",
+    "alloy-op-evm/std",
+    "op-revm/std",
+    "reth-evm/std",
+    "base-alloy-rpc-types-engine/std",
+    "reth-storage-errors/std",
+]
+portable = [
+    "reth-revm/portable",
+    "op-revm/portable",
+    "revm/portable",
+]
+rpc = ["reth-rpc-eth-api", "base-reth-primitives/serde", "base-reth-primitives/reth-codec", "alloy-evm/rpc"]

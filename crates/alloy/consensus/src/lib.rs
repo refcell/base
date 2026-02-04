@@ -9,6 +9,9 @@ extern crate alloc;
 #[cfg(feature = "alloy-compat")]
 mod alloy_compat;
 
+#[cfg(feature = "reth-compat")]
+mod reth_compat;
+
 mod block;
 pub use block::OpBlock;
 

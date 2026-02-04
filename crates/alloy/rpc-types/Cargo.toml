@@ -30,6 +30,14 @@ serde_json.workspace = true
 # RPC
 jsonrpsee = { workspace = true, optional = true }
 
+# Reth compat
+reth-rpc-convert = { workspace = true, optional = true }
+alloy-evm = { workspace = true, optional = true }
+op-revm = { workspace = true, optional = true }
+alloy-signer = { workspace = true, optional = true }
+alloy-network = { workspace = true, optional = true }
+revm = { workspace = true, optional = true }
+
 # arbitrary
 arbitrary = { workspace = true, features = ["derive"], optional = true }
 
@@ -64,3 +72,4 @@ arbitrary = [
 k256 = ["alloy-rpc-types-eth/k256", "base-alloy-consensus/k256"]
 serde = ["base-alloy-consensus/serde"]
 jsonrpsee = ["dep:jsonrpsee"]
+reth-compat = ["dep:reth-rpc-convert", "dep:alloy-evm", "dep:op-revm", "dep:alloy-signer", "dep:alloy-network", "dep:revm"]

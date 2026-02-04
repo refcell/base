@@ -24,6 +24,9 @@ pub use deposit::serde_deposit_tx_rpc;
 mod meta;
 pub use meta::{OpDepositInfo, OpTransactionInfo};
 
+#[cfg(feature = "evm-compat")]
+mod evm_compat;
+
 /// Bincode-compatible serde implementations for transaction types.
 #[cfg(all(feature = "serde", feature = "serde-bincode-compat"))]
 pub mod serde_bincode_compat {
