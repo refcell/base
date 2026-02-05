@@ -4,7 +4,6 @@
 //!
 //! Adapted from <https://github.com/paradigmxyz/reth/blob/0e087ae1c35502f0b8d128c64e4c57269af20c0e/crates/net/peers/src/node_record.rs>.
 
-use crate::PeerId;
 use core::{
     fmt,
     fmt::Write,
@@ -13,6 +12,8 @@ use core::{
     str::FromStr,
 };
 use std::net::ToSocketAddrs;
+
+use crate::PeerId;
 
 /// Represents an ENR in discovery.
 ///

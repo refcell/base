@@ -3,11 +3,6 @@
 //! The `SequenceManager` maintains a ring buffer of recently completed flashblock sequences
 //! and intelligently selects which sequence to build based on the local chain tip.
 
-use crate::{
-    sequence::{FlashBlockPendingSequence, SequenceExecutionOutcome},
-    worker::BuildArgs,
-    FlashBlock, FlashBlockCompleteSequence, PendingFlashBlock,
-};
 use alloy_eips::eip2718::WithEncoded;
 use alloy_primitives::B256;
 use reth_primitives_traits::{NodePrimitives, Recovered, SignedTransaction};
@@ -15,6 +10,12 @@ use reth_revm::cached::CachedReads;
 use ringbuffer::{AllocRingBuffer, RingBuffer};
 use tokio::sync::broadcast;
 use tracing::*;
+
+use crate::{
+    FlashBlock, FlashBlockCompleteSequence, PendingFlashBlock,
+    sequence::{FlashBlockPendingSequence, SequenceExecutionOutcome},
+    worker::BuildArgs,
+};
 
 /// Maximum number of cached sequences in the ring buffer.
 const CACHE_SIZE: usize = 3;
@@ -181,9 +182,9 @@ impl<T: SignedTransaction> SequenceManager<T> {
         // chain progression.
         let block_time_ms = (base.timestamp - local_tip_timestamp) * 1000;
         let expected_final_flashblock = block_time_ms / FLASHBLOCK_BLOCK_TIME;
-        let compute_state_root = self.compute_state_root &&
-            last_flashblock.diff.state_root.is_zero() &&
-            last_flashblock.index >= expected_final_flashblock.saturating_sub(1);
+        let compute_state_root = self.compute_state_root
+            && last_flashblock.diff.state_root.is_zero()
+            && last_flashblock.index >= expected_final_flashblock.saturating_sub(1);
 
         trace!(
             target: "flashblocks",
@@ -265,10 +266,11 @@ impl<T: SignedTransaction> SequenceManager<T> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::test_utils::TestFlashBlockFactory;
     use alloy_primitives::B256;
     use base_alloy_consensus::OpTxEnvelope;
+
+    use super::*;
+    use crate::test_utils::TestFlashBlockFactory;
 
     #[test]
     fn test_sequence_manager_new() {

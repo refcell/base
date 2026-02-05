@@ -1,10 +1,12 @@
-use crate::{DerivationActorRequest, DerivationClientError, DerivationClientResult};
+use std::fmt::Debug;
+
 use async_trait::async_trait;
-use derive_more::Constructor;
 use base_derive::Signal;
 use base_protocol::L2BlockInfo;
-use std::fmt::Debug;
+use derive_more::Constructor;
 use tokio::sync::mpsc;
+
+use crate::{DerivationActorRequest, DerivationClientError, DerivationClientResult};
 
 /// Client to use to interact with the [`crate::DerivationActor`].
 #[cfg_attr(test, mockall::automock)]

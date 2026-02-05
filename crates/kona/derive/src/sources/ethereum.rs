@@ -1,15 +1,17 @@
 //! Contains the [`EthereumDataSource`], which is a concrete implementation of the
 //! [`DataAvailabilityProvider`] trait for the Ethereum protocol.
 
-use crate::{
-    BlobProvider, BlobSource, CalldataSource, ChainProvider, DataAvailabilityProvider,
-    PipelineResult,
-};
 use alloc::{boxed::Box, fmt::Debug};
+
 use alloy_primitives::{Address, Bytes};
 use async_trait::async_trait;
 use base_genesis::RollupConfig;
 use base_protocol::BlockInfo;
+
+use crate::{
+    BlobProvider, BlobSource, CalldataSource, ChainProvider, DataAvailabilityProvider,
+    PipelineResult,
+};
 
 /// A factory for creating an Ethereum data source provider.
 #[derive(Debug, Clone)]
@@ -80,17 +82,19 @@ where
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::{
-        BlobData,
-        test_utils::{TestBlobProvider, TestChainProvider},
-    };
     use alloc::vec;
+
     use alloy_consensus::TxEnvelope;
     use alloy_eips::eip2718::Decodable2718;
     use alloy_primitives::{Address, address};
     use base_genesis::{HardForkConfig, RollupConfig, SystemConfig};
     use base_protocol::BlockInfo;
+
+    use super::*;
+    use crate::{
+        BlobData,
+        test_utils::{TestBlobProvider, TestChainProvider},
+    };
 
     fn default_test_blob_source() -> BlobSource<TestChainProvider, TestBlobProvider> {
         let chain_provider = TestChainProvider::default();

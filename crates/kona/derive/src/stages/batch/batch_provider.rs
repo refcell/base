@@ -1,15 +1,17 @@
 //! This module contains the [`BatchProvider`] stage.
 
+use alloc::{boxed::Box, sync::Arc};
+use core::fmt::Debug;
+
+use async_trait::async_trait;
+use base_genesis::RollupConfig;
+use base_protocol::{BlockInfo, L2BlockInfo, SingleBatch};
+
 use super::NextBatchProvider;
 use crate::{
     AttributesProvider, BatchQueue, BatchValidator, L2ChainProvider, OriginAdvancer,
     OriginProvider, PipelineError, PipelineResult, Signal, SignalReceiver,
 };
-use alloc::{boxed::Box, sync::Arc};
-use async_trait::async_trait;
-use core::fmt::Debug;
-use base_genesis::RollupConfig;
-use base_protocol::{BlockInfo, L2BlockInfo, SingleBatch};
 
 /// The [`BatchProvider`] stage is a mux between the [`BatchQueue`] and [`BatchValidator`] stages.
 ///
@@ -65,11 +67,8 @@ where
             if self.cfg.is_holocene_active(origin.timestamp) {
                 self.batch_validator = Some(BatchValidator::new(Arc::clone(&self.cfg), prev));
             } else {
-                self.batch_queue = Some(BatchQueue::new(
-                    Arc::clone(&self.cfg),
-                    prev,
-                    self.provider.clone(),
-                ));
+                self.batch_queue =
+                    Some(BatchQueue::new(Arc::clone(&self.cfg), prev, self.provider.clone()));
             }
         } else if self.batch_queue.is_some() && self.cfg.is_holocene_active(origin.timestamp) {
             // If the batch queue is active and Holocene is also active, transition to the batch
@@ -83,11 +82,8 @@ where
             // reorg around Holocene activation. Transition back to the batch queue
             // until Holocene re-activates.
             let batch_validator = self.batch_validator.take().expect("Must have batch validator");
-            let mut bq = BatchQueue::new(
-                Arc::clone(&self.cfg),
-                batch_validator.prev,
-                self.provider.clone(),
-            );
+            let mut bq =
+                BatchQueue::new(Arc::clone(&self.cfg), batch_validator.prev, self.provider.clone());
             bq.l1_blocks = batch_validator.l1_blocks;
             self.batch_queue = Some(bq);
         }
@@ -179,15 +175,17 @@ where
 
 #[cfg(test)]
 mod test {
+    use alloc::{sync::Arc, vec};
+
+    use base_genesis::{HardForkConfig, RollupConfig};
+    use base_protocol::BlockInfo;
+
     use super::BatchProvider;
     use crate::{
         test_utils::{TestL2ChainProvider, TestNextBatchProvider},
         traits::{OriginProvider, SignalReceiver},
         types::ResetSignal,
     };
-    use alloc::{sync::Arc, vec};
-    use base_genesis::{HardForkConfig, RollupConfig};
-    use base_protocol::BlockInfo;
 
     #[test]
     fn test_batch_provider_validator_active() {

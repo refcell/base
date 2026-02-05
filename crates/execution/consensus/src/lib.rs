@@ -12,11 +12,14 @@
 extern crate alloc;
 
 use alloc::{format, sync::Arc};
+use core::fmt::Debug;
+
 use alloy_consensus::{
-    constants::MAXIMUM_EXTRA_DATA_SIZE, BlockHeader as _, EMPTY_OMMER_ROOT_HASH,
+    BlockHeader as _, EMPTY_OMMER_ROOT_HASH, constants::MAXIMUM_EXTRA_DATA_SIZE,
 };
 use alloy_primitives::B64;
-use core::fmt::Debug;
+use base_forks::OpHardforks;
+use base_reth_primitives::DepositReceipt;
 use reth_chainspec::EthChainSpec;
 use reth_consensus::{Consensus, ConsensusError, FullConsensus, HeaderValidator, ReceiptRootBloom};
 use reth_consensus_common::validation::{
@@ -25,8 +28,6 @@ use reth_consensus_common::validation::{
     validate_header_extra_data, validate_header_gas,
 };
 use reth_execution_types::BlockExecutionResult;
-use base_forks::OpHardforks;
-use base_reth_primitives::DepositReceipt;
 use reth_primitives_traits::{
     Block, BlockBody, BlockHeader, GotExpected, NodePrimitives, RecoveredBlock, SealedBlock,
     SealedHeader,
@@ -108,12 +109,12 @@ where
                     expected: block.ommers_hash(),
                 }
                 .into(),
-            ))
+            ));
         }
 
         // Check transaction root
         if let Err(error) = block.ensure_transaction_root_valid() {
-            return Err(ConsensusError::BodyTransactionRootDiff(error.into()))
+            return Err(ConsensusError::BodyTransactionRootDiff(error.into()));
         }
 
         // Check empty shanghai-withdrawals
@@ -122,7 +123,7 @@ where
                 ConsensusError::Other(format!("failed to verify block {}: {err}", block.number()))
             })?
         } else {
-            return Ok(())
+            return Ok(());
         }
 
         // Blob gas used validation
@@ -164,11 +165,11 @@ where
         );
 
         if header.nonce() != Some(B64::ZERO) {
-            return Err(ConsensusError::TheMergeNonceIsNotZero)
+            return Err(ConsensusError::TheMergeNonceIsNotZero);
         }
 
         if header.ommers_hash() != EMPTY_OMMER_ROOT_HASH {
-            return Err(ConsensusError::TheMergeOmmerRootIsNotEmpty)
+            return Err(ConsensusError::TheMergeOmmerRootIsNotEmpty);
         }
 
         // Post-merge, the consensus layer is expected to perform checks such that the block
@@ -210,8 +211,8 @@ where
             let blob_gas_used = header.blob_gas_used().ok_or(ConsensusError::BlobGasUsedMissing)?;
 
             // Before Jovian and after ecotone, the blob gas used should be 0.
-            if !self.chain_spec.is_jovian_active_at_timestamp(header.timestamp()) &&
-                blob_gas_used != 0
+            if !self.chain_spec.is_jovian_active_at_timestamp(header.timestamp())
+                && blob_gas_used != 0
             {
                 return Err(ConsensusError::BlobGasUsedDiff(GotExpected {
                     got: blob_gas_used,
@@ -226,7 +227,7 @@ where
                     diff: GotExpected { got: excess_blob_gas, expected: 0 },
                     parent_excess_blob_gas: parent.excess_blob_gas().unwrap_or(0),
                     parent_blob_gas_used: parent.blob_gas_used().unwrap_or(0),
-                })
+                });
             }
         }
 
@@ -242,13 +243,13 @@ mod tests {
     use alloy_eips::{eip4895::Withdrawals, eip7685::Requests};
     use alloy_primitives::{Address, Bytes, Log, Signature, U256};
     use base_alloy_consensus::{
-        encode_holocene_extra_data, encode_jovian_extra_data, OpTypedTransaction,
+        OpTypedTransaction, encode_holocene_extra_data, encode_jovian_extra_data,
     };
+    use base_chainspec::{OP_MAINNET, OpChainSpec, OpChainSpecBuilder};
+    use base_reth_primitives::{OpPrimitives, OpReceipt, OpTransactionSigned};
     use reth_chainspec::BaseFeeParams;
     use reth_consensus::{Consensus, ConsensusError, FullConsensus, HeaderValidator};
-    use base_chainspec::{OpChainSpec, OpChainSpecBuilder, OP_MAINNET};
-    use base_reth_primitives::{OpPrimitives, OpReceipt, OpTransactionSigned};
-    use reth_primitives_traits::{proofs, RecoveredBlock, SealedBlock, SealedHeader};
+    use reth_primitives_traits::{RecoveredBlock, SealedBlock, SealedHeader, proofs};
     use reth_provider::BlockExecutionResult;
 
     use crate::OpBeaconConsensus;

@@ -1,13 +1,15 @@
-use crate::{FlashBlock, FlashBlockCompleteSequenceRx};
-use alloy_primitives::{Bytes, B256};
-use alloy_rpc_types_engine::PayloadId;
 use core::mem;
-use eyre::{bail, OptionExt};
-use base_alloy_rpc_types_engine::OpFlashblockPayloadBase;
-use reth_revm::cached::CachedReads;
 use std::{collections::BTreeMap, ops::Deref};
+
+use alloy_primitives::{B256, Bytes};
+use alloy_rpc_types_engine::PayloadId;
+use base_alloy_rpc_types_engine::OpFlashblockPayloadBase;
+use eyre::{OptionExt, bail};
+use reth_revm::cached::CachedReads;
 use tokio::sync::broadcast;
 use tracing::*;
+
+use crate::{FlashBlock, FlashBlockCompleteSequenceRx};
 
 /// The size of the broadcast channel for completed flashblock sequences.
 const FLASHBLOCK_SEQUENCE_CHANNEL_SIZE: usize = 128;
@@ -189,9 +191,9 @@ impl FlashBlockCompleteSequence {
 
         // Ensure that index are successive from 0, have same block number and payload id
         if !blocks.iter().enumerate().all(|(idx, block)| {
-            idx == block.index as usize &&
-                block.payload_id == first_block.payload_id &&
-                block.block_number() == first_block.block_number()
+            idx == block.index as usize
+                && block.payload_id == first_block.payload_id
+                && block.block_number() == first_block.block_number()
         }) {
             bail!("Flashblock inconsistencies detected in sequence");
         }

@@ -1,8 +1,10 @@
 //! Span Batch Element
 
-use crate::SingleBatch;
 use alloc::vec::Vec;
+
 use alloy_primitives::Bytes;
+
+use crate::SingleBatch;
 
 /// MAX_SPAN_BATCH_ELEMENTS is the maximum number of blocks, transactions in total,
 /// or transaction per block allowed in a span batch.
@@ -33,8 +35,9 @@ impl From<SingleBatch> for SpanBatchElement {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use proptest::{collection::vec, prelude::any, proptest};
+
+    use super::*;
 
     proptest! {
         #[test]

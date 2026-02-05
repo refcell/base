@@ -1,7 +1,7 @@
 //! Providers that use alloy provider types on the backend.
 
-#[cfg(feature = "metrics")]
-use crate::Metrics;
+use std::{boxed::Box, num::NonZeroUsize, vec::Vec};
+
 use alloy_consensus::{Header, Receipt, TxEnvelope};
 use alloy_eips::BlockId;
 use alloy_primitives::B256;
@@ -11,7 +11,9 @@ use async_trait::async_trait;
 use base_derive::{ChainProvider, PipelineError, PipelineErrorKind};
 use base_protocol::BlockInfo;
 use lru::LruCache;
-use std::{boxed::Box, num::NonZeroUsize, vec::Vec};
+
+#[cfg(feature = "metrics")]
+use crate::Metrics;
 
 #[derive(Debug, Clone)]
 pub struct AlloyChainProvider {

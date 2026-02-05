@@ -1,5 +1,10 @@
 //! Contains ecotone-specific L1 block info types.
 
+use alloc::vec::Vec;
+
+use alloy_primitives::{Address, B256, Bytes, U256};
+use ambassador::Delegate;
+
 use crate::{
     DecodeError,
     info::{
@@ -10,9 +15,6 @@ use crate::{
         ecotone_base::{L1BlockInfoEcotoneBase, ambassador_impl_L1BlockInfoEcotoneBaseFields},
     },
 };
-use alloc::vec::Vec;
-use alloy_primitives::{Address, B256, Bytes, U256};
-use ambassador::Delegate;
 
 /// Represents the fields within an Ecotone L1 block info transaction.
 ///
@@ -221,8 +223,9 @@ impl L1BlockInfoEcotone {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use alloc::vec;
+
+    use super::*;
 
     #[test]
     fn test_decode_calldata_ecotone_invalid_length() {

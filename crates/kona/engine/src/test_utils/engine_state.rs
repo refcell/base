@@ -1,7 +1,8 @@
-use crate::{EngineState, EngineSyncStateUpdate};
 use alloy_eips::BlockNumHash;
 use alloy_primitives::{B256, b256};
 use base_protocol::{BlockInfo, L2BlockInfo};
+
+use crate::{EngineState, EngineSyncStateUpdate};
 
 #[derive(Debug)]
 pub struct TestEngineStateBuilder {

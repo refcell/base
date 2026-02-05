@@ -1,3 +1,7 @@
+use base_derive::{BuilderError, PipelineErrorKind, test_utils::TestAttributesBuilder};
+use base_protocol::{BlockInfo, L2BlockInfo};
+use rstest::rstest;
+
 #[cfg(test)]
 use crate::{
     SequencerActorError,
@@ -5,14 +9,11 @@ use crate::{
         MockOriginSelector, MockSequencerEngineClient, sequencer::tests::test_util::test_actor,
     },
 };
-use base_derive::{BuilderError, PipelineErrorKind, test_utils::TestAttributesBuilder};
-use base_protocol::{BlockInfo, L2BlockInfo};
-use rstest::rstest;
 
 #[rstest]
-#[case::temp(PipelineErrorKind::Temporary(BuilderError::Custom("".into()).into()), false)]
-#[case::reset(PipelineErrorKind::Reset(BuilderError::Custom("".into()).into()), false)]
-#[case::critical(PipelineErrorKind::Critical(BuilderError::Custom("".into()).into()), true)]
+#[case::temp(PipelineErrorKind::Temporary(BuilderError::Custom(String::new()).into()), false)]
+#[case::reset(PipelineErrorKind::Reset(BuilderError::Custom(String::new()).into()), false)]
+#[case::critical(PipelineErrorKind::Critical(BuilderError::Custom(String::new()).into()), true)]
 #[tokio::test]
 async fn test_build_unsealed_payload_prepare_payload_attributes_error(
     #[case] forced_error: PipelineErrorKind,

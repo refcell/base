@@ -39,13 +39,12 @@ pub use source::{
 };
 
 pub mod transaction;
+#[cfg(feature = "serde")]
+pub use transaction::serde_deposit_tx_rpc;
 pub use transaction::{
     DEPOSIT_TX_TYPE_ID, DepositTransaction, OpDepositInfo, OpPooledTransaction, OpTransaction,
     OpTransactionInfo, OpTxEnvelope, OpTxType, OpTypedTransaction, TxDeposit,
 };
-
-#[cfg(feature = "serde")]
-pub use transaction::serde_deposit_tx_rpc;
 
 /// Bincode-compatible serde implementations for consensus types.
 ///

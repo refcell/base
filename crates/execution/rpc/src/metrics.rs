@@ -1,6 +1,7 @@
 //! RPC metrics unique for OP-stack.
 
 use core::time::Duration;
+
 use metrics::Histogram;
 use reth_metrics::Metrics;
 

@@ -59,8 +59,9 @@ impl OutputRoot {
 
 #[cfg(test)]
 mod test {
-    use super::OutputRoot;
     use alloy_primitives::{B256, Bytes, b256, bytes};
+
+    use super::OutputRoot;
 
     fn test_or() -> OutputRoot {
         OutputRoot::from_parts(

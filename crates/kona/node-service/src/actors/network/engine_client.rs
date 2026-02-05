@@ -1,8 +1,10 @@
-use crate::{EngineActorRequest, EngineClientError, EngineClientResult};
+use std::fmt::Debug;
+
 use async_trait::async_trait;
 use base_alloy_rpc_types_engine::OpExecutionPayloadEnvelope;
-use std::fmt::Debug;
 use tokio::sync::mpsc;
+
+use crate::{EngineActorRequest, EngineClientError, EngineClientResult};
 
 /// Client used to interact with the Engine.
 #[cfg_attr(test, mockall::automock)]

@@ -7,15 +7,20 @@
 //! - `Compact` for database serialization (reth-codecs)
 //! - `SerdeBincodeCompat` for bincode serialization
 
-use crate::{
-    DEPOSIT_TX_TYPE_ID, OpDepositReceipt, OpPooledTransaction, OpReceipt, OpTxEnvelope, OpTxType,
-    OpTypedTransaction, TxDeposit,
-};
 use alloy_consensus::{Sealed, Signed, TxEip1559, TxEip2930, TxEip7702, TxLegacy};
 use alloy_primitives::{Address, B256, Bytes, Signature, TxKind, U256};
 use bytes::{Buf, BufMut};
 use reth_codecs::Compact;
+use reth_db_api::{
+    DatabaseError,
+    table::{Compress, Decompress},
+};
 use reth_primitives_traits::{InMemorySize, SignedTransaction};
+
+use crate::{
+    DEPOSIT_TX_TYPE_ID, OpDepositReceipt, OpPooledTransaction, OpReceipt, OpTxEnvelope, OpTxType,
+    OpTypedTransaction, TxDeposit,
+};
 
 // ============================================================================
 // InMemorySize implementations
@@ -105,7 +110,7 @@ mod compact_ids {
 
 use compact_ids::*;
 
-/// Helper struct for deriving Compact on TxDeposit fields.
+/// Helper struct for deriving Compact on `TxDeposit` fields.
 /// This mirrors the structure of [`TxDeposit`] for compact encoding.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
 struct TxDepositCompact {
@@ -540,13 +545,48 @@ impl Compact for OpReceipt {
 }
 
 // ============================================================================
+// Compress/Decompress implementations for database storage
+// ============================================================================
+
+impl Compress for OpTxEnvelope {
+    type Compressed = alloc::vec::Vec<u8>;
+
+    fn compress_to_buf<B: BufMut + AsMut<[u8]>>(&self, buf: &mut B) {
+        let _ = Compact::to_compact(self, buf);
+    }
+}
+
+impl Decompress for OpTxEnvelope {
+    fn decompress(value: &[u8]) -> Result<Self, DatabaseError> {
+        let (obj, _) = Compact::from_compact(value, value.len());
+        Ok(obj)
+    }
+}
+
+impl Compress for OpReceipt {
+    type Compressed = alloc::vec::Vec<u8>;
+
+    fn compress_to_buf<B: BufMut + AsMut<[u8]>>(&self, buf: &mut B) {
+        let _ = Compact::to_compact(self, buf);
+    }
+}
+
+impl Decompress for OpReceipt {
+    fn decompress(value: &[u8]) -> Result<Self, DatabaseError> {
+        let (obj, _) = Compact::from_compact(value, value.len());
+        Ok(obj)
+    }
+}
+
+// ============================================================================
 // SerdeBincodeCompat implementations (requires serde-bincode-compat feature)
 // ============================================================================
 
 #[cfg(feature = "serde-bincode-compat")]
 mod bincode_compat_impls {
-    use super::{OpReceipt, OpTxEnvelope};
     use reth_primitives_traits::serde_bincode_compat::SerdeBincodeCompat;
+
+    use super::{OpReceipt, OpTxEnvelope};
 
     impl SerdeBincodeCompat for OpTxEnvelope {
         type BincodeRepr<'a> = crate::serde_bincode_compat::transaction::OpTxEnvelope<'a>;

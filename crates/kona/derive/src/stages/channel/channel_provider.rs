@@ -1,17 +1,19 @@
 //! This module contains the [`ChannelProvider`] stage.
 
+use alloc::{boxed::Box, sync::Arc};
+use core::fmt::Debug;
+
+use alloy_primitives::Bytes;
+use async_trait::async_trait;
+use base_genesis::RollupConfig;
+use base_protocol::BlockInfo;
+
 use super::{ChannelAssembler, ChannelBank, ChannelReaderProvider, NextFrameProvider};
 use crate::{
     errors::PipelineError,
     traits::{OriginAdvancer, OriginProvider, SignalReceiver},
     types::{PipelineResult, Signal},
 };
-use alloc::{boxed::Box, sync::Arc};
-use alloy_primitives::Bytes;
-use async_trait::async_trait;
-use core::fmt::Debug;
-use base_genesis::RollupConfig;
-use base_protocol::BlockInfo;
 
 /// The [`ChannelProvider`] stage is a mux between the [`ChannelBank`] and [`ChannelAssembler`]
 /// stages.
@@ -59,8 +61,7 @@ where
             // On the first call to `attempt_update`, we need to determine the active stage to
             // initialize the mux with.
             if self.cfg.is_holocene_active(origin.timestamp) {
-                self.channel_assembler =
-                    Some(ChannelAssembler::new(Arc::clone(&self.cfg), prev));
+                self.channel_assembler = Some(ChannelAssembler::new(Arc::clone(&self.cfg), prev));
             } else {
                 self.channel_bank = Some(ChannelBank::new(Arc::clone(&self.cfg), prev));
             }
@@ -157,13 +158,15 @@ where
 
 #[cfg(test)]
 mod test {
+    use alloc::{sync::Arc, vec};
+
+    use base_genesis::{HardForkConfig, RollupConfig};
+    use base_protocol::BlockInfo;
+
     use crate::{
         ChannelProvider, ChannelReaderProvider, OriginProvider, PipelineError, ResetSignal,
         SignalReceiver, test_utils::TestNextFrameProvider,
     };
-    use alloc::{sync::Arc, vec};
-    use base_genesis::{HardForkConfig, RollupConfig};
-    use base_protocol::BlockInfo;
 
     #[test]
     fn test_channel_provider_assembler_active() {

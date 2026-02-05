@@ -1,6 +1,7 @@
 //! List of OP Stack chains.
 
 use alloc::{string::String, vec::Vec};
+
 use alloy_chains::Chain as AlloyChain;
 
 /// List of Chains.

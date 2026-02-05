@@ -1,31 +1,29 @@
 //! Optimism payload builder implementation.
-use crate::{
-    config::OpBuilderConfig, error::OpPayloadBuilderError, payload::OpBuiltPayload, OpAttributes,
-    OpPayloadBuilderAttributes, OpPayloadPrimitives,
-};
+use std::{marker::PhantomData, sync::Arc};
+
 use alloy_consensus::{BlockHeader, Transaction, Typed2718};
 use alloy_evm::Evm as AlloyEvm;
 use alloy_primitives::{B256, U256};
 use alloy_rpc_types_debug::ExecutionWitness;
 use alloy_rpc_types_engine::PayloadId;
+use base_forks::OpHardforks;
+use base_reth_primitives::{L2_TO_L1_MESSAGE_PASSER_ADDRESS, transaction::OpTransaction};
+use base_txpool_reth::{
+    OpPooledTx,
+    estimated_da_size::DataAvailabilitySized,
+    interop::{MaybeInteropTransaction, is_valid_interop},
+};
 use reth_basic_payload_builder::*;
 use reth_chainspec::{ChainSpecProvider, EthChainSpec};
 use reth_evm::{
+    ConfigureEvm, Database,
     block::BlockExecutorFor,
     execute::{
         BlockBuilder, BlockBuilderOutcome, BlockExecutionError, BlockExecutor, BlockValidationError,
     },
-    op_revm::{constants::L1_BLOCK_CONTRACT, L1BlockInfo},
-    ConfigureEvm, Database,
+    op_revm::{L1BlockInfo, constants::L1_BLOCK_CONTRACT},
 };
 use reth_execution_types::BlockExecutionOutput;
-use base_forks::OpHardforks;
-use base_reth_primitives::{transaction::OpTransaction, L2_TO_L1_MESSAGE_PASSER_ADDRESS};
-use base_txpool_reth::{
-    estimated_da_size::DataAvailabilitySized,
-    interop::{is_valid_interop, MaybeInteropTransaction},
-    OpPooledTx,
-};
 use reth_payload_builder_primitives::PayloadBuilderError;
 use reth_payload_primitives::{BuildNextEnv, BuiltPayloadExecutedBlock, PayloadBuilderAttributes};
 use reth_payload_util::{BestPayloadTransactions, NoopPayloadTransactions, PayloadTransactions};
@@ -36,11 +34,15 @@ use reth_revm::{
     cancelled::CancelOnDrop, database::StateProviderDatabase, db::State,
     witness::ExecutionWitnessRecord,
 };
-use reth_storage_api::{errors::ProviderError, StateProvider, StateProviderFactory};
+use reth_storage_api::{StateProvider, StateProviderFactory, errors::ProviderError};
 use reth_transaction_pool::{BestTransactionsAttributes, PoolTransaction, TransactionPool};
 use revm::context::{Block, BlockEnv};
-use std::{marker::PhantomData, sync::Arc};
 use tracing::{debug, trace, warn};
+
+use crate::{
+    OpAttributes, OpPayloadBuilderAttributes, OpPayloadPrimitives, config::OpBuilderConfig,
+    error::OpPayloadBuilderError, payload::OpBuiltPayload,
+};
 
 /// Optimism's payload builder
 #[derive(Debug)]
@@ -158,9 +160,9 @@ where
     Client: StateProviderFactory + ChainSpecProvider<ChainSpec: OpHardforks>,
     N: OpPayloadPrimitives,
     Evm: ConfigureEvm<
-        Primitives = N,
-        NextBlockEnvCtx: BuildNextEnv<Attrs, N::BlockHeader, Client::ChainSpec>,
-    >,
+            Primitives = N,
+            NextBlockEnvCtx: BuildNextEnv<Attrs, N::BlockHeader, Client::ChainSpec>,
+        >,
     Attrs: OpAttributes<Transaction = TxTy<Evm::Primitives>>,
 {
     /// Constructs an Optimism payload from the transactions sent via the
@@ -242,9 +244,9 @@ where
     Client: StateProviderFactory + ChainSpecProvider<ChainSpec: OpHardforks> + Clone,
     Pool: TransactionPool<Transaction: OpPooledTx<Consensus = N::SignedTx>>,
     Evm: ConfigureEvm<
-        Primitives = N,
-        NextBlockEnvCtx: BuildNextEnv<Attrs, N::BlockHeader, Client::ChainSpec>,
-    >,
+            Primitives = N,
+            NextBlockEnvCtx: BuildNextEnv<Attrs, N::BlockHeader, Client::ChainSpec>,
+        >,
     Txs: OpPayloadTransactions<Pool::Transaction>,
     Attrs: OpAttributes<Transaction = N::SignedTx>,
 {
@@ -325,9 +327,9 @@ impl<Txs> OpBuilder<'_, Txs> {
     ) -> Result<BuildOutcomeKind<OpBuiltPayload<N>>, PayloadBuilderError>
     where
         Evm: ConfigureEvm<
-            Primitives = N,
-            NextBlockEnvCtx: BuildNextEnv<Attrs, N::BlockHeader, ChainSpec>,
-        >,
+                Primitives = N,
+                NextBlockEnvCtx: BuildNextEnv<Attrs, N::BlockHeader, ChainSpec>,
+            >,
         ChainSpec: EthChainSpec + OpHardforks,
         N: OpPayloadPrimitives,
         Txs:
@@ -359,13 +361,13 @@ impl<Txs> OpBuilder<'_, Txs> {
         if !ctx.attributes().no_tx_pool() {
             let best_txs = best(ctx.best_transaction_attributes(builder.evm_mut().block()));
             if ctx.execute_best_transactions(&mut info, &mut builder, best_txs)?.is_some() {
-                return Ok(BuildOutcomeKind::Cancelled)
+                return Ok(BuildOutcomeKind::Cancelled);
             }
 
             // check if the new payload is even more valuable
             if !ctx.is_better_payload(info.total_fees) {
                 // can skip building the block
-                return Ok(BuildOutcomeKind::Aborted { fees: info.total_fees })
+                return Ok(BuildOutcomeKind::Aborted { fees: info.total_fees });
             }
         }
 
@@ -410,9 +412,9 @@ impl<Txs> OpBuilder<'_, Txs> {
     ) -> Result<ExecutionWitness, PayloadBuilderError>
     where
         Evm: ConfigureEvm<
-            Primitives = N,
-            NextBlockEnvCtx: BuildNextEnv<Attrs, N::BlockHeader, ChainSpec>,
-        >,
+                Primitives = N,
+                NextBlockEnvCtx: BuildNextEnv<Attrs, N::BlockHeader, ChainSpec>,
+            >,
         ChainSpec: EthChainSpec + OpHardforks,
         N: OpPayloadPrimitives,
         Txs: PayloadTransactions<Transaction: PoolTransaction<Consensus = N::SignedTx>>,
@@ -559,9 +561,9 @@ pub struct OpPayloadBuilderCtx<
 impl<Evm, ChainSpec, Attrs> OpPayloadBuilderCtx<Evm, ChainSpec, Attrs>
 where
     Evm: ConfigureEvm<
-        Primitives: OpPayloadPrimitives,
-        NextBlockEnvCtx: BuildNextEnv<Attrs, HeaderTy<Evm::Primitives>, ChainSpec>,
-    >,
+            Primitives: OpPayloadPrimitives,
+            NextBlockEnvCtx: BuildNextEnv<Attrs, HeaderTy<Evm::Primitives>, ChainSpec>,
+        >,
     ChainSpec: EthChainSpec + OpHardforks,
     Attrs: OpAttributes<Transaction = TxTy<Evm::Primitives>>,
 {
@@ -599,9 +601,9 @@ where
         db: &'a mut State<DB>,
     ) -> Result<
         impl BlockBuilder<
-                Primitives = Evm::Primitives,
-                Executor: BlockExecutorFor<'a, Evm::BlockExecutorFactory, DB>,
-            > + 'a,
+            Primitives = Evm::Primitives,
+            Executor: BlockExecutorFor<'a, Evm::BlockExecutorFactory, DB>,
+        > + 'a,
         PayloadBuilderError,
     > {
         self.evm_config
@@ -648,11 +650,11 @@ where
                     ..
                 })) => {
                     trace!(target: "payload_builder", %error, ?sequencer_tx, "Error in sequencer transaction, skipping.");
-                    continue
+                    continue;
                 }
                 Err(err) => {
                     // this is an error that we should treat as fatal for this attempt
-                    return Err(PayloadBuilderError::EvmExecutionError(Box::new(err)))
+                    return Err(PayloadBuilderError::EvmExecutionError(Box::new(err)));
                 }
             };
 
@@ -714,26 +716,26 @@ where
                 // invalid which also removes all dependent transaction from
                 // the iterator before we can continue
                 best_txs.mark_invalid(tx.signer(), tx.nonce());
-                continue
+                continue;
             }
 
             // A sequencer's block should never contain blob or deposit transactions from the pool.
             if tx.is_eip4844() || tx.is_deposit() {
                 best_txs.mark_invalid(tx.signer(), tx.nonce());
-                continue
+                continue;
             }
 
             // We skip invalid cross chain txs, they would be removed on the next block update in
             // the maintenance job
-            if let Some(interop) = interop &&
-                !is_valid_interop(interop, self.config.attributes.timestamp())
+            if let Some(interop) = interop
+                && !is_valid_interop(interop, self.config.attributes.timestamp())
             {
                 best_txs.mark_invalid(tx.signer(), tx.nonce());
-                continue
+                continue;
             }
             // check if the job was cancelled, if so we can exit early
             if self.cancel.is_cancelled() {
-                return Ok(Some(()))
+                return Ok(Some(()));
             }
 
             let gas_used = match builder.execute_transaction(tx.clone()) {
@@ -751,11 +753,11 @@ where
                         trace!(target: "payload_builder", %error, ?tx, "skipping invalid transaction and its descendants");
                         best_txs.mark_invalid(tx.signer(), tx.nonce());
                     }
-                    continue
+                    continue;
                 }
                 Err(err) => {
                     // this is an error that we should treat as fatal for this attempt
-                    return Err(PayloadBuilderError::EvmExecutionError(Box::new(err)))
+                    return Err(PayloadBuilderError::EvmExecutionError(Box::new(err)));
                 }
             };
 

@@ -1,7 +1,7 @@
 //! Receipt envelope types for Optimism.
 
-use crate::{OpDepositReceipt, OpDepositReceiptWithBloom, OpTxType};
 use alloc::vec::Vec;
+
 use alloy_consensus::{Eip658Value, Receipt, ReceiptWithBloom, TxReceipt};
 use alloy_eips::{
     Typed2718,
@@ -9,6 +9,8 @@ use alloy_eips::{
 };
 use alloy_primitives::{Bloom, Log, logs_bloom};
 use alloy_rlp::{BufMut, Decodable, Encodable, length_of_length};
+
+use crate::{OpDepositReceipt, OpDepositReceiptWithBloom, OpTxType};
 
 /// Receipt envelope, as defined in [EIP-2718], modified for OP Stack chains.
 ///
@@ -360,14 +362,15 @@ where
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    #[cfg(not(feature = "std"))]
+    use alloc::vec;
+
     use alloy_consensus::{Receipt, ReceiptWithBloom};
     use alloy_eips::eip2718::Encodable2718;
     use alloy_primitives::{Log, LogData, address, b256, bytes, hex};
     use alloy_rlp::Encodable;
 
-    #[cfg(not(feature = "std"))]
-    use alloc::vec;
+    use super::*;
 
     // Test vector from: https://eips.ethereum.org/EIPS/eip-2481
     #[test]

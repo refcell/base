@@ -1,6 +1,7 @@
 //! Module containing a [`TxDeposit`] builder for the Fjord network upgrade transactions.
 
 use alloc::{string::String, vec::Vec};
+
 use alloy_eips::eip2718::Encodable2718;
 use alloy_primitives::{Address, B256, Bytes, TxKind, U256, address, hex};
 use base_alloy_consensus::{TxDeposit, UpgradeDepositSource};
@@ -120,10 +121,10 @@ impl Hardfork for Fjord {
 
 #[cfg(test)]
 mod tests {
-    use crate::test_utils::check_deployment_code;
+    use alloc::vec;
 
     use super::*;
-    use alloc::vec;
+    use crate::test_utils::check_deployment_code;
 
     #[test]
     fn test_deploy_fjord_gas_price_oracle_source() {

@@ -1,21 +1,22 @@
 //! RPC errors specific to OP.
 
+use std::{convert::Infallible, fmt::Display};
+
 use alloy_json_rpc::ErrorPayload;
 use alloy_primitives::Bytes;
-use alloy_rpc_types_eth::{error::EthRpcErrorCode, BlockError};
+use alloy_rpc_types_eth::{BlockError, error::EthRpcErrorCode};
 use alloy_transport::{RpcError, TransportErrorKind};
+use base_evm::OpBlockExecutionError;
 use jsonrpsee_types::error::{INTERNAL_ERROR_CODE, INVALID_PARAMS_CODE};
 use op_revm::{OpHaltReason, OpTransactionError};
 use reth_evm::execute::ProviderError;
-use base_evm::OpBlockExecutionError;
 use reth_rpc_eth_api::{AsEthApiError, EthTxEnvError, TransactionConversionError};
 use reth_rpc_eth_types::{
-    error::api::{FromEvmHalt, FromRevert},
     EthApiError,
+    error::api::{FromEvmHalt, FromRevert},
 };
 use reth_rpc_server_types::result::{internal_rpc_err, rpc_err};
 use revm::context_interface::result::{EVMError, InvalidTransaction};
-use std::{convert::Infallible, fmt::Display};
 
 /// Optimism specific errors, that extend [`EthApiError`].
 #[derive(Debug, thiserror::Error)]
@@ -54,9 +55,9 @@ impl From<OpEthApiError> for jsonrpsee_types::error::ErrorObject<'static> {
         match err {
             OpEthApiError::Eth(err) => err.into(),
             OpEthApiError::InvalidTransaction(err) => err.into(),
-            OpEthApiError::Evm(_) |
-            OpEthApiError::L1BlockFeeError |
-            OpEthApiError::L1BlockGasError => internal_rpc_err(err.to_string()),
+            OpEthApiError::Evm(_)
+            | OpEthApiError::L1BlockFeeError
+            | OpEthApiError::L1BlockGasError => internal_rpc_err(err.to_string()),
             OpEthApiError::Sequencer(err) => err.into(),
         }
     }
@@ -82,9 +83,9 @@ pub enum OpInvalidTransactionError {
 impl From<OpInvalidTransactionError> for jsonrpsee_types::error::ErrorObject<'static> {
     fn from(err: OpInvalidTransactionError) -> Self {
         match err {
-            OpInvalidTransactionError::DepositSystemTxPostRegolith |
-            OpInvalidTransactionError::HaltedDepositPostRegolith |
-            OpInvalidTransactionError::MissingEnvelopedTx => {
+            OpInvalidTransactionError::DepositSystemTxPostRegolith
+            | OpInvalidTransactionError::HaltedDepositPostRegolith
+            | OpInvalidTransactionError::MissingEnvelopedTx => {
                 rpc_err(EthRpcErrorCode::TransactionRejected.code(), err.to_string(), None)
             }
             OpInvalidTransactionError::TxConditionalErr(_) => err.into(),

@@ -1,18 +1,19 @@
 //! Loads OP pending block for a RPC response.
 
-use crate::{OpEthApi, OpEthApiError};
 use alloy_consensus::BlockHeader;
 use alloy_eips::BlockNumberOrTag;
 use reth_chain_state::BlockState;
 use reth_rpc_eth_api::{
-    helpers::{pending_block::PendingEnvBuilder, LoadPendingBlock, SpawnBlocking},
     FromEvmError, RpcConvert, RpcNodeCore, RpcNodeCoreExt,
+    helpers::{LoadPendingBlock, SpawnBlocking, pending_block::PendingEnvBuilder},
 };
 use reth_rpc_eth_types::{
-    block::BlockAndReceipts, builder::config::PendingBlockKind, error::FromEthApiError,
-    EthApiError, PendingBlock,
+    EthApiError, PendingBlock, block::BlockAndReceipts, builder::config::PendingBlockKind,
+    error::FromEthApiError,
 };
 use reth_storage_api::{BlockReaderIdExt, StateProviderBox, StateProviderFactory};
+
+use crate::{OpEthApi, OpEthApiError};
 
 impl<N, Rpc> LoadPendingBlock for OpEthApi<N, Rpc>
 where

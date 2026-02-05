@@ -1,18 +1,20 @@
 //! This module contains the `ChannelReader` struct.
 
-use crate::{
-    BatchStreamProvider, OriginAdvancer, OriginProvider, PipelineError, PipelineResult, Signal,
-    SignalReceiver,
-};
 use alloc::{boxed::Box, sync::Arc};
+use core::fmt::Debug;
+
 use alloy_primitives::Bytes;
 use async_trait::async_trait;
-use core::fmt::Debug;
 use base_genesis::{
     MAX_RLP_BYTES_PER_CHANNEL_BEDROCK, MAX_RLP_BYTES_PER_CHANNEL_FJORD, RollupConfig,
 };
 use base_protocol::{Batch, BatchReader, BlockInfo};
 use tracing::{debug, warn};
+
+use crate::{
+    BatchStreamProvider, OriginAdvancer, OriginProvider, PipelineError, PipelineResult, Signal,
+    SignalReceiver,
+};
 
 /// The [`ChannelReader`] provider trait.
 #[async_trait]
@@ -199,12 +201,14 @@ where
 
 #[cfg(test)]
 mod test {
+    use alloc::vec;
+
+    use base_genesis::HardForkConfig;
+
     use super::*;
     use crate::{
         errors::PipelineErrorKind, test_utils::TestChannelReaderProvider, types::ResetSignal,
     };
-    use alloc::vec;
-    use base_genesis::HardForkConfig;
 
     fn new_compressed_batch_data() -> Bytes {
         let file_contents =

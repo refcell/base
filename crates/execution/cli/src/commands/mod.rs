@@ -1,4 +1,5 @@
-use crate::chainspec::OpChainSpecParser;
+use std::{fmt, sync::Arc};
+
 use clap::Subcommand;
 use import::ImportOpCommand;
 use import_receipts::ImportReceiptsOpCommand;
@@ -9,7 +10,8 @@ use reth_cli_commands::{
     node::{self, NoArgs},
     p2p, prune, re_execute, stage,
 };
-use std::{fmt, sync::Arc};
+
+use crate::chainspec::OpChainSpecParser;
 
 pub mod import;
 pub mod import_receipts;
@@ -64,9 +66,9 @@ pub enum Commands<Spec: ChainSpecParser = OpChainSpecParser, Ext: clap::Args + f
 }
 
 impl<
-        C: ChainSpecParser<ChainSpec: EthChainSpec + Hardforks + EthereumHardforks>,
-        Ext: clap::Args + fmt::Debug,
-    > Commands<C, Ext>
+    C: ChainSpecParser<ChainSpec: EthChainSpec + Hardforks + EthereumHardforks>,
+    Ext: clap::Args + fmt::Debug,
+> Commands<C, Ext>
 {
     /// Returns the underlying chain being used for commands
     pub fn chain_spec(&self) -> Option<&Arc<C::ChainSpec>> {

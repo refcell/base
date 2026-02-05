@@ -526,8 +526,8 @@ impl P2PArgs {
 #[cfg(test)]
 mod tests {
     use alloy_primitives::b256;
-    use clap::Parser;
     use base_peers::NodeRecord;
+    use clap::Parser;
 
     use super::*;
 

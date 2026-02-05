@@ -1,10 +1,12 @@
 //! Error types for the gossip networking module.
 
-use crate::BehaviourError;
+use std::net::IpAddr;
+
 use derive_more::From;
 use libp2p::{Multiaddr, PeerId};
-use std::net::IpAddr;
 use thiserror::Error;
+
+use crate::BehaviourError;
 
 /// Error encountered when publishing a payload to the gossip network.
 #[derive(Debug, Error)]

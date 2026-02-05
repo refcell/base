@@ -17,7 +17,7 @@ pub mod error;
 pub mod payload;
 use base_alloy_rpc_types_engine::OpExecutionData;
 pub use payload::{
-    payload_id_optimism, OpBuiltPayload, OpPayloadAttributes, OpPayloadBuilderAttributes,
+    OpBuiltPayload, OpPayloadAttributes, OpPayloadBuilderAttributes, payload_id_optimism,
 };
 mod traits;
 use base_reth_primitives::OpPrimitives;

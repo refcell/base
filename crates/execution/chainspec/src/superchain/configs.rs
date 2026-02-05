@@ -1,12 +1,14 @@
-use crate::superchain::chain_metadata::{to_genesis_chain_config, ChainMetadata};
 use alloc::{
     format,
     string::{String, ToString},
     vec::Vec,
 };
+
 use alloy_genesis::Genesis;
 use miniz_oxide::inflate::decompress_to_vec_zlib_with_limit;
 use tar_no_std::{CorruptDataError, TarArchiveRef};
+
+use crate::superchain::chain_metadata::{ChainMetadata, to_genesis_chain_config};
 
 /// A genesis file can be up to 100MiB. This is a reasonable limit for the genesis file size.
 const MAX_GENESIS_SIZE: usize = 100 * 1024 * 1024; // 100MiB
@@ -78,7 +80,7 @@ fn read_file(
 ) -> Result<Vec<u8>, SuperchainConfigError> {
     for entry in archive.entries() {
         if entry.filename().as_str()? == file_path {
-            return Ok(entry.data().to_vec())
+            return Ok(entry.data().to_vec());
         }
     }
     Err(SuperchainConfigError::FileNotFound(file_path.to_string()))
@@ -86,20 +88,21 @@ fn read_file(
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::{generated_chain_value_parser, superchain::Superchain, SUPPORTED_CHAINS};
     use alloy_chains::NamedChain;
     use alloy_op_hardforks::{
-        OpHardfork, BASE_MAINNET_CANYON_TIMESTAMP, BASE_MAINNET_ECOTONE_TIMESTAMP,
+        BASE_MAINNET_CANYON_TIMESTAMP, BASE_MAINNET_ECOTONE_TIMESTAMP,
         BASE_MAINNET_ISTHMUS_TIMESTAMP, BASE_MAINNET_JOVIAN_TIMESTAMP,
         BASE_SEPOLIA_CANYON_TIMESTAMP, BASE_SEPOLIA_ECOTONE_TIMESTAMP,
         BASE_SEPOLIA_ISTHMUS_TIMESTAMP, BASE_SEPOLIA_JOVIAN_TIMESTAMP, OP_MAINNET_CANYON_TIMESTAMP,
         OP_MAINNET_ECOTONE_TIMESTAMP, OP_MAINNET_ISTHMUS_TIMESTAMP, OP_MAINNET_JOVIAN_TIMESTAMP,
         OP_SEPOLIA_CANYON_TIMESTAMP, OP_SEPOLIA_ECOTONE_TIMESTAMP, OP_SEPOLIA_ISTHMUS_TIMESTAMP,
-        OP_SEPOLIA_JOVIAN_TIMESTAMP,
+        OP_SEPOLIA_JOVIAN_TIMESTAMP, OpHardfork,
     };
     use base_reth_primitives::L2_TO_L1_MESSAGE_PASSER_ADDRESS;
     use tar_no_std::TarArchiveRef;
+
+    use super::*;
+    use crate::{SUPPORTED_CHAINS, generated_chain_value_parser, superchain::Superchain};
 
     #[test]
     fn test_read_superchain_genesis() {
@@ -137,7 +140,7 @@ mod tests {
                 .map(|s| s.to_string())
                 .collect::<Vec<String>>();
             if filename.first().unwrap().ne(&"genesis") {
-                continue
+                continue;
             }
             read_superchain_metadata(
                 &filename.get(2).unwrap().replace(".json.zz", ""),

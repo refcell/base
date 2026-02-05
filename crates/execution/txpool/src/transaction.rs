@@ -1,29 +1,31 @@
-use crate::{
-    conditional::MaybeConditionalTransaction, estimated_da_size::DataAvailabilitySized,
-    interop::MaybeInteropTransaction,
+use core::fmt::Debug;
+use std::{
+    borrow::Cow,
+    sync::{
+        Arc, OnceLock,
+        atomic::{AtomicU64, Ordering},
+    },
 };
-use alloy_consensus::{transaction::Recovered, BlobTransactionValidationError, Typed2718};
+
+use alloy_consensus::{BlobTransactionValidationError, Typed2718, transaction::Recovered};
 use alloy_eips::{
     eip2718::{Encodable2718, WithEncoded},
     eip2930::AccessList,
     eip7594::BlobTransactionSidecarVariant,
     eip7702::SignedAuthorization,
 };
-use alloy_primitives::{Address, Bytes, TxHash, TxKind, B256, U256};
+use alloy_primitives::{Address, B256, Bytes, TxHash, TxKind, U256};
 use alloy_rpc_types_eth::erc4337::TransactionConditional;
-use c_kzg::KzgSettings;
-use core::fmt::Debug;
 use base_reth_primitives::OpTransactionSigned;
+use c_kzg::KzgSettings;
 use reth_primitives_traits::{InMemorySize, SignedTransaction};
 use reth_transaction_pool::{
     EthBlobTransactionSidecar, EthPoolTransaction, EthPooledTransaction, PoolTransaction,
 };
-use std::{
-    borrow::Cow,
-    sync::{
-        atomic::{AtomicU64, Ordering},
-        Arc, OnceLock,
-    },
+
+use crate::{
+    conditional::MaybeConditionalTransaction, estimated_da_size::DataAvailabilitySized,
+    interop::MaybeInteropTransaction,
 };
 
 /// Marker for no-interop transactions
@@ -109,7 +111,7 @@ impl<Cons, Pooled> MaybeInteropTransaction for OpPooledTransaction<Cons, Pooled>
     fn interop_deadline(&self) -> Option<u64> {
         let interop = self.interop.load(Ordering::Relaxed);
         if interop > NO_INTEROP_TX {
-            return Some(interop)
+            return Some(interop);
         }
         None
     }
@@ -310,7 +312,6 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::{OpPooledTransaction, OpTransactionValidator};
     use alloy_consensus::transaction::Recovered;
     use alloy_eips::eip2718::Encodable2718;
     use alloy_primitives::{TxKind, U256};
@@ -319,9 +320,11 @@ mod tests {
     use base_reth_primitives::OpTransactionSigned;
     use reth_provider::test_utils::MockEthProvider;
     use reth_transaction_pool::{
-        blobstore::InMemoryBlobStore, validate::EthTransactionValidatorBuilder, TransactionOrigin,
-        TransactionValidationOutcome,
+        TransactionOrigin, TransactionValidationOutcome, blobstore::InMemoryBlobStore,
+        validate::EthTransactionValidatorBuilder,
     };
+
+    use crate::{OpPooledTransaction, OpTransactionValidator};
     #[tokio::test]
     async fn validate_optimism_transaction() {
         let client = MockEthProvider::default().with_chain_spec(OP_MAINNET.clone());

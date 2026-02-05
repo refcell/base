@@ -1,30 +1,32 @@
 //! This is our custom implementation of validator struct
 
-use crate::{
-    supervisor::{
-        metrics::SupervisorMetrics, parse_access_list_items_to_inbox_entries, ExecutingDescriptor,
-        InteropTxValidatorError,
-    },
-    InvalidCrossTx,
-};
-use alloy_consensus::Transaction;
-use alloy_eips::eip2930::AccessList;
-use alloy_primitives::{TxHash, B256};
-use alloy_rpc_client::ReqwestClient;
-use futures_util::{
-    future::BoxFuture,
-    stream::{self, StreamExt},
-    Stream,
-};
-use base_alloy_consensus::SafetyLevel;
-use reth_transaction_pool::PoolTransaction;
 use std::{
     borrow::Cow,
     future::IntoFuture,
     sync::Arc,
     time::{Duration, Instant},
 };
+
+use alloy_consensus::Transaction;
+use alloy_eips::eip2930::AccessList;
+use alloy_primitives::{B256, TxHash};
+use alloy_rpc_client::ReqwestClient;
+use base_alloy_consensus::SafetyLevel;
+use futures_util::{
+    Stream,
+    future::BoxFuture,
+    stream::{self, StreamExt},
+};
+use reth_transaction_pool::PoolTransaction;
 use tracing::trace;
+
+use crate::{
+    InvalidCrossTx,
+    supervisor::{
+        ExecutingDescriptor, InteropTxValidatorError, metrics::SupervisorMetrics,
+        parse_access_list_items_to_inbox_entries,
+    },
+};
 
 /// Supervisor hosted by op-labs
 // TODO: This should be changed to actual supervisor url
@@ -102,7 +104,7 @@ impl SupervisorClient {
         // Interop check
         if !is_interop_active {
             // No cross chain tx allowed before interop
-            return Some(Err(InvalidCrossTx::CrossChainTxPreInterop))
+            return Some(Err(InvalidCrossTx::CrossChainTxPreInterop));
         }
 
         if let Err(err) = self

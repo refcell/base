@@ -12,6 +12,8 @@
 extern crate alloc;
 
 use alloc::sync::Arc;
+use core::fmt::Debug;
+
 use alloy_consensus::{BlockHeader, Header};
 use alloy_evm::{EvmFactory, FromRecoveredTx, FromTxWithEncoded};
 use alloy_op_evm::block::{OpTxEnv, receipt_builder::OpReceiptBuilder};
@@ -19,15 +21,15 @@ use base_alloy_consensus::EIP1559ParamError;
 use base_chainspec::OpChainSpec;
 use base_forks::OpHardforks;
 use base_reth_primitives::{DepositReceipt, OpPrimitives};
-use core::fmt::Debug;
 use op_revm::{OpSpecId, OpTransaction};
 use reth_chainspec::EthChainSpec;
+#[cfg(feature = "std")]
+use reth_evm::{ConfigureEngineEvm, ExecutableTxIterator};
 use reth_evm::{
     ConfigureEvm, EvmEnv, TransactionEnv, eth::NextEvmEnvAttributes, precompiles::PrecompilesMap,
 };
 use reth_primitives_traits::{NodePrimitives, SealedBlock, SealedHeader, SignedTransaction};
 use revm::context::{BlockEnv, TxEnv};
-
 #[allow(unused_imports)]
 use {
     alloy_eips::Decodable2718,
@@ -42,9 +44,6 @@ use {
     },
 };
 
-#[cfg(feature = "std")]
-use reth_evm::{ConfigureEngineEvm, ExecutableTxIterator};
-
 mod config;
 pub use config::{OpNextBlockEnvAttributes, revm_spec, revm_spec_by_timestamp_after_bedrock};
 mod execute;
@@ -57,9 +56,8 @@ mod build;
 pub use build::OpBlockAssembler;
 
 mod error;
-pub use error::OpBlockExecutionError;
-
 pub use alloy_op_evm::{OpBlockExecutionCtx, OpBlockExecutorFactory, OpEvm, OpEvmFactory};
+pub use error::OpBlockExecutionError;
 
 /// Optimism-related EVM configuration.
 #[derive(Debug)]
@@ -288,8 +286,9 @@ where
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use alloc::collections::BTreeMap;
+    use std::sync::Arc;
+
     use alloy_consensus::{Header, Receipt};
     use alloy_eips::eip7685::Requests;
     use alloy_genesis::Genesis;
@@ -310,7 +309,8 @@ mod tests {
         primitives::Log,
         state::AccountInfo,
     };
-    use std::sync::Arc;
+
+    use super::*;
 
     fn test_evm_config() -> OpEvmConfig {
         OpEvmConfig::optimism(BASE_MAINNET.clone())

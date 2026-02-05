@@ -6,10 +6,11 @@
 //! sophisticated compression techniques.
 
 use alloc::vec::Vec;
+
 use alloy_eips::eip2718::Encodable2718;
 use alloy_primitives::FixedBytes;
-use base_genesis::RollupConfig;
 use base_alloy_consensus::OpTxType;
+use base_genesis::RollupConfig;
 use tracing::{info, warn};
 
 use crate::{
@@ -508,8 +509,8 @@ impl SpanBatch {
                 }
 
                 // If isthmus is not active yet and the transaction is a 7702, drop the batch.
-                if !cfg.is_isthmus_active(batch.timestamp) &&
-                    tx.as_ref().first() == Some(&(OpTxType::Eip7702 as u8))
+                if !cfg.is_isthmus_active(batch.timestamp)
+                    && tx.as_ref().first() == Some(&(OpTxType::Eip7702 as u8))
                 {
                     warn!(target: "batch_span", "EIP-7702 transactions are not supported pre-isthmus. tx_index: {}", i);
                     return BatchValidity::Drop(BatchDropReason::Eip7702PreIsthmus);
@@ -673,9 +674,9 @@ impl SpanBatch {
                 warn!(target: "batch_span", "batch has misaligned timestamp, not overlapped exactly");
                 return (BatchValidity::Drop(BatchDropReason::SpanBatchNotOverlappedExactly), None);
             }
-            parent_num = l2_safe_head.block_info.number -
-                (l2_safe_head.block_info.timestamp - self.starting_timestamp()) / cfg.block_time -
-                1;
+            parent_num = l2_safe_head.block_info.number
+                - (l2_safe_head.block_info.timestamp - self.starting_timestamp()) / cfg.block_time
+                - 1;
             parent_block = match fetcher.l2_block_info_by_number(parent_num).await {
                 Ok(block) => block,
                 Err(e) => {
@@ -749,16 +750,18 @@ impl SpanBatch {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::test_utils::{CollectingLayer, TestBatchValidator, TraceStorage};
     use alloc::vec;
+
     use alloy_consensus::{Header, constants::EIP1559_TX_TYPE_ID};
     use alloy_eips::BlockNumHash;
     use alloy_primitives::{B256, Bytes, b256};
-    use base_genesis::{ChainGenesis, HardForkConfig};
     use base_alloy_consensus::OpBlock;
+    use base_genesis::{ChainGenesis, HardForkConfig};
     use tracing::Level;
     use tracing_subscriber::layer::SubscriberExt;
+
+    use super::*;
+    use crate::test_utils::{CollectingLayer, TestBatchValidator, TraceStorage};
 
     fn gen_l1_blocks(
         start_num: u64,

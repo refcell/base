@@ -3,12 +3,12 @@
 use base_engine::EngineState;
 use base_protocol::L2BlockInfo;
 use jsonrpsee::{
-    core::{to_json_raw_value, SubscriptionResult},
-    tracing::warn,
     PendingSubscriptionSink, SubscriptionSink,
+    core::{SubscriptionResult, to_json_raw_value},
+    tracing::warn,
 };
 
-use crate::{jsonrpsee::WsServer, EngineRpcClient};
+use crate::{EngineRpcClient, jsonrpsee::WsServer};
 
 /// An RPC server that handles subscriptions to the node's state.
 #[derive(Debug)]

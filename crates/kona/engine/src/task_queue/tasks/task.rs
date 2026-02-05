@@ -1,16 +1,18 @@
 //! Tasks sent to the [`Engine`] for execution.
 
+use std::cmp::Ordering;
+
+use async_trait::async_trait;
+use derive_more::Display;
+use thiserror::Error;
+use tokio::task::yield_now;
+
 use super::{BuildTask, ConsolidateTask, FinalizeTask, InsertTask};
 use crate::{
     BuildTaskError, ConsolidateTaskError, EngineClient, EngineState, FinalizeTaskError,
     InsertTaskError,
     task_queue::{SealTask, SealTaskError},
 };
-use async_trait::async_trait;
-use derive_more::Display;
-use std::cmp::Ordering;
-use thiserror::Error;
-use tokio::task::yield_now;
 
 /// The severity of an engine task error.
 #[derive(Debug, PartialEq, Eq, Display, Clone, Copy)]

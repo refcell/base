@@ -1,8 +1,10 @@
 //! Transaction Types
 
-use crate::Frame;
 use alloc::vec::Vec;
+
 use alloy_primitives::Bytes;
+
+use crate::Frame;
 
 /// BatchTransaction is a set of [`Frame`]s that can be [Into::into] [`Bytes`].
 /// if the size exceeds the desired threshold.
@@ -39,8 +41,9 @@ impl BatchTransaction {
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use alloc::vec;
+
+    use super::*;
 
     #[test]
     fn test_batch_transaction() {

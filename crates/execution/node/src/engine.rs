@@ -1,3 +1,5 @@
+use std::{marker::PhantomData, sync::Arc};
+
 use alloy_consensus::BlockHeader;
 use alloy_primitives::B256;
 use alloy_rpc_types_engine::{ExecutionPayloadEnvelopeV2, ExecutionPayloadV1};
@@ -5,24 +7,23 @@ use base_alloy_rpc_types_engine::{
     OpExecutionData, OpExecutionPayloadEnvelopeV3, OpExecutionPayloadEnvelopeV4,
     OpPayloadAttributes,
 };
-use reth_consensus::ConsensusError;
-use reth_node_api::{
-    payload::{
-        validate_parent_beacon_block_root_presence, EngineApiMessageVersion,
-        EngineObjectValidationError, MessageValidationKind, NewPayloadError, PayloadOrAttributes,
-        PayloadTypes, VersionSpecificValidationError,
-    },
-    validate_version_specific_fields, BuiltPayload, EngineApiValidator, EngineTypes,
-    NodePrimitives, PayloadValidator,
-};
 use base_execution_consensus::isthmus;
 use base_forks::OpHardforks;
 use base_payload_builder::{OpExecutionPayloadValidator, OpPayloadTypes};
-use base_reth_primitives::{OpBlock, L2_TO_L1_MESSAGE_PASSER_ADDRESS};
+use base_reth_primitives::{L2_TO_L1_MESSAGE_PASSER_ADDRESS, OpBlock};
+use reth_consensus::ConsensusError;
+use reth_node_api::{
+    BuiltPayload, EngineApiValidator, EngineTypes, NodePrimitives, PayloadValidator,
+    payload::{
+        EngineApiMessageVersion, EngineObjectValidationError, MessageValidationKind,
+        NewPayloadError, PayloadOrAttributes, PayloadTypes, VersionSpecificValidationError,
+        validate_parent_beacon_block_root_presence,
+    },
+    validate_version_specific_fields,
+};
 use reth_primitives_traits::{Block, RecoveredBlock, SealedBlock, SignedTransaction};
 use reth_provider::StateProviderFactory;
 use reth_trie_common::{HashedPostState, KeyHasher};
-use std::{marker::PhantomData, sync::Arc};
 
 /// The types used in the optimism beacon consensus engine.
 #[derive(Debug, Default, Clone, serde::Deserialize, serde::Serialize)]
@@ -131,7 +132,7 @@ where
                 // FIXME: we don't necessarily have access to the parent block here because the
                 // parent block isn't necessarily part of the canonical chain yet. Instead this
                 // function should receive the list of in memory blocks as input
-                return Ok(())
+                return Ok(());
             };
             let predeploy_storage_updates = state_updates
                 .storages
@@ -162,10 +163,10 @@ where
 impl<Types, P, Tx, ChainSpec> EngineApiValidator<Types> for OpEngineValidator<P, Tx, ChainSpec>
 where
     Types: PayloadTypes<
-        PayloadAttributes = OpPayloadAttributes,
-        ExecutionData = OpExecutionData,
-        BuiltPayload: BuiltPayload<Primitives: NodePrimitives<SignedTx = Tx>>,
-    >,
+            PayloadAttributes = OpPayloadAttributes,
+            ExecutionData = OpExecutionData,
+            BuiltPayload: BuiltPayload<Primitives: NodePrimitives<SignedTx = Tx>>,
+        >,
     P: StateProviderFactory + Unpin + 'static,
     Tx: SignedTransaction + Unpin + 'static,
     ChainSpec: OpHardforks + Send + Sync + 'static,
@@ -280,10 +281,10 @@ pub fn validate_withdrawals_presence(
                     .to_error(VersionSpecificValidationError::NoWithdrawalsPostShanghai));
             }
         }
-        EngineApiMessageVersion::V2 |
-        EngineApiMessageVersion::V3 |
-        EngineApiMessageVersion::V4 |
-        EngineApiMessageVersion::V5 => {
+        EngineApiMessageVersion::V2
+        | EngineApiMessageVersion::V3
+        | EngineApiMessageVersion::V4
+        | EngineApiMessageVersion::V5 => {
             if is_shanghai && !has_withdrawals {
                 return Err(message_validation_kind
                     .to_error(VersionSpecificValidationError::NoWithdrawalsPostShanghai));
@@ -300,15 +301,15 @@ pub fn validate_withdrawals_presence(
 
 #[cfg(test)]
 mod test {
-    use super::*;
-
-    use crate::engine;
     use alloy_op_hardforks::BASE_SEPOLIA_JOVIAN_TIMESTAMP;
-    use alloy_primitives::{b64, Address, B256, B64};
+    use alloy_primitives::{Address, B64, B256, b64};
     use alloy_rpc_types_engine::PayloadAttributes;
     use base_chainspec::BASE_SEPOLIA;
     use reth_provider::noop::NoopProvider;
     use reth_trie_common::KeccakKeyHasher;
+
+    use super::*;
+    use crate::engine;
 
     macro_rules! assert_invalid_params_error {
         ($result:expr, $msg:expr) => {{

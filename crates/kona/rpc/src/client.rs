@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use alloy_eips::BlockNumberOrTag;
 use alloy_primitives::B256;
 use async_trait::async_trait;
@@ -6,7 +8,6 @@ use base_genesis::RollupConfig;
 use base_protocol::{L2BlockInfo, OutputRoot};
 use jsonrpsee::core::RpcResult;
 use rollup_boost::{GetExecutionModeResponse, SetExecutionModeRequest, SetExecutionModeResponse};
-use std::fmt::Debug;
 use thiserror::Error;
 use tokio::sync::watch;
 

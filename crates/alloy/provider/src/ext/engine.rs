@@ -1,10 +1,9 @@
 use alloy_network::Network;
-use alloy_primitives::{BlockHash, Bytes, B256};
+use alloy_primitives::{B256, BlockHash, Bytes};
 use alloy_provider::Provider;
 use alloy_rpc_types_engine::{
-    ClientVersionV1, ExecutionPayloadBodiesV1, ExecutionPayloadEnvelopeV2,
-    ExecutionPayloadInputV2, ExecutionPayloadV3, ForkchoiceState, ForkchoiceUpdated, PayloadId,
-    PayloadStatus,
+    ClientVersionV1, ExecutionPayloadBodiesV1, ExecutionPayloadEnvelopeV2, ExecutionPayloadInputV2,
+    ExecutionPayloadV3, ForkchoiceState, ForkchoiceUpdated, PayloadId, PayloadStatus,
 };
 use alloy_transport::{Transport, TransportResult};
 use base_alloy_rpc_types_engine::{
@@ -27,8 +26,10 @@ pub trait OpEngineApi<N, T> {
     /// See also <https://github.com/ethereum/execution-apis/blob/584905270d8ad665718058060267061ecfd79ca5/src/engine/shanghai.md#engine_newpayloadv2>
     ///
     /// No modifications needed for OP compatibility.
-    async fn new_payload_v2(&self, payload: ExecutionPayloadInputV2)
-        -> TransportResult<PayloadStatus>;
+    async fn new_payload_v2(
+        &self,
+        payload: ExecutionPayloadInputV2,
+    ) -> TransportResult<PayloadStatus>;
 
     /// Sends the given payload to the execution layer client, as specified for the Cancun fork.
     ///

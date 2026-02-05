@@ -1,6 +1,8 @@
 //! Contains an online derivation pipeline.
 
-use crate::{AlloyChainProvider, AlloyL2ChainProvider, OnlineBeaconClient, OnlineBlobProvider};
+use core::fmt::Debug;
+use std::sync::Arc;
+
 use async_trait::async_trait;
 use base_derive::{
     DerivationPipeline, EthereumDataSource, IndexedAttributesQueueStage, L2ChainProvider,
@@ -10,8 +12,8 @@ use base_derive::{
 };
 use base_genesis::{L1ChainConfig, RollupConfig, SystemConfig};
 use base_protocol::{BlockInfo, L2BlockInfo, OpAttributesWithParent};
-use core::fmt::Debug;
-use std::sync::Arc;
+
+use crate::{AlloyChainProvider, AlloyL2ChainProvider, OnlineBeaconClient, OnlineBlobProvider};
 
 type OnlinePolledDerivationPipeline = DerivationPipeline<
     PolledAttributesQueueStage<

@@ -13,7 +13,7 @@ use base_genesis::{
     OP_SEPOLIA_BASE_FEE_CONFIG, RollupConfig, SystemConfig,
 };
 
-/// The [RollupConfig] for OP Sepolia.
+/// The [`RollupConfig`] for OP Sepolia.
 pub const OP_SEPOLIA_CONFIG: RollupConfig = RollupConfig {
     genesis: ChainGenesis {
         l1: BlockNumHash {

@@ -1,13 +1,15 @@
 //! Contains the [`L1Retrieval`] stage of the derivation pipeline.
 
+use alloc::boxed::Box;
+
+use alloy_primitives::Address;
+use async_trait::async_trait;
+use base_protocol::BlockInfo;
+
 use crate::{
     ActivationSignal, DataAvailabilityProvider, FrameQueueProvider, OriginAdvancer, OriginProvider,
     PipelineError, PipelineErrorKind, PipelineResult, ResetSignal, Signal, SignalReceiver,
 };
-use alloc::boxed::Box;
-use alloy_primitives::Address;
-use async_trait::async_trait;
-use base_protocol::BlockInfo;
 
 /// Provides L1 blocks for the [`L1Retrieval`] stage.
 /// This is the previous stage in the pipeline.
@@ -123,8 +125,8 @@ where
     async fn signal(&mut self, signal: Signal) -> PipelineResult<()> {
         self.prev.signal(signal).await?;
         match signal {
-            Signal::Reset(ResetSignal { l1_origin, .. }) |
-            Signal::Activation(ActivationSignal { l1_origin, .. }) => {
+            Signal::Reset(ResetSignal { l1_origin, .. })
+            | Signal::Activation(ActivationSignal { l1_origin, .. }) => {
                 self.next = Some(l1_origin);
             }
             _ => {}
@@ -135,10 +137,12 @@ where
 
 #[cfg(test)]
 mod tests {
+    use alloc::vec;
+
+    use alloy_primitives::Bytes;
+
     use super::*;
     use crate::test_utils::{TestDAP, TraversalTestHelper};
-    use alloc::vec;
-    use alloy_primitives::Bytes;
 
     #[tokio::test]
     async fn test_l1_retrieval_flush_channel() {

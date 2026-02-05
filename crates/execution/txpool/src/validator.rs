@@ -1,22 +1,24 @@
-use crate::{supervisor::SupervisorClient, InvalidCrossTx, OpPooledTx};
+use std::sync::{
+    Arc,
+    atomic::{AtomicBool, AtomicU64, Ordering},
+};
+
 use alloy_consensus::{BlockHeader, Transaction};
+use base_evm::RethL1BlockInfo;
+use base_forks::OpHardforks;
 use op_revm::L1BlockInfo;
 use parking_lot::RwLock;
 use reth_chainspec::ChainSpecProvider;
-use base_evm::RethL1BlockInfo;
-use base_forks::OpHardforks;
 use reth_primitives_traits::{
-    transaction::error::InvalidTransactionError, Block, BlockBody, GotExpected, SealedBlock,
+    Block, BlockBody, GotExpected, SealedBlock, transaction::error::InvalidTransactionError,
 };
 use reth_storage_api::{AccountInfoReader, BlockReaderIdExt, StateProviderFactory};
 use reth_transaction_pool::{
-    error::InvalidPoolTransactionError, EthPoolTransaction, EthTransactionValidator,
-    TransactionOrigin, TransactionValidationOutcome, TransactionValidator,
+    EthPoolTransaction, EthTransactionValidator, TransactionOrigin, TransactionValidationOutcome,
+    TransactionValidator, error::InvalidPoolTransactionError,
 };
-use std::sync::{
-    atomic::{AtomicBool, AtomicU64, Ordering},
-    Arc,
-};
+
+use crate::{InvalidCrossTx, OpPooledTx, supervisor::SupervisorClient};
 
 /// The interval for which we check transaction against supervisor, 1 hour.
 const TRANSACTION_VALIDITY_WINDOW_SECS: u64 = 3600;
@@ -184,7 +186,7 @@ where
             return TransactionValidationOutcome::Invalid(
                 transaction,
                 InvalidTransactionError::TxTypeNotSupported.into(),
-            )
+            );
         }
 
         // Interop cross tx validation
@@ -196,7 +198,7 @@ where
                     }
                     err => InvalidPoolTransactionError::Other(Box::new(err)),
                 };
-                return TransactionValidationOutcome::Invalid(transaction, err)
+                return TransactionValidationOutcome::Invalid(transaction, err);
             }
             Some(Ok(_)) => {
                 // valid interop tx
@@ -219,7 +221,7 @@ where
     ) -> TransactionValidationOutcome<Tx> {
         if !self.requires_l1_data_gas_fee() {
             // no need to check L1 gas fee
-            return outcome
+            return outcome;
         }
         // ensure that the account has enough balance to cover the L1 gas cost
         if let TransactionValidationOutcome::Valid {
@@ -243,7 +245,7 @@ where
             ) {
                 Ok(cost) => cost,
                 Err(err) => {
-                    return TransactionValidationOutcome::Error(*valid_tx.hash(), Box::new(err))
+                    return TransactionValidationOutcome::Error(*valid_tx.hash(), Box::new(err));
                 }
             };
             let cost = valid_tx.transaction().cost().saturating_add(cost_addition);
@@ -256,7 +258,7 @@ where
                         GotExpected { got: balance, expected: cost }.into(),
                     )
                     .into(),
-                )
+                );
             }
 
             return TransactionValidationOutcome::Valid {
@@ -266,7 +268,7 @@ where
                 propagate,
                 bytecode_hash,
                 authorities,
-            }
+            };
         }
         outcome
     }

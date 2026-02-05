@@ -1,15 +1,17 @@
 //! Contains the `PipelineBuilder` object that is used to build a `DerivationPipeline`.
 
+use alloc::sync::Arc;
+use core::fmt::Debug;
+
+use base_genesis::RollupConfig;
+use base_protocol::BlockInfo;
+
 use crate::{
     AttributesBuilder, AttributesQueue, BatchProvider, BatchStream, ChainProvider, ChannelProvider,
     ChannelReader, DataAvailabilityProvider, DerivationPipeline, FrameQueue,
     IndexedAttributesQueueStage, IndexedTraversal, L1Retrieval, L2ChainProvider,
     PolledAttributesQueueStage, PollingTraversal,
 };
-use alloc::sync::Arc;
-use base_genesis::RollupConfig;
-use base_protocol::BlockInfo;
-use core::fmt::Debug;
 
 /// The `PipelineBuilder` constructs a [`DerivationPipeline`] using a builder pattern.
 #[derive(Debug)]

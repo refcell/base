@@ -1,6 +1,7 @@
 //! Test utilities for the protocol crate.
 
 use alloc::{boxed::Box, format, string::String, sync::Arc, vec::Vec};
+
 use alloy_primitives::hex;
 use async_trait::async_trait;
 use base_alloy_consensus::OpBlock;

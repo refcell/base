@@ -1,13 +1,15 @@
-use crate::{EngineActorRequest, EngineRpcRequest};
+use std::fmt::Debug;
+
 use async_trait::async_trait;
+use base_rpc::{RollupBoostAdminClient, RollupBoostHealthzApiServer, RollupBoostHealthzResponse};
 use jsonrpsee::{
     core::RpcResult,
     types::{ErrorCode, ErrorObject},
 };
-use base_rpc::{RollupBoostAdminClient, RollupBoostHealthzApiServer, RollupBoostHealthzResponse};
 use rollup_boost::{GetExecutionModeResponse, SetExecutionModeRequest, SetExecutionModeResponse};
-use std::fmt::Debug;
 use tokio::sync::{mpsc, oneshot};
+
+use crate::{EngineActorRequest, EngineRpcRequest};
 
 /// [`RollupBoostHealthzApiServer`] implementation to send the request to `EngineActor`'s request
 /// channel.

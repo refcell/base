@@ -1,13 +1,15 @@
 //! Frames
 
+use alloc::{sync::Arc, vec, vec::Vec};
+
+use alloy_primitives::Bytes;
+use base_genesis::RollupConfig;
+use base_protocol::{BlockInfo, DERIVATION_VERSION_0, Frame};
+
 use crate::{
     FrameQueue, NextFrameProvider, OriginProvider, PipelineError, PipelineErrorKind,
     test_utils::TestFrameQueueProvider,
 };
-use alloc::{sync::Arc, vec, vec::Vec};
-use alloy_primitives::Bytes;
-use base_genesis::RollupConfig;
-use base_protocol::{BlockInfo, DERIVATION_VERSION_0, Frame};
 
 /// A [`FrameQueue`] builder.
 #[derive(Debug, Default)]
@@ -22,7 +24,7 @@ pub struct FrameQueueBuilder {
 fn encode_frames(frames: &[Frame]) -> Bytes {
     let mut bytes = Vec::new();
     bytes.extend_from_slice(&[DERIVATION_VERSION_0]);
-    for frame in frames.iter() {
+    for frame in frames {
         bytes.extend_from_slice(&frame.encode());
     }
     Bytes::from(bytes)
@@ -122,7 +124,7 @@ impl FrameQueueAsserter {
 
     /// Asserts that the frame queue produces the expected frames.
     pub async fn next_frames(mut self) {
-        for eframe in self.expected_frames.into_iter() {
+        for eframe in self.expected_frames {
             let frame = self.inner.next_frame().await.expect("unexpected frame");
             assert_eq!(frame, eframe);
         }

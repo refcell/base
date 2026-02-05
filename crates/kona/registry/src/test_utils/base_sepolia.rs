@@ -13,7 +13,7 @@ use base_genesis::{
     HardForkConfig, RollupConfig, SystemConfig,
 };
 
-/// The [RollupConfig] for Base Sepolia.
+/// The [`RollupConfig`] for Base Sepolia.
 pub const BASE_SEPOLIA_CONFIG: RollupConfig = RollupConfig {
     genesis: ChainGenesis {
         l1: BlockNumHash {

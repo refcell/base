@@ -78,10 +78,11 @@ pub fn local_id_to_p2p_id(peer_id: PeerId) -> Result<libp2p::PeerId, PeerIdConve
 mod tests {
     use std::net::{Ipv4Addr, Ipv6Addr};
 
-    use super::*;
-    use crate::PeerId;
     use alloy_primitives::hex::FromHex;
     use discv5::enr::{CombinedKey, Enr, EnrKey};
+
+    use super::*;
+    use crate::PeerId;
 
     #[test]
     fn test_resolve_multiaddr() {
@@ -103,7 +104,7 @@ mod tests {
         let mut received_tcp_port = None;
         let mut received_p2p_id = None;
 
-        for protocol in multiaddr.iter() {
+        for protocol in &multiaddr {
             match protocol {
                 Protocol::Ip4(ip) => {
                     received_ip = Some(ip);
@@ -144,7 +145,7 @@ mod tests {
         let mut received_tcp_port = None;
         let mut received_p2p_id = None;
 
-        for protocol in multiaddr.iter() {
+        for protocol in &multiaddr {
             match protocol {
                 Protocol::Ip6(ip) => {
                     received_ip = Some(ip);

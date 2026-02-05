@@ -1,13 +1,14 @@
 //! Contains traits for working with payload attributes and their providers.
 
+use alloc::boxed::Box;
 use core::fmt::Debug;
 
-use crate::PipelineResult;
-use alloc::boxed::Box;
 use alloy_eips::BlockNumHash;
 use async_trait::async_trait;
-use base_protocol::{L2BlockInfo, OpAttributesWithParent, SingleBatch};
 use base_alloy_rpc_types_engine::OpPayloadAttributes;
+use base_protocol::{L2BlockInfo, OpAttributesWithParent, SingleBatch};
+
+use crate::PipelineResult;
 
 /// [`AttributesProvider`] is a trait abstraction that generalizes the [`BatchQueue`] stage.
 ///

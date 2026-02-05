@@ -1,16 +1,18 @@
 //! Implements a mock [`L2ChainProvider`] and [`BatchValidationProvider`] for testing.
 
+use alloc::{boxed::Box, string::ToString, sync::Arc};
+
+use alloy_primitives::map::HashMap;
+use async_trait::async_trait;
+use base_alloy_consensus::OpBlock;
+use base_genesis::{RollupConfig, SystemConfig};
+use base_protocol::{BatchValidationProvider, L2BlockInfo};
+use thiserror::Error;
+
 use crate::{
     errors::{PipelineError, PipelineErrorKind},
     traits::L2ChainProvider,
 };
-use alloc::{boxed::Box, string::ToString, sync::Arc};
-use alloy_primitives::map::HashMap;
-use async_trait::async_trait;
-use base_genesis::{RollupConfig, SystemConfig};
-use base_protocol::{BatchValidationProvider, L2BlockInfo};
-use base_alloy_consensus::OpBlock;
-use thiserror::Error;
 
 /// A mock implementation of the [`L2ChainProvider`] and [`BatchValidationProvider`] for testing.
 #[derive(Debug, Default)]
@@ -69,7 +71,7 @@ impl L2ChainProvider for TestSystemConfigL2Fetcher {
     ) -> Result<SystemConfig, <Self as L2ChainProvider>::Error> {
         self.system_configs
             .get(&number)
-            .cloned()
+            .copied()
             .ok_or_else(|| TestSystemConfigL2FetcherError::NotFound(number))
     }
 }

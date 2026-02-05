@@ -1,7 +1,8 @@
 //! Deposit Transaction type.
 
-use super::OpTxType;
 use alloc::vec::Vec;
+use core::mem;
+
 use alloy_consensus::{Sealable, Transaction, Typed2718};
 use alloy_eips::{
     eip2718::{Decodable2718, Eip2718Error, Eip2718Result, Encodable2718, IsTyped2718},
@@ -9,7 +10,8 @@ use alloy_eips::{
 };
 use alloy_primitives::{Address, B256, Bytes, ChainId, Signature, TxHash, TxKind, U256, keccak256};
 use alloy_rlp::{BufMut, Decodable, Encodable, Header};
-use core::mem;
+
+use super::OpTxType;
 
 /// Deposit transactions, also known as deposits are initiated on L1, and executed on L2.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
@@ -418,9 +420,10 @@ pub fn serde_deposit_tx_rpc<T: serde::Serialize, S: serde::Serializer>(
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use alloy_primitives::hex;
     use alloy_rlp::BytesMut;
+
+    use super::*;
 
     #[test]
     fn test_deposit_transaction_trait() {
@@ -617,6 +620,7 @@ mod tests {
 #[cfg(all(feature = "serde", feature = "serde-bincode-compat"))]
 pub(super) mod serde_bincode_compat {
     use alloc::borrow::Cow;
+
     use alloy_primitives::{Address, B256, Bytes, TxKind, U256};
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
     use serde_with::{DeserializeAs, SerializeAs};
@@ -723,10 +727,8 @@ pub(super) mod serde_bincode_compat {
                     .unwrap(),
             };
 
-            let encoded = bincode::serde::encode_to_vec(&data, bincode::config::legacy()).unwrap();
-            let (decoded, _) =
-                bincode::serde::decode_from_slice::<Data, _>(&encoded, bincode::config::legacy())
-                    .unwrap();
+            let encoded = bincode::serialize(&data).unwrap();
+            let decoded: Data = bincode::deserialize(&encoded).unwrap();
             assert_eq!(decoded, data);
         }
     }

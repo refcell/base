@@ -1,10 +1,10 @@
 //! Integration tests that stress Flashblocks state handling.
 
 use alloy_primitives::U256;
+use base_alloy_network::BlockResponse;
 use base_client_node::test_utils::Account;
 use base_flashblocks::{FlashblocksAPI, PendingBlocksAPI};
 use base_flashblocks_node::test_harness::{FlashblockBuilder, FlashblocksBuilderTestHarness};
-use base_alloy_network::BlockResponse;
 use reth_provider::{AccountReader, StateProviderFactory};
 
 #[tokio::test]

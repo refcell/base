@@ -5,6 +5,7 @@
 //! [specs]: https://specs.optimism.io/protocol/jovian/derivation.html#network-upgrade-automation-transactions
 
 use alloc::{string::String, vec::Vec};
+
 use alloy_eips::eip2718::Encodable2718;
 use alloy_primitives::{Address, B256, Bytes, TxKind, U256, address, hex, keccak256};
 use base_alloy_consensus::{TxDeposit, UpgradeDepositSource};
@@ -166,10 +167,10 @@ impl Hardfork for Jovian {
 
 #[cfg(test)]
 mod tests {
-    use crate::test_utils::check_deployment_code;
+    use alloy_primitives::b256;
 
     use super::*;
-    use alloy_primitives::b256;
+    use crate::test_utils::check_deployment_code;
 
     #[test]
     fn test_l1_block_source_hash() {

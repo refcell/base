@@ -8,7 +8,6 @@ pub use forkchoice::L2ForkchoiceState;
 
 mod error;
 pub use error::SyncStartError;
-
 use tracing::info;
 
 use crate::EngineClient;

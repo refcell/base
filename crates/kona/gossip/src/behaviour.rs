@@ -90,12 +90,13 @@ impl Behaviour {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::{config, handler::BlockHandler};
     use alloy_chains::Chain;
     use alloy_primitives::Address;
     use base_genesis::RollupConfig;
     use libp2p::gossipsub::{IdentTopic, TopicHash};
+
+    use super::*;
+    use crate::{config, handler::BlockHandler};
 
     fn op_mainnet_topics() -> Vec<TopicHash> {
         vec![

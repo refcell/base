@@ -1,12 +1,13 @@
 //! The implementation of the [`PayloadAttributesBuilder`] for local payload building.
 
+use std::sync::Arc;
+
 use alloy_consensus::BlockHeader;
 use alloy_primitives::{Address, B256};
 use base_alloy_rpc_types_engine::OpPayloadAttributes;
 use reth_chainspec::EthChainSpec;
 use reth_node_api::PayloadAttributesBuilder;
 use reth_primitives_traits::SealedHeader;
-use std::sync::Arc;
 
 /// Base local payload attributes builder for Optimism-specific payloads.
 #[derive(Debug)]

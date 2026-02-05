@@ -1,8 +1,9 @@
 //! Contains peer scoring types.
 
+use std::collections::HashMap;
+
 use derive_more::{Display, FromStr};
 use libp2p::gossipsub::{PeerScoreParams, PeerScoreThresholds, TopicHash, TopicScoreParams};
-use std::collections::HashMap;
 
 /// The peer scoring level is used to determine
 /// how peers are scored based on their behavior.

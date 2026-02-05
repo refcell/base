@@ -1,12 +1,13 @@
 //! Client for polling Derivation Delegate sync status.
 
+use std::time::Duration;
+
+use base_protocol::SyncStatus;
+use base_rpc::RollupNodeApiClient;
 use jsonrpsee::{
     core::ClientError,
     http_client::{HttpClient, HttpClientBuilder},
 };
-use base_protocol::SyncStatus;
-use base_rpc::RollupNodeApiClient;
-use std::time::Duration;
 use thiserror::Error;
 use url::Url;
 

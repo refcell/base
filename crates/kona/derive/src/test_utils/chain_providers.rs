@@ -1,17 +1,19 @@
 //! Test Utilities for chain provider traits
 
+use alloc::{boxed::Box, string::ToString, sync::Arc, vec::Vec};
+
+use alloy_consensus::{Header, Receipt, TxEnvelope};
+use alloy_primitives::{B256, map::HashMap};
+use async_trait::async_trait;
+use base_alloy_consensus::OpBlock;
+use base_genesis::{RollupConfig, SystemConfig};
+use base_protocol::{BatchValidationProvider, BlockInfo, L2BlockInfo};
+use thiserror::Error;
+
 use crate::{
     errors::{PipelineError, PipelineErrorKind},
     traits::{ChainProvider, L2ChainProvider},
 };
-use alloc::{boxed::Box, string::ToString, sync::Arc, vec::Vec};
-use alloy_consensus::{Header, Receipt, TxEnvelope};
-use alloy_primitives::{B256, map::HashMap};
-use async_trait::async_trait;
-use base_genesis::{RollupConfig, SystemConfig};
-use base_protocol::{BatchValidationProvider, BlockInfo, L2BlockInfo};
-use base_alloy_consensus::OpBlock;
-use thiserror::Error;
 
 /// A mock chain provider for testing.
 #[derive(Debug, Clone, Default)]
@@ -185,7 +187,7 @@ impl BatchValidationProvider for TestL2ChainProvider {
         self.blocks
             .iter()
             .find(|b| b.block_info.number == number)
-            .cloned()
+            .copied()
             .ok_or_else(|| TestProviderError::BlockNotFound)
     }
 

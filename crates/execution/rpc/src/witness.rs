@@ -1,25 +1,26 @@
 //! Support for optimism specific witness RPCs.
 
+use std::{fmt::Debug, sync::Arc};
+
 use alloy_primitives::B256;
 use alloy_rpc_types_debug::ExecutionWitness;
-use jsonrpsee_core::{async_trait, RpcResult};
-use reth_chainspec::ChainSpecProvider;
-use reth_evm::ConfigureEvm;
-use reth_node_api::{BuildNextEnv, NodePrimitives};
 use base_forks::OpHardforks;
 use base_payload_builder::{OpAttributes, OpPayloadBuilder, OpPayloadPrimitives};
 use base_txpool_reth::OpPooledTx;
+use jsonrpsee_core::{RpcResult, async_trait};
+use reth_chainspec::ChainSpecProvider;
+use reth_evm::ConfigureEvm;
+use reth_node_api::{BuildNextEnv, NodePrimitives};
 use reth_primitives_traits::{SealedHeader, TxTy};
 pub use reth_rpc_api::DebugExecutionWitnessApiServer;
-use reth_rpc_server_types::{result::internal_rpc_err, ToRpcResult};
+use reth_rpc_server_types::{ToRpcResult, result::internal_rpc_err};
 use reth_storage_api::{
-    errors::{ProviderError, ProviderResult},
     BlockReaderIdExt, NodePrimitivesProvider, StateProviderFactory,
+    errors::{ProviderError, ProviderResult},
 };
 use reth_tasks::TaskSpawner;
 use reth_transaction_pool::TransactionPool;
-use std::{fmt::Debug, sync::Arc};
-use tokio::sync::{oneshot, Semaphore};
+use tokio::sync::{Semaphore, oneshot};
 
 /// An extension to the `debug_` namespace of the RPC API.
 pub struct OpDebugWitnessApi<Pool, Provider, EvmConfig, Attrs> {

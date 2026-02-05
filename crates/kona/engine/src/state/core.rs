@@ -1,9 +1,10 @@
 //! The internal state of the engine controller.
 
-use crate::Metrics;
 use alloy_rpc_types_engine::ForkchoiceState;
 use base_protocol::L2BlockInfo;
 use serde::{Deserialize, Serialize};
+
+use crate::Metrics;
 
 /// The synchronization state of the execution layer across different safety levels.
 #[derive(Default, Debug, Copy, Clone, PartialEq, Eq)]
@@ -138,11 +139,12 @@ impl EngineState {
 
 #[cfg(test)]
 mod test {
-    use super::*;
-    use crate::Metrics;
     use base_protocol::BlockInfo;
     use metrics_exporter_prometheus::PrometheusBuilder;
     use rstest::rstest;
+
+    use super::*;
+    use crate::Metrics;
 
     impl EngineState {
         /// Set the unsafe head.

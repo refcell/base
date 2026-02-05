@@ -1,5 +1,5 @@
-use futures_util::stream::StreamExt;
 use base_reth_flashblocks::WsFlashBlockStream;
+use futures_util::stream::StreamExt;
 
 #[tokio::test]
 async fn test_streaming_flashblocks_from_remote_source_is_successful() {

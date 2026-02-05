@@ -180,8 +180,9 @@ impl BatchValidity {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use alloc::format;
+
+    use super::*;
 
     #[test]
     fn test_batch_validity() {

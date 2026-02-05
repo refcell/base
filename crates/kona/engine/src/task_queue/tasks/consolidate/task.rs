@@ -1,15 +1,17 @@
 //! A task to consolidate the engine state.
 
+use std::{sync::Arc, time::Instant};
+
+use alloy_rpc_types_eth::Block;
+use async_trait::async_trait;
+use base_alloy_rpc_types::Transaction;
+use base_genesis::RollupConfig;
+use base_protocol::{L2BlockInfo, OpAttributesWithParent};
+
 use crate::{
     ConsolidateTaskError, EngineClient, EngineState, EngineTaskExt, SynchronizeTask,
     state::EngineSyncStateUpdate, task_queue::build_and_seal,
 };
-use alloy_rpc_types_eth::Block;
-use async_trait::async_trait;
-use base_genesis::RollupConfig;
-use base_protocol::{L2BlockInfo, OpAttributesWithParent};
-use base_alloy_rpc_types::Transaction;
-use std::{sync::Arc, time::Instant};
 
 #[derive(Debug, Clone)]
 pub enum ConsolidateInput {

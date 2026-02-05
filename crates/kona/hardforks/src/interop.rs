@@ -5,6 +5,7 @@
 //! [specs]: https://specs.optimism.io/interop/derivation.html#network-upgrade-transactions
 
 use alloc::string::String;
+
 use alloy_eips::Encodable2718;
 use alloy_primitives::{Address, B256, Bytes, TxKind, U256, address, b256, hex};
 use base_alloy_consensus::{TxDeposit, UpgradeDepositSource};

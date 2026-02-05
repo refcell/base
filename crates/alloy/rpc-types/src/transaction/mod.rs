@@ -208,10 +208,11 @@ mod tx_serde {
     //! [`alloy_rpc_types_eth::Transaction::inner`] and [`base_alloy_consensus::TxDeposit::from`].
     //!
     //! Additionally, we need similar logic for the `gasPrice` field
-    use super::*;
     use alloy_consensus::transaction::Recovered;
     use base_alloy_consensus::OpTransaction;
     use serde::de::Error;
+
+    use super::*;
 
     /// Helper struct which will be flattened into the transaction and will only contain `from`
     /// field if inner [`OpTxEnvelope`] did not consume it.

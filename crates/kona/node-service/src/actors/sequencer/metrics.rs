@@ -1,9 +1,10 @@
 use std::time::Duration;
 
+use base_derive::AttributesBuilder;
+
 use crate::{
     Conductor, OriginSelector, SequencerActor, SequencerEngineClient, UnsafePayloadGossipClient,
 };
-use base_derive::AttributesBuilder;
 
 /// `SequencerActor` metrics-related method implementations.
 impl<

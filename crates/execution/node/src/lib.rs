@@ -28,22 +28,18 @@ pub mod rpc;
 pub use rpc::OpEngineApiBuilder;
 
 pub mod version;
-pub use version::OP_NAME_CLIENT;
-
 pub use base_txpool_reth as txpool;
+pub use version::OP_NAME_CLIENT;
 
 /// Helpers for running test node instances.
 #[cfg(feature = "test-utils")]
 pub mod utils;
 
-pub use base_payload_builder::{
-    self as payload, config::OpDAConfig, OpBuiltPayload, OpPayloadAttributes, OpPayloadBuilder,
-    OpPayloadBuilderAttributes, OpPayloadPrimitives, OpPayloadTypes,
-};
-
 pub use base_evm::*;
-
+pub use base_payload_builder::{
+    self as payload, OpBuiltPayload, OpPayloadAttributes, OpPayloadBuilder,
+    OpPayloadBuilderAttributes, OpPayloadPrimitives, OpPayloadTypes, config::OpDAConfig,
+};
 pub use base_storage::OpStorage;
-
 use op_revm as _;
 use revm as _;

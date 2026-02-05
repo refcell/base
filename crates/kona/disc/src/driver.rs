@@ -1,12 +1,12 @@
 //! Discovery Module.
 
 use backon::{ExponentialBuilder, RetryableWithContext};
-use base_peers::{enr_to_multiaddr, BootNode, BootNodes, BootStore, BootStoreFile, EnrValidation};
+use base_peers::{BootNode, BootNodes, BootStore, BootStoreFile, EnrValidation, enr_to_multiaddr};
 use derive_more::Debug;
-use discv5::{enr::NodeId, Config, Discv5, Enr};
+use discv5::{Config, Discv5, Enr, enr::NodeId};
 use tokio::{
     sync::mpsc::channel,
-    time::{sleep, Duration},
+    time::{Duration, sleep},
 };
 
 use crate::{Discv5Builder, Discv5Handler, HandlerRequest, LocalNode};
@@ -374,17 +374,18 @@ impl Discv5Driver {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::LocalNode;
+    use std::net::{IpAddr, Ipv4Addr, SocketAddr};
+
+    use base_genesis::{OP_MAINNET_CHAIN_ID, OP_SEPOLIA_CHAIN_ID};
     use discv5::{
+        ConfigBuilder,
         enr::{CombinedKey, CombinedPublicKey},
         handler::NodeContact,
-        ConfigBuilder,
     };
-    use base_genesis::{OP_MAINNET_CHAIN_ID, OP_SEPOLIA_CHAIN_ID};
     use tempfile::tempdir;
 
-    use std::net::{IpAddr, Ipv4Addr, SocketAddr};
+    use super::*;
+    use crate::LocalNode;
 
     #[tokio::test]
     async fn test_online_discv5_driver() {
@@ -487,10 +488,10 @@ mod tests {
         let mainnet: Vec<CombinedPublicKey> = mainnet
             .iter()
             .filter_map(|node| {
-                if let BootNode::Enr(enr) = node {
-                    if EnrValidation::validate(enr, OP_MAINNET_CHAIN_ID).is_invalid() {
-                        return None;
-                    }
+                if let BootNode::Enr(enr) = node
+                    && EnrValidation::validate(enr, OP_MAINNET_CHAIN_ID).is_invalid()
+                {
+                    return None;
                 }
                 let node_contact =
                     NodeContact::try_from_multiaddr(node.to_multiaddr().unwrap()).unwrap();

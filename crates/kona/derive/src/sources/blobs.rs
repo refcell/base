@@ -1,10 +1,7 @@
 //! Blob Data Source
 
-use crate::{
-    BlobData, BlobProvider, BlobProviderError, ChainProvider, DataAvailabilityProvider,
-    PipelineError, PipelineResult,
-};
 use alloc::{boxed::Box, string::ToString, vec::Vec};
+
 use alloy_consensus::{
     Transaction, TxEip4844Variant, TxEnvelope, TxType, transaction::SignerRecoverable,
 };
@@ -12,6 +9,11 @@ use alloy_eips::eip4844::IndexedBlobHash;
 use alloy_primitives::{Address, Bytes};
 use async_trait::async_trait;
 use base_protocol::BlockInfo;
+
+use crate::{
+    BlobData, BlobProvider, BlobProviderError, ChainProvider, DataAvailabilityProvider,
+    PipelineError, PipelineResult,
+};
 
 /// A data iterator that reads from a blob.
 #[derive(Debug, Clone)]
@@ -214,13 +216,15 @@ where
 
 #[cfg(test)]
 pub(crate) mod tests {
+    use alloc::vec;
+
+    use alloy_rlp::Decodable;
+
     use super::*;
     use crate::{
         errors::PipelineErrorKind,
         test_utils::{TestBlobProvider, TestChainProvider},
     };
-    use alloc::vec;
-    use alloy_rlp::Decodable;
 
     pub(crate) fn default_test_blob_source() -> BlobSource<TestChainProvider, TestBlobProvider> {
         let chain_provider = TestChainProvider::default();

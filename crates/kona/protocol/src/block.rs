@@ -1,7 +1,7 @@
 //! Block Types for Optimism.
 
-use crate::{DecodeError, L1BlockInfoTx};
 use alloc::vec::Vec;
+
 use alloy_consensus::{Block, Transaction, Typed2718};
 use alloy_eips::{BlockNumHash, eip2718::Eip2718Error, eip7685::EMPTY_REQUESTS_HASH};
 use alloy_primitives::B256;
@@ -11,6 +11,8 @@ use base_alloy_consensus::{OpBlock, OpTxEnvelope};
 use base_alloy_rpc_types_engine::{OpExecutionPayload, OpExecutionPayloadSidecar, OpPayloadError};
 use base_genesis::ChainGenesis;
 use derive_more::Display;
+
+use crate::{DecodeError, L1BlockInfoTx};
 
 /// Block Header Info
 #[derive(Debug, Clone, Display, Copy, Eq, Hash, PartialEq, Default)]
@@ -238,11 +240,13 @@ impl L2BlockInfo {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use alloc::string::ToString;
+
     use alloy_consensus::{Header, TxEnvelope};
     use alloy_primitives::b256;
     use base_alloy_consensus::OpBlock;
+
+    use super::*;
 
     #[test]
     fn test_rpc_block_into_info() {
@@ -273,8 +277,9 @@ mod tests {
 
     #[test]
     fn test_from_block_and_genesis() {
-        use crate::test_utils::RAW_BEDROCK_INFO_TX;
         use alloc::vec;
+
+        use crate::test_utils::RAW_BEDROCK_INFO_TX;
         let genesis = ChainGenesis {
             l1: BlockNumHash { hash: B256::from([4; 32]), number: 2 },
             l2: BlockNumHash { hash: B256::from([5; 32]), number: 1 },

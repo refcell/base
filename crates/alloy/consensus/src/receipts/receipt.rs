@@ -1,10 +1,8 @@
 //! Optimism receipt type for execution and storage.
 
+use alloc::vec::Vec;
 use core::fmt::Debug;
 
-use super::{OpDepositReceipt, OpTxReceipt};
-use crate::{OpReceiptEnvelope, OpTxType};
-use alloc::vec::Vec;
 use alloy_consensus::{
     Eip658Value, Eip2718DecodableReceipt, Eip2718EncodableReceipt, Receipt, ReceiptWithBloom,
     RlpDecodableReceipt, RlpEncodableReceipt, TxReceipt, Typed2718,
@@ -12,6 +10,9 @@ use alloy_consensus::{
 use alloy_eips::eip2718::{Eip2718Error, Eip2718Result, IsTyped2718};
 use alloy_primitives::{Bloom, Log};
 use alloy_rlp::{Buf, BufMut, Decodable, Encodable, Header};
+
+use super::{OpDepositReceipt, OpTxReceipt};
+use crate::{OpReceiptEnvelope, OpTxType};
 
 /// Typed Optimism transaction receipt.
 ///
@@ -544,11 +545,12 @@ pub(crate) mod serde_bincode_compat {
 
     #[cfg(test)]
     mod tests {
-        use crate::OpReceipt;
         use arbitrary::Arbitrary;
         use rand::Rng;
         use serde::{Deserialize, Serialize};
         use serde_with::serde_as;
+
+        use crate::OpReceipt;
 
         #[test]
         fn test_tx_bincode_roundtrip() {
@@ -568,10 +570,8 @@ pub(crate) mod serde_bincode_compat {
             // // ensure we don't have an invalid poststate variant
             data.receipt.as_receipt_mut().status = success.into();
 
-            let encoded = bincode::serde::encode_to_vec(&data, bincode::config::legacy()).unwrap();
-            let (decoded, _) =
-                bincode::serde::decode_from_slice::<Data, _>(&encoded, bincode::config::legacy())
-                    .unwrap();
+            let encoded = bincode::serialize(&data).unwrap();
+            let decoded: Data = bincode::deserialize(&encoded).unwrap();
             assert_eq!(decoded, data);
         }
     }
@@ -579,11 +579,13 @@ pub(crate) mod serde_bincode_compat {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use alloc::vec;
+
     use alloy_eips::Encodable2718;
     use alloy_primitives::{Bytes, address, b256, bytes, hex_literal::hex};
     use alloy_rlp::Encodable;
+
+    use super::*;
 
     // Test vector from: https://eips.ethereum.org/EIPS/eip-2481
     #[test]

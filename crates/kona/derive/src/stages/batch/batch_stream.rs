@@ -1,16 +1,18 @@
 //! This module contains the `BatchStream` stage.
 
-use crate::{
-    L2ChainProvider, NextBatchProvider, OriginAdvancer, OriginProvider, PipelineError,
-    PipelineResult, Signal, SignalReceiver,
-};
 use alloc::{boxed::Box, collections::VecDeque, sync::Arc};
-use async_trait::async_trait;
 use core::fmt::Debug;
+
+use async_trait::async_trait;
 use base_genesis::RollupConfig;
 use base_protocol::{
     Batch, BatchValidity, BatchWithInclusionBlock, BlockInfo, L2BlockInfo, SingleBatch, SpanBatch,
     SpanBatchError,
+};
+
+use crate::{
+    L2ChainProvider, NextBatchProvider, OriginAdvancer, OriginProvider, PipelineError,
+    PipelineResult, Signal, SignalReceiver,
 };
 
 /// Provides [`Batch`]es for the [`BatchStream`] stage.
@@ -244,19 +246,21 @@ where
 
 #[cfg(test)]
 mod test {
+    use alloc::vec;
+
+    use alloy_consensus::{BlockBody, Header};
+    use alloy_eips::{BlockNumHash, NumHash};
+    use alloy_primitives::{FixedBytes, b256};
+    use base_alloy_consensus::OpBlock;
+    use base_genesis::{ChainGenesis, HardForkConfig};
+    use base_protocol::{SingleBatch, SpanBatchElement};
+    use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+
     use super::*;
     use crate::{
         test_utils::{CollectingLayer, TestBatchStreamProvider, TestL2ChainProvider, TraceStorage},
         types::ResetSignal,
     };
-    use alloc::vec;
-    use alloy_consensus::{BlockBody, Header};
-    use alloy_eips::{BlockNumHash, NumHash};
-    use alloy_primitives::{FixedBytes, b256};
-    use base_genesis::{ChainGenesis, HardForkConfig};
-    use base_protocol::{SingleBatch, SpanBatchElement};
-    use base_alloy_consensus::OpBlock;
-    use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
     #[tokio::test]
     async fn test_batch_stream_flush() {

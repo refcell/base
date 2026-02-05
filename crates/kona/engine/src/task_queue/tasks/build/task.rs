@@ -1,16 +1,18 @@
 //! A task for building a new block and importing it.
+use std::{sync::Arc, time::Instant};
+
+use alloy_rpc_types_engine::{PayloadId, PayloadStatusEnum};
+use async_trait::async_trait;
+use base_genesis::RollupConfig;
+use base_protocol::OpAttributesWithParent;
+use derive_more::Constructor;
+use tokio::sync::mpsc;
+
 use super::BuildTaskError;
 use crate::{
     EngineClient, EngineForkchoiceVersion, EngineState, EngineTaskExt,
     state::EngineSyncStateUpdate, task_queue::tasks::build::error::EngineBuildError,
 };
-use alloy_rpc_types_engine::{PayloadId, PayloadStatusEnum};
-use async_trait::async_trait;
-use derive_more::Constructor;
-use base_genesis::RollupConfig;
-use base_protocol::OpAttributesWithParent;
-use std::{sync::Arc, time::Instant};
-use tokio::sync::mpsc;
 
 #[derive(Debug, Clone, Constructor)]
 pub struct BuildTask<EngineClient_: EngineClient> {
@@ -34,11 +36,9 @@ impl<EngineClient_: EngineClient> BuildTask<EngineClient_> {
                 warn!(target: "engine_builder", "Forkchoice update failed temporarily: EL is syncing");
                 Err(BuildTaskError::EngineBuildError(EngineBuildError::EngineSyncing))
             }
-            PayloadStatusEnum::Accepted => {
-                Err(BuildTaskError::EngineBuildError(EngineBuildError::UnexpectedPayloadStatus(
-                    status,
-                )))
-            }
+            PayloadStatusEnum::Accepted => Err(BuildTaskError::EngineBuildError(
+                EngineBuildError::UnexpectedPayloadStatus(status),
+            )),
         }
     }
 
@@ -48,13 +48,15 @@ impl<EngineClient_: EngineClient> BuildTask<EngineClient_> {
         engine_client: &EngineClient_,
         attributes_envelope: OpAttributesWithParent,
     ) -> Result<PayloadId, BuildTaskError> {
-        if state.sync_state.unsafe_head().block_info.number <
-            state.sync_state.finalized_head().block_info.number
+        if state.sync_state.unsafe_head().block_info.number
+            < state.sync_state.finalized_head().block_info.number
         {
-            return Err(BuildTaskError::EngineBuildError(EngineBuildError::FinalizedAheadOfUnsafe(
-                state.sync_state.unsafe_head().block_info.number,
-                state.sync_state.finalized_head().block_info.number,
-            )));
+            return Err(BuildTaskError::EngineBuildError(
+                EngineBuildError::FinalizedAheadOfUnsafe(
+                    state.sync_state.unsafe_head().block_info.number,
+                    state.sync_state.finalized_head().block_info.number,
+                ),
+            ));
         }
 
         let new_forkchoice = state

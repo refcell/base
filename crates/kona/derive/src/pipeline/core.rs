@@ -1,15 +1,17 @@
 //! Contains the core derivation pipeline.
 
+use alloc::{boxed::Box, collections::VecDeque, sync::Arc};
+use core::fmt::Debug;
+
+use async_trait::async_trait;
+use base_genesis::{RollupConfig, SystemConfig};
+use base_protocol::{BlockInfo, L2BlockInfo, OpAttributesWithParent};
+
 use crate::{
     ActivationSignal, L2ChainProvider, NextAttributes, OriginAdvancer, OriginProvider, Pipeline,
     PipelineError, PipelineErrorKind, PipelineResult, ResetSignal, Signal, SignalReceiver,
     StepResult,
 };
-use alloc::{boxed::Box, collections::VecDeque, sync::Arc};
-use async_trait::async_trait;
-use core::fmt::Debug;
-use base_genesis::{RollupConfig, SystemConfig};
-use base_protocol::{BlockInfo, L2BlockInfo, OpAttributesWithParent};
 
 /// The derivation pipeline is responsible for deriving L2 inputs from L1 data.
 #[derive(Debug)]
@@ -93,8 +95,8 @@ where
     /// The `signal` is contains the signal variant with any necessary parameters.
     async fn signal(&mut self, signal: Signal) -> PipelineResult<()> {
         match signal {
-            mut s @ Signal::Reset(ResetSignal { l2_safe_head, .. }) |
-            mut s @ Signal::Activation(ActivationSignal { l2_safe_head, .. }) => {
+            mut s @ Signal::Reset(ResetSignal { l2_safe_head, .. })
+            | mut s @ Signal::Activation(ActivationSignal { l2_safe_head, .. }) => {
                 let system_config = self
                     .l2_chain_provider
                     .system_config_by_number(
@@ -223,13 +225,15 @@ where
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::{DerivationPipeline, test_utils::*};
     use alloc::{string::ToString, sync::Arc};
+
     use alloy_rpc_types_engine::PayloadAttributes;
+    use base_alloy_rpc_types_engine::OpPayloadAttributes;
     use base_genesis::{RollupConfig, SystemConfig};
     use base_protocol::{L2BlockInfo, OpAttributesWithParent};
-    use base_alloy_rpc_types_engine::OpPayloadAttributes;
+
+    use super::*;
+    use crate::{DerivationPipeline, test_utils::*};
 
     fn default_test_payload_attributes() -> OpAttributesWithParent {
         OpAttributesWithParent {

@@ -1,8 +1,9 @@
 //! Optimism Payload attributes that reference the parent L2 block.
 
-use crate::{BlockInfo, L2BlockInfo};
 use base_alloy_consensus::OpTxType;
 use base_alloy_rpc_types_engine::OpPayloadAttributes;
+
+use crate::{BlockInfo, L2BlockInfo};
 
 /// Optimism Payload Attributes with parent block reference and the L1 origin block.
 #[derive(Debug, Clone, PartialEq)]
@@ -93,8 +94,9 @@ impl OpAttributesWithParent {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use alloc::vec;
+
+    use super::*;
 
     #[test]
     fn test_op_attributes_with_parent() {

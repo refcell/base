@@ -2,6 +2,8 @@
 //!
 //! Implemented in the op-node in <https://github.com/ethereum-optimism/optimism/blob/174e55f0a1e73b49b80a561fd3fedd4fea5770c6/op-service/sources/rollupclient.go#L16>
 
+use std::fmt::Debug;
+
 use alloy_eips::BlockNumberOrTag;
 use async_trait::async_trait;
 use base_engine::EngineState;
@@ -11,11 +13,10 @@ use jsonrpsee::{
     core::RpcResult,
     types::{ErrorCode, ErrorObject},
 };
-use std::fmt::Debug;
 
 use crate::{
-    l1_watcher::L1WatcherQuerySender, EngineRpcClient, L1State, L1WatcherQueries, OutputResponse,
-    RollupNodeApiServer, SafeHeadResponse,
+    EngineRpcClient, L1State, L1WatcherQueries, OutputResponse, RollupNodeApiServer,
+    SafeHeadResponse, l1_watcher::L1WatcherQuerySender,
 };
 
 /// `RollupRpc`

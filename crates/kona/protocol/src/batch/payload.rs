@@ -1,9 +1,11 @@
 //! Raw Span Batch Payload
 
+use alloc::vec::Vec;
+
+use alloy_primitives::bytes;
+
 use super::MAX_SPAN_BATCH_ELEMENTS;
 use crate::{SpanBatchBits, SpanBatchError, SpanBatchTransactions, SpanDecodingError};
-use alloc::vec::Vec;
-use alloy_primitives::bytes;
 
 /// Span Batch Payload
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -136,8 +138,9 @@ impl SpanBatchPayload {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use alloc::vec;
+
+    use super::*;
 
     #[test]
     fn test_decode_origin_bits() {

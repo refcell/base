@@ -8,6 +8,7 @@ use alloy_eips::{eip2718::Encodable2718, eip7702::Authorization};
 use alloy_primitives::{Address, B256, Bytes, U256};
 use alloy_provider::Provider;
 use alloy_sol_types::SolCall;
+use base_alloy_network::ReceiptResponse;
 use base_client_node::test_utils::{
     Account, L1_BLOCK_INFO_DEPOSIT_TX, Minimal7702Account, SignerSync,
 };
@@ -16,7 +17,6 @@ use base_flashtypes::{
     ExecutionPayloadBaseV1, ExecutionPayloadFlashblockDeltaV1, Flashblock, Metadata,
 };
 use eyre::Result;
-use base_alloy_network::ReceiptResponse;
 
 /// Cumulative gas used after the base flashblock (deposit tx + contract deployment)
 /// This value must be used as the starting point for subsequent flashblocks.

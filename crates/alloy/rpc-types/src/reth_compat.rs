@@ -1,6 +1,7 @@
 //! Reth RPC conversion trait implementations for base-alloy-rpc-types types.
 
-use crate::{OpTransactionRequest, Transaction};
+use core::convert::Infallible;
+
 use alloy_consensus::{SignableTransaction, error::ValueError, transaction::Recovered};
 use alloy_evm::{EvmEnv, env::BlockEnvironment, rpc::TryIntoTxEnv};
 use alloy_network::TxSigner;
@@ -9,12 +10,13 @@ use alloy_signer::Signature;
 use base_alloy_consensus::{
     OpTransaction as OpTransactionTrait, OpTxEnvelope, transaction::OpTransactionInfo,
 };
-use core::convert::Infallible;
 use op_revm::OpTransaction;
 use reth_rpc_convert::{
     SignTxRequestError, SignableTxRequest, TryIntoSimTx, transaction::FromConsensusTx,
 };
 use revm::context::TxEnv;
+
+use crate::{OpTransactionRequest, Transaction};
 
 impl<T: OpTransactionTrait + alloy_consensus::Transaction> FromConsensusTx<T> for Transaction<T> {
     type TxInfo = OpTransactionInfo;
@@ -61,9 +63,8 @@ impl SignableTxRequest<OpTxEnvelope> for OpTransactionRequest {
         self,
         signer: impl TxSigner<Signature> + Send,
     ) -> Result<OpTxEnvelope, SignTxRequestError> {
-        let mut tx = self
-            .build_typed_tx()
-            .map_err(|_| SignTxRequestError::InvalidTransactionRequest)?;
+        let mut tx =
+            self.build_typed_tx().map_err(|_| SignTxRequestError::InvalidTransactionRequest)?;
 
         if tx.is_deposit() {
             return Err(SignTxRequestError::InvalidTransactionRequest);

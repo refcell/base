@@ -1,7 +1,7 @@
 //! Providers that use alloy provider types on the backend.
 
-#[cfg(feature = "metrics")]
-use crate::Metrics;
+use std::{num::NonZeroUsize, sync::Arc};
+
 use alloy_eips::BlockId;
 use alloy_primitives::{B256, Bytes};
 use alloy_provider::{Provider, RootProvider};
@@ -20,8 +20,10 @@ use base_genesis::{RollupConfig, SystemConfig};
 use base_protocol::{BatchValidationProvider, L2BlockInfo, to_system_config};
 use http_body_util::Full;
 use lru::LruCache;
-use std::{num::NonZeroUsize, sync::Arc};
 use tower::ServiceBuilder;
+
+#[cfg(feature = "metrics")]
+use crate::Metrics;
 
 #[derive(Debug, Clone)]
 pub struct AlloyL2ChainProvider {

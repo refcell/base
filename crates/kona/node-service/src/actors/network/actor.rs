@@ -1,10 +1,10 @@
 use alloy_primitives::Address;
 use async_trait::async_trait;
+use base_alloy_rpc_types_engine::{OpExecutionPayloadEnvelope, OpNetworkPayloadEnvelope};
 use base_gossip::P2pRpcRequest;
 use base_rpc::NetworkAdminQuery;
 use base_sources::BlockSignerError;
 use libp2p::TransportError;
-use base_alloy_rpc_types_engine::{OpExecutionPayloadEnvelope, OpNetworkPayloadEnvelope};
 use thiserror::Error;
 use tokio::{self, select, sync::mpsc};
 use tokio_util::sync::{CancellationToken, WaitForCancellationFuture};
@@ -252,7 +252,6 @@ impl<NetworkEngineClient_: NetworkEngineClient + 'static> NodeActor
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use alloy_primitives::B256;
     use alloy_rpc_types_engine::{ExecutionPayloadV1, ExecutionPayloadV3};
     use alloy_signer::SignerSync;
@@ -260,6 +259,8 @@ mod tests {
     use arbitrary::Arbitrary;
     use base_alloy_rpc_types_engine::OpExecutionPayload;
     use rand::Rng;
+
+    use super::*;
 
     #[test]
     fn test_payload_signature_roundtrip_v1() {

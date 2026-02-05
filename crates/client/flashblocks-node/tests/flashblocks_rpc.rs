@@ -11,6 +11,8 @@ use alloy_rpc_client::RpcClient;
 use alloy_rpc_types::simulate::{SimBlock, SimulatePayload};
 use alloy_rpc_types_engine::PayloadId;
 use alloy_rpc_types_eth::{TransactionInput, error::EthRpcErrorCode};
+use base_alloy_network::{Optimism, ReceiptResponse, TransactionResponse};
+use base_alloy_rpc_types::OpTransactionRequest;
 use base_client_node::test_utils::{Account, DoubleCounter, L1_BLOCK_INFO_DEPOSIT_TX};
 use base_flashblocks_node::test_harness::FlashblocksHarness;
 use base_flashtypes::{
@@ -18,8 +20,6 @@ use base_flashtypes::{
 };
 use eyre::Result;
 use futures_util::{SinkExt, StreamExt};
-use base_alloy_network::{Optimism, ReceiptResponse, TransactionResponse};
-use base_alloy_rpc_types::OpTransactionRequest;
 use reth_revm::context::TransactionType;
 use reth_rpc_eth_api::RpcReceipt;
 use serde_json::json;

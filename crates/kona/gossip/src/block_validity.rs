@@ -281,7 +281,6 @@ impl BlockHandler {
 #[cfg(test)]
 pub(crate) mod tests {
 
-    use super::*;
     use alloy_chains::Chain;
     use alloy_consensus::{Block, EMPTY_OMMER_ROOT_HASH};
     use alloy_eips::{eip2718::Encodable2718, eip4895::Withdrawal};
@@ -292,6 +291,8 @@ pub(crate) mod tests {
     use base_alloy_consensus::OpTxEnvelope;
     use base_alloy_rpc_types_engine::{OpExecutionPayload, OpExecutionPayloadV4, PayloadHash};
     use base_genesis::RollupConfig;
+
+    use super::*;
 
     fn valid_block() -> Block<OpTxEnvelope> {
         let mut data = vec![0; 1024 * 1024];
@@ -550,7 +551,7 @@ pub(crate) mod tests {
             })
             .collect::<Vec<_>>();
 
-        for envelope in next_payloads[..next_payloads.len() - 1].iter() {
+        for envelope in &next_payloads[..next_payloads.len() - 1] {
             assert!(handler.block_valid(envelope).is_ok());
         }
 

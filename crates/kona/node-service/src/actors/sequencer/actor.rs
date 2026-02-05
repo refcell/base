@@ -1,5 +1,20 @@
 //! The [`SequencerActor`].
 
+use std::{
+    sync::Arc,
+    time::{Duration, Instant, SystemTime, UNIX_EPOCH},
+};
+
+use alloy_rpc_types_engine::PayloadId;
+use async_trait::async_trait;
+use base_alloy_rpc_types_engine::OpPayloadAttributes;
+use base_derive::{AttributesBuilder, PipelineErrorKind};
+use base_engine::{InsertTaskError, SealTaskError, SynchronizeTaskError};
+use base_genesis::RollupConfig;
+use base_protocol::{BlockInfo, L2BlockInfo, OpAttributesWithParent};
+use tokio::{select, sync::mpsc};
+use tokio_util::sync::{CancellationToken, WaitForCancellationFuture};
+
 use crate::{
     CancellableContext, NodeActor, SequencerAdminQuery, UnsafePayloadGossipClient,
     actors::{
@@ -17,19 +32,6 @@ use crate::{
         },
     },
 };
-use alloy_rpc_types_engine::PayloadId;
-use async_trait::async_trait;
-use base_derive::{AttributesBuilder, PipelineErrorKind};
-use base_engine::{InsertTaskError, SealTaskError, SynchronizeTaskError};
-use base_genesis::RollupConfig;
-use base_protocol::{BlockInfo, L2BlockInfo, OpAttributesWithParent};
-use base_alloy_rpc_types_engine::OpPayloadAttributes;
-use std::{
-    sync::Arc,
-    time::{Duration, Instant, SystemTime, UNIX_EPOCH},
-};
-use tokio::{select, sync::mpsc};
-use tokio_util::sync::{CancellationToken, WaitForCancellationFuture};
 
 /// The handle to a block that has been started but not sealed.
 #[derive(Debug)]
@@ -235,8 +237,8 @@ where
             }
         };
 
-        if unsafe_head.l1_origin.hash != l1_origin.parent_hash &&
-            unsafe_head.l1_origin.hash != l1_origin.hash
+        if unsafe_head.l1_origin.hash != l1_origin.parent_hash
+            && unsafe_head.l1_origin.hash != l1_origin.hash
         {
             warn!(
                 target: "sequencer",
@@ -302,8 +304,8 @@ where
 
         // If the next L2 block is beyond the sequencer drift threshold, we must produce an empty
         // block.
-        if attributes.payload_attributes.timestamp >
-            l1_origin.timestamp + self.rollup_config.max_sequencer_drift(l1_origin.timestamp)
+        if attributes.payload_attributes.timestamp
+            > l1_origin.timestamp + self.rollup_config.max_sequencer_drift(l1_origin.timestamp)
         {
             return false;
         }
@@ -510,9 +512,7 @@ fn is_seal_task_err_fatal(err: &SealTaskError) -> bool {
             InsertTaskError::FromBlockError(_) | InsertTaskError::L2BlockInfoConstruction(_) => {
                 true
             }
-            InsertTaskError::InsertFailed(_) | InsertTaskError::UnexpectedPayloadStatus(_) => {
-                false
-            }
+            InsertTaskError::InsertFailed(_) | InsertTaskError::UnexpectedPayloadStatus(_) => false,
         },
         SealTaskError::GetPayloadFailed(_)
         | SealTaskError::HoloceneInvalidFlush

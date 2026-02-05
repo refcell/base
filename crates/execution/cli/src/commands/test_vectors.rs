@@ -1,7 +1,9 @@
 //! Command for generating test vectors.
 
-use clap::{Parser, Subcommand};
+use std::sync::Arc;
+
 use base_alloy_consensus::TxDeposit;
+use clap::{Parser, Subcommand};
 use proptest::test_runner::TestRunner;
 use reth_chainspec::ChainSpec;
 use reth_cli_commands::{
@@ -9,13 +11,12 @@ use reth_cli_commands::{
     test_vectors::{
         compact,
         compact::{
-            generate_vector, read_vector, GENERATE_VECTORS as ETH_GENERATE_VECTORS,
-            READ_VECTORS as ETH_READ_VECTORS,
+            GENERATE_VECTORS as ETH_GENERATE_VECTORS, READ_VECTORS as ETH_READ_VECTORS,
+            generate_vector, read_vector,
         },
         tables,
     },
 };
-use std::sync::Arc;
 
 /// Generate test-vectors for different data types.
 #[derive(Debug, Parser)]

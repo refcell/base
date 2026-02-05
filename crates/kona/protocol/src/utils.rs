@@ -1,11 +1,12 @@
 //! Utility methods used by protocol types.
 
 use alloc::vec::Vec;
+
 use alloy_consensus::{Transaction, TxType, Typed2718};
 use alloy_primitives::{B256, U256};
 use alloy_rlp::{Buf, Header};
-use base_genesis::{RollupConfig, SystemConfig};
 use base_alloy_consensus::{OpBlock, decode_holocene_extra_data, decode_jovian_extra_data};
+use base_genesis::{RollupConfig, SystemConfig};
 
 use crate::{
     L1BlockInfoBedrockOnlyFields as _, L1BlockInfoEcotoneBaseFields as _, L1BlockInfoTx,
@@ -134,12 +135,14 @@ pub fn read_tx_data(r: &mut &[u8]) -> Result<(Vec<u8>, TxType), SpanBatchError> 
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::test_utils::{RAW_BEDROCK_INFO_TX, RAW_ECOTONE_INFO_TX, RAW_ISTHMUS_INFO_TX};
     use alloc::vec;
+
     use alloy_eips::eip1898::BlockNumHash;
     use alloy_primitives::{U256, address, bytes, uint};
     use base_genesis::{ChainGenesis, HardForkConfig};
+
+    use super::*;
+    use crate::test_utils::{RAW_BEDROCK_INFO_TX, RAW_ECOTONE_INFO_TX, RAW_ISTHMUS_INFO_TX};
 
     #[test]
     fn test_to_system_config_invalid_genesis_hash() {

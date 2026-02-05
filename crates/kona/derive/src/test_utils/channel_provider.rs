@@ -1,6 +1,11 @@
-//! Mock testing utilities for the [ChannelBank] stage.
+//! Mock testing utilities for the [`ChannelBank`] stage.
 //!
 //! [ChannelBank]: crate::stages::ChannelBank
+
+use alloc::{boxed::Box, vec::Vec};
+
+use async_trait::async_trait;
+use base_protocol::{BlockInfo, Frame};
 
 use crate::{
     errors::PipelineError,
@@ -8,9 +13,6 @@ use crate::{
     traits::{OriginAdvancer, OriginProvider, SignalReceiver},
     types::{PipelineResult, Signal},
 };
-use alloc::{boxed::Box, vec::Vec};
-use async_trait::async_trait;
-use base_protocol::{BlockInfo, Frame};
 
 /// A mock [`NextFrameProvider`] for testing the [`ChannelBank`] stage.
 ///

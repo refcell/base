@@ -1,13 +1,15 @@
 //! Contains traits that describe the functionality of various data sources used in the derivation
 //! pipeline's stages.
 
-use crate::{PipelineErrorKind, PipelineResult};
 use alloc::{boxed::Box, fmt::Debug, string::ToString, vec::Vec};
+use core::fmt::Display;
+
 use alloy_eips::eip4844::{Blob, IndexedBlobHash};
 use alloy_primitives::{Address, Bytes};
 use async_trait::async_trait;
-use core::fmt::Display;
 use base_protocol::BlockInfo;
+
+use crate::{PipelineErrorKind, PipelineResult};
 
 /// The `BlobProvider` trait specifies the functionality of a data source that can provide blobs.
 #[async_trait]

@@ -1,6 +1,7 @@
 //! Mock implementations for testing engine client functionality.
 
-use crate::{EngineClient, HyperAuthClient};
+use std::{collections::HashMap, sync::Arc};
+
 use alloy_eips::{BlockId, eip1898::BlockNumberOrTag};
 use alloy_network::{Ethereum, Network};
 use alloy_primitives::{Address, B256, BlockHash, StorageKey};
@@ -14,8 +15,6 @@ use alloy_rpc_types_eth::{Block, EIP1186AccountProofResponse, Transaction as Eth
 use alloy_transport::{TransportError, TransportErrorKind, TransportResult};
 use alloy_transport_http::Http;
 use async_trait::async_trait;
-use base_genesis::RollupConfig;
-use base_protocol::L2BlockInfo;
 use base_alloy_network::Optimism;
 use base_alloy_provider::ext::engine::OpEngineApi;
 use base_alloy_rpc_types::Transaction as OpTransaction;
@@ -23,10 +22,11 @@ use base_alloy_rpc_types_engine::{
     OpExecutionPayloadEnvelopeV3, OpExecutionPayloadEnvelopeV4, OpExecutionPayloadV4,
     OpPayloadAttributes, ProtocolVersion,
 };
-use std::{collections::HashMap, sync::Arc};
+use base_genesis::RollupConfig;
+use base_protocol::L2BlockInfo;
 use tokio::sync::RwLock;
 
-use crate::EngineClientError;
+use crate::{EngineClient, EngineClientError, HyperAuthClient};
 
 pub fn test_engine_client_builder() -> MockEngineClientBuilder {
     MockEngineClientBuilder::new().with_config(Arc::new(RollupConfig::default()))
@@ -571,8 +571,9 @@ fn block_id_to_key(block_id: &BlockId) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use alloy_rpc_types_engine::PayloadStatusEnum;
+
+    use super::*;
 
     #[tokio::test]
     async fn test_mock_engine_client_creation() {

@@ -8,56 +8,58 @@ mod block;
 mod call;
 mod pending_block;
 
-use crate::{
-    eth::{receipt::OpReceiptConverter, transaction::OpTxInfoMapper},
-    OpEthApiError, SequencerClient,
-};
-use alloy_consensus::BlockHeader;
-use alloy_eips::BlockNumHash;
-use alloy_primitives::{B256, U256};
-use alloy_rpc_types_eth::{Filter, Log};
-use eyre::WrapErr;
-use futures::StreamExt;
-use base_alloy_network::Optimism;
-use base_alloy_rpc_types_engine::OpFlashblockPayloadBase;
-pub use receipt::{OpReceiptBuilder, OpReceiptFieldsBuilder};
-use reqwest::Url;
-use reth_chainspec::{EthereumHardforks, Hardforks};
-use reth_evm::ConfigureEvm;
-use reth_node_api::{FullNodeComponents, FullNodeTypes, HeaderTy, NodeTypes};
-use reth_node_builder::rpc::{EthApiBuilder, EthApiCtx};
-use base_reth_flashblocks::{
-    FlashBlockBuildInfo, FlashBlockCompleteSequence, FlashBlockCompleteSequenceRx,
-    FlashBlockConsensusClient, FlashBlockRx, FlashBlockService, FlashblocksListeners,
-    PendingBlockRx, PendingFlashBlock, WsFlashBlockStream,
-};
-use reth_rpc::eth::core::EthApiInner;
-use reth_rpc_eth_api::{
-    helpers::{
-        pending_block::BuildPendingEnv, EthApiSpec, EthFees, EthState, LoadFee, LoadPendingBlock,
-        LoadState, SpawnBlocking, Trace,
-    },
-    EthApiTypes, FromEvmError, FullEthApiServer, RpcConvert, RpcConverter, RpcNodeCore,
-    RpcNodeCoreExt, RpcTypes,
-};
-use reth_rpc_eth_types::{
-    logs_utils::matching_block_logs_with_tx_hashes, EthStateCache, FeeHistoryCache, GasPriceOracle,
-    PendingBlock,
-};
-use reth_storage_api::{BlockReaderIdExt, ProviderHeader};
-use reth_tasks::{
-    pool::{BlockingTaskGuard, BlockingTaskPool},
-    TaskSpawner,
-};
 use std::{
     fmt::{self, Formatter},
     marker::PhantomData,
     sync::Arc,
     time::Duration,
 };
+
+use alloy_consensus::BlockHeader;
+use alloy_eips::BlockNumHash;
+use alloy_primitives::{B256, U256};
+use alloy_rpc_types_eth::{Filter, Log};
+use base_alloy_network::Optimism;
+use base_alloy_rpc_types_engine::OpFlashblockPayloadBase;
+use base_reth_flashblocks::{
+    FlashBlockBuildInfo, FlashBlockCompleteSequence, FlashBlockCompleteSequenceRx,
+    FlashBlockConsensusClient, FlashBlockRx, FlashBlockService, FlashblocksListeners,
+    PendingBlockRx, PendingFlashBlock, WsFlashBlockStream,
+};
+use eyre::WrapErr;
+use futures::StreamExt;
+pub use receipt::{OpReceiptBuilder, OpReceiptFieldsBuilder};
+use reqwest::Url;
+use reth_chainspec::{EthereumHardforks, Hardforks};
+use reth_evm::ConfigureEvm;
+use reth_node_api::{FullNodeComponents, FullNodeTypes, HeaderTy, NodeTypes};
+use reth_node_builder::rpc::{EthApiBuilder, EthApiCtx};
+use reth_rpc::eth::core::EthApiInner;
+use reth_rpc_eth_api::{
+    EthApiTypes, FromEvmError, FullEthApiServer, RpcConvert, RpcConverter, RpcNodeCore,
+    RpcNodeCoreExt, RpcTypes,
+    helpers::{
+        EthApiSpec, EthFees, EthState, LoadFee, LoadPendingBlock, LoadState, SpawnBlocking, Trace,
+        pending_block::BuildPendingEnv,
+    },
+};
+use reth_rpc_eth_types::{
+    EthStateCache, FeeHistoryCache, GasPriceOracle, PendingBlock,
+    logs_utils::matching_block_logs_with_tx_hashes,
+};
+use reth_storage_api::{BlockReaderIdExt, ProviderHeader};
+use reth_tasks::{
+    TaskSpawner,
+    pool::{BlockingTaskGuard, BlockingTaskPool},
+};
 use tokio::{sync::watch, time};
-use tokio_stream::{wrappers::BroadcastStream, Stream};
+use tokio_stream::{Stream, wrappers::BroadcastStream};
 use tracing::info;
+
+use crate::{
+    OpEthApiError, SequencerClient,
+    eth::{receipt::OpReceiptConverter, transaction::OpTxInfoMapper},
+};
 
 /// Maximum duration to wait for a fresh flashblock when one is being built.
 const MAX_FLASHBLOCK_WAIT_DURATION: Duration = Duration::from_millis(50);
@@ -157,7 +159,7 @@ impl<N: RpcNodeCore, Rpc: RpcConvert> OpEthApi<N, Rpc> {
                         let Some((block_number, timestamp)) = *state else {
                             // we haven't received a new flashblock sequence yet, so we can skip
                             // until we receive the first index 0 (base)
-                            return futures::future::ready(Some(Vec::new()))
+                            return futures::future::ready(Some(Vec::new()));
                         };
 
                         let receipts =
@@ -198,7 +200,7 @@ impl<N: RpcNodeCore, Rpc: RpcConvert> OpEthApi<N, Rpc> {
         parent_hash: B256,
     ) -> eyre::Result<Option<PendingBlock<N::Primitives>>> {
         let Some(rx) = self.inner.flashblocks.as_ref().map(|f| &f.pending_block_rx) else {
-            return Ok(None)
+            return Ok(None);
         };
 
         // Check if a flashblock is being built
@@ -528,21 +530,21 @@ impl<NetworkT> OpEthApiBuilder<NetworkT> {
 impl<N, NetworkT> EthApiBuilder<N> for OpEthApiBuilder<NetworkT>
 where
     N: FullNodeComponents<
-        Evm: ConfigureEvm<
-            NextBlockEnvCtx: BuildPendingEnv<HeaderTy<N::Types>>
-                                 + From<OpFlashblockPayloadBase>
-                                 + Unpin,
-        >,
-        Types: NodeTypes<
-            ChainSpec: Hardforks + EthereumHardforks,
-            Payload: reth_node_api::PayloadTypes<
-                ExecutionData: for<'a> TryFrom<
-                    &'a FlashBlockCompleteSequence,
-                    Error: std::fmt::Display,
+            Evm: ConfigureEvm<
+                NextBlockEnvCtx: BuildPendingEnv<HeaderTy<N::Types>>
+                                     + From<OpFlashblockPayloadBase>
+                                     + Unpin,
+            >,
+            Types: NodeTypes<
+                ChainSpec: Hardforks + EthereumHardforks,
+                Payload: reth_node_api::PayloadTypes<
+                    ExecutionData: for<'a> TryFrom<
+                        &'a FlashBlockCompleteSequence,
+                        Error: std::fmt::Display,
+                    >,
                 >,
             >,
         >,
-    >,
     NetworkT: RpcTypes,
     OpRpcConvert<N, NetworkT>: RpcConvert<Network = NetworkT>,
     OpEthApi<N, OpRpcConvert<N, NetworkT>>:

@@ -1,10 +1,10 @@
 use std::collections::HashSet;
 
 use alloy_primitives::Address;
-use discv5::Enr;
 use base_disc::{Discv5Handler, HandlerRequest};
 use base_gossip::{ConnectionGater, GossipDriver};
 use base_sources::BlockSignerHandler;
+use discv5::Enr;
 use tokio::sync::{mpsc, watch};
 
 /// A network handler used to communicate with the network once it is started.

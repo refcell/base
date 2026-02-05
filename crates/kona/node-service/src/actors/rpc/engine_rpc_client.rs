@@ -1,17 +1,19 @@
-use crate::{EngineActorRequest, EngineRpcRequest};
+use std::fmt::Debug;
+
 use alloy_eips::BlockNumberOrTag;
 use async_trait::async_trait;
+use base_engine::{EngineQueries, EngineState};
+use base_genesis::RollupConfig;
+use base_protocol::{L2BlockInfo, OutputRoot};
+use base_rpc::EngineRpcClient;
 use derive_more::Constructor;
 use jsonrpsee::{
     core::RpcResult,
     types::{ErrorCode, ErrorObject},
 };
-use base_engine::{EngineQueries, EngineState};
-use base_genesis::RollupConfig;
-use base_protocol::{L2BlockInfo, OutputRoot};
-use base_rpc::EngineRpcClient;
-use std::fmt::Debug;
 use tokio::sync::{mpsc, oneshot, watch};
+
+use crate::{EngineActorRequest, EngineRpcRequest};
 
 /// Queue-based implementation of the [`EngineRpcClient`] trait. This handles all channel-based
 /// operations, providing a nice facade for callers. This also exposes only a subset of the

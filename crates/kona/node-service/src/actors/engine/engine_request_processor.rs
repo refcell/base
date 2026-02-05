@@ -1,6 +1,6 @@
-use crate::{
-    BuildRequest, EngineClientError, EngineDerivationClient, EngineError, ResetRequest, SealRequest,
-};
+use std::sync::Arc;
+
+use base_alloy_rpc_types_engine::OpExecutionPayloadEnvelope;
 use base_derive::{ResetSignal, Signal};
 use base_engine::{
     BuildTask, ConsolidateInput, ConsolidateTask, Engine, EngineClient, EngineTask,
@@ -8,11 +8,13 @@ use base_engine::{
 };
 use base_genesis::RollupConfig;
 use base_protocol::L2BlockInfo;
-use base_alloy_rpc_types_engine::OpExecutionPayloadEnvelope;
-use std::sync::Arc;
 use tokio::{
     sync::{mpsc, watch},
     task::JoinHandle,
+};
+
+use crate::{
+    BuildRequest, EngineClientError, EngineDerivationClient, EngineError, ResetRequest, SealRequest,
 };
 
 /// Requires that the implementor handles [`EngineProcessingRequest`]s via the provided channel.

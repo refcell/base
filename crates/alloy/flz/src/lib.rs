@@ -1,7 +1,7 @@
-//! Tiny FastLZ compression library for L2 transaction cost estimation.
+//! Tiny `FastLZ` compression library for L2 transaction cost estimation.
 //!
 //! This crate provides utilities for estimating the compressed size of transactions
-//! using FastLZ compression, which is used for calculating Optimism L1 data availability
+//! using `FastLZ` compression, which is used for calculating Optimism L1 data availability
 //! costs post-Fjord upgrade.
 //!
 //! # Example
@@ -20,7 +20,6 @@
 
 #[cfg(feature = "compress")]
 pub use fastlz::compress;
-
 #[cfg(feature = "decompress")]
 pub use fastlz::decompress;
 
@@ -68,7 +67,7 @@ pub fn tx_estimated_size_fjord_bytes(input: &[u8]) -> u64 {
     estimated_size.wrapping_div(1_000_000)
 }
 
-/// Returns the length of the data after compression through FastLZ.
+/// Returns the length of the data after compression through `FastLZ`.
 ///
 /// The u32s match op-geth's Go port.
 ///

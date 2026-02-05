@@ -1,5 +1,10 @@
 //! Jovian L1 Block Info transaction types.
 
+use alloc::vec::Vec;
+
+use alloy_primitives::{Address, B256, Bytes};
+use ambassador::{self, Delegate};
+
 use crate::{
     DecodeError, L1BlockInfoIsthmus,
     info::{
@@ -9,9 +14,6 @@ use crate::{
         isthmus::{L1BlockInfoIsthmusBaseFields, ambassador_impl_L1BlockInfoIsthmusBaseFields},
     },
 };
-use alloc::vec::Vec;
-use alloy_primitives::{Address, B256, Bytes};
-use ambassador::{self, Delegate};
 
 /// Represents the fields within an Jovian L1 block info transaction.
 ///
@@ -179,9 +181,11 @@ impl L1BlockInfoJovian {
 #[cfg(test)]
 mod tests {
 
-    use super::*;
     use alloc::vec;
+
     use alloy_primitives::keccak256;
+
+    use super::*;
 
     #[test]
     fn test_decode_calldata_jovian_invalid_length() {

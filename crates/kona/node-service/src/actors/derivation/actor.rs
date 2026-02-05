@@ -1,12 +1,5 @@
 //! [`NodeActor`] implementation for the derivation sub-routine.
 
-use crate::{
-    CancellableContext, DerivationActorRequest, DerivationEngineClient, DerivationState,
-    DerivationStateMachine, DerivationStateTransitionError, DerivationStateUpdate, NodeActor,
-    actors::derivation::L2Finalizer,
-};
-#[cfg(feature = "metrics")]
-use crate::Metrics;
 use async_trait::async_trait;
 use base_derive::{
     ActivationSignal, Pipeline, PipelineError, PipelineErrorKind, ResetError, Signal,
@@ -16,6 +9,14 @@ use base_protocol::OpAttributesWithParent;
 use thiserror::Error;
 use tokio::{select, sync::mpsc};
 use tokio_util::sync::{CancellationToken, WaitForCancellationFuture};
+
+#[cfg(feature = "metrics")]
+use crate::Metrics;
+use crate::{
+    CancellableContext, DerivationActorRequest, DerivationEngineClient, DerivationState,
+    DerivationStateMachine, DerivationStateTransitionError, DerivationStateUpdate, NodeActor,
+    actors::derivation::L2Finalizer,
+};
 
 /// The [`NodeActor`] for the derivation sub-routine.
 ///
@@ -80,7 +81,11 @@ where
     /// Handles a [`Signal`] received over the derivation signal receiver channel.
     async fn signal(&mut self, signal: Signal) {
         if let Signal::Reset(reset_signal) = signal {
-            base_macros::set!(counter, Metrics::DERIVATION_L1_ORIGIN, reset_signal.l1_origin.number);
+            base_macros::set!(
+                counter,
+                Metrics::DERIVATION_L1_ORIGIN,
+                reset_signal.l1_origin.number
+            );
             self.finalizer.clear();
         }
 

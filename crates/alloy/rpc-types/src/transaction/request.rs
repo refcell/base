@@ -1,4 +1,5 @@
 use alloc::{boxed::Box, vec::Vec};
+
 use alloy_consensus::{
     Sealed, SignableTransaction, Signed, TxEip1559, TxEip4844, TypedTransaction,
 };

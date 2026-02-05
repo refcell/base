@@ -1,9 +1,9 @@
 //! The types used in the p2p RPC API.
 
 use core::net::IpAddr;
-use derive_more::Display;
 
 use alloy_primitives::{ChainId, map::HashMap};
+use derive_more::Display;
 
 /// The peer info.
 #[derive(Clone, Default, Debug, serde::Serialize, serde::Deserialize)]

@@ -1,23 +1,25 @@
-use crate::PendingFlashBlock;
-use alloy_eips::{eip2718::WithEncoded, BlockNumberOrTag};
+use std::{
+    sync::Arc,
+    time::{Duration, Instant},
+};
+
+use alloy_eips::{BlockNumberOrTag, eip2718::WithEncoded};
 use alloy_primitives::B256;
 use base_alloy_rpc_types_engine::OpFlashblockPayloadBase;
 use reth_chain_state::{ComputedTrieData, ExecutedBlock};
 use reth_errors::RethError;
 use reth_evm::{
-    execute::{BlockBuilder, BlockBuilderOutcome},
     ConfigureEvm,
+    execute::{BlockBuilder, BlockBuilderOutcome},
 };
 use reth_execution_types::BlockExecutionOutput;
 use reth_primitives_traits::{BlockTy, HeaderTy, NodePrimitives, ReceiptTy, Recovered};
 use reth_revm::{cached::CachedReads, database::StateProviderDatabase, db::State};
 use reth_rpc_eth_types::{EthApiError, PendingBlock};
-use reth_storage_api::{noop::NoopProvider, BlockReaderIdExt, StateProviderFactory};
-use std::{
-    sync::Arc,
-    time::{Duration, Instant},
-};
+use reth_storage_api::{BlockReaderIdExt, StateProviderFactory, noop::NoopProvider};
 use tracing::trace;
+
+use crate::PendingFlashBlock;
 
 /// The `FlashBlockBuilder` builds [`PendingBlock`] out of a sequence of transactions.
 #[derive(Debug)]
@@ -76,7 +78,7 @@ where
         if args.base.parent_hash != latest_hash {
             trace!(target: "flashblocks", flashblock_parent = ?args.base.parent_hash, local_latest=?latest.num_hash(),"Skipping non consecutive flashblock");
             // doesn't attach to the latest block
-            return Ok(None)
+            return Ok(None);
         }
 
         let state_provider = self.provider.history_by_block_hash(latest.hash())?;

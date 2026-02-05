@@ -1,12 +1,13 @@
 //! Transaction receipt types for Optimism.
 
-use super::OpTxReceipt;
-use crate::transaction::OpDepositInfo;
 use alloy_consensus::{
     Eip658Value, Receipt, ReceiptWithBloom, RlpDecodableReceipt, RlpEncodableReceipt, TxReceipt,
 };
 use alloy_primitives::{Bloom, Log};
 use alloy_rlp::{Buf, BufMut, Decodable, Encodable, Header};
+
+use super::OpTxReceipt;
+use crate::transaction::OpDepositInfo;
 
 /// [`OpDepositReceipt`] with calculated bloom filter, modified for the OP Stack.
 ///
@@ -270,6 +271,7 @@ where
 #[cfg(all(feature = "serde", feature = "serde-bincode-compat"))]
 pub(crate) mod serde_bincode_compat {
     use alloc::borrow::Cow;
+
     use alloy_consensus::Receipt;
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
     use serde_with::{DeserializeAs, SerializeAs};
@@ -350,12 +352,13 @@ pub(crate) mod serde_bincode_compat {
 
     #[cfg(test)]
     mod tests {
-        use super::super::{OpDepositReceipt, serde_bincode_compat};
         use alloy_primitives::Log;
         use arbitrary::Arbitrary;
         use rand::Rng;
         use serde::{Deserialize, Serialize, de::DeserializeOwned};
         use serde_with::serde_as;
+
+        use super::super::{OpDepositReceipt, serde_bincode_compat};
 
         #[test]
         fn test_tx_deposit_bincode_roundtrip() {
@@ -375,12 +378,8 @@ pub(crate) mod serde_bincode_compat {
             // ensure we don't have an invalid poststate variant
             data.transaction.inner.status = data.transaction.inner.status.coerce_status().into();
 
-            let encoded = bincode::serde::encode_to_vec(&data, bincode::config::legacy()).unwrap();
-            let (decoded, _) = bincode::serde::decode_from_slice::<Data<Log>, _>(
-                &encoded,
-                bincode::config::legacy(),
-            )
-            .unwrap();
+            let encoded = bincode::serialize(&data).unwrap();
+            let decoded: Data<Log> = bincode::deserialize(&encoded).unwrap();
             assert_eq!(decoded, data);
         }
     }
@@ -388,13 +387,14 @@ pub(crate) mod serde_bincode_compat {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    #[cfg(not(feature = "std"))]
+    use alloc::{vec, vec::Vec};
+
     use alloy_consensus::Receipt;
     use alloy_primitives::{Bytes, Log, LogData, address, b256, bytes, hex};
     use alloy_rlp::{Decodable, Encodable};
 
-    #[cfg(not(feature = "std"))]
-    use alloc::{vec, vec::Vec};
+    use super::*;
 
     // Test vector from: https://eips.ethereum.org/EIPS/eip-2481
     #[test]

@@ -1,7 +1,3 @@
-use crate::{
-    CancellableContext, DerivationActorRequest, DerivationEngineClient, NodeActor,
-    actors::derivation::{DerivationDelegateClient, DerivationError},
-};
 use alloy_primitives::BlockHash;
 use async_trait::async_trait;
 use base_protocol::{L2BlockInfo, SyncStatus};
@@ -9,6 +5,11 @@ use base_providers_alloy::AlloyChainProvider;
 use thiserror::Error;
 use tokio::{select, sync::mpsc, time};
 use tokio_util::sync::{CancellationToken, WaitForCancellationFuture};
+
+use crate::{
+    CancellableContext, DerivationActorRequest, DerivationEngineClient, NodeActor,
+    actors::derivation::{DerivationDelegateClient, DerivationError},
+};
 
 /// The [`NodeActor`] for the delegate derivation sub-routine.
 ///
@@ -234,9 +235,9 @@ where
                 self.engine_l2_safe_head = *safe_head;
                 self.has_engine_sync_completed = true;
             }
-            DerivationActorRequest::ProcessEngineSignalRequest(_) |
-            DerivationActorRequest::ProcessFinalizedL1Block(_) |
-            DerivationActorRequest::ProcessL1HeadUpdateRequest(_) => {
+            DerivationActorRequest::ProcessEngineSignalRequest(_)
+            | DerivationActorRequest::ProcessFinalizedL1Block(_)
+            | DerivationActorRequest::ProcessL1HeadUpdateRequest(_) => {
                 debug!(target: "derivation", "Ignoring request while derivation delegation: {:?}", request_type);
             }
         }

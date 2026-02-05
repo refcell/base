@@ -1,8 +1,12 @@
 //! Tests for custom genesis block number support.
 
+use std::sync::Arc;
+
 use alloy_consensus::BlockHeader;
 use alloy_genesis::Genesis;
 use alloy_primitives::B256;
+use base_chainspec::OpChainSpecBuilder;
+use base_node::{OpNode, utils::optimism_payload_attributes};
 use reth_chainspec::EthChainSpec;
 use reth_db::test_utils::create_test_rw_db_with_path;
 use reth_e2e_test_utils::{
@@ -10,11 +14,8 @@ use reth_e2e_test_utils::{
 };
 use reth_node_builder::{EngineNodeLauncher, Node, NodeBuilder, NodeConfig};
 use reth_node_core::args::DatadirArgs;
-use base_chainspec::OpChainSpecBuilder;
-use base_node::{utils::optimism_payload_attributes, OpNode};
-use reth_provider::{providers::BlockchainProvider, HeaderProvider, StageCheckpointReader};
+use reth_provider::{HeaderProvider, StageCheckpointReader, providers::BlockchainProvider};
 use reth_stages_types::StageId;
-use std::sync::Arc;
 use tokio::sync::Mutex;
 
 /// Tests that an OP node can initialize with a custom genesis block number.

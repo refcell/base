@@ -1,12 +1,13 @@
 //! Bootnode Store
 
-use discv5::Enr;
 use std::{
     collections::VecDeque,
     fs::File,
     io::{BufReader, Seek, SeekFrom},
     path::PathBuf,
 };
+
+use discv5::Enr;
 
 /// The maximum number of peers that can be stored in the bootstore.
 const MAX_PEERS: usize = 2048;

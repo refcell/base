@@ -1,26 +1,28 @@
-use crate::{
-    cache::SequenceManager, worker::FlashBlockBuilder, FlashBlock, FlashBlockCompleteSequence,
-    FlashBlockCompleteSequenceRx, InProgressFlashBlockRx, PendingFlashBlock,
+use std::{
+    sync::Arc,
+    time::{Duration, Instant},
 };
+
 use alloy_primitives::B256;
+use base_alloy_rpc_types_engine::OpFlashblockPayloadBase;
 use futures_util::{FutureExt, Stream, StreamExt};
 use metrics::{Gauge, Histogram};
-use base_alloy_rpc_types_engine::OpFlashblockPayloadBase;
 use reth_evm::ConfigureEvm;
 use reth_metrics::Metrics;
 use reth_primitives_traits::{AlloyBlockHeader, BlockTy, HeaderTy, NodePrimitives, ReceiptTy};
 use reth_revm::cached::CachedReads;
 use reth_storage_api::{BlockReaderIdExt, StateProviderFactory};
 use reth_tasks::TaskExecutor;
-use std::{
-    sync::Arc,
-    time::{Duration, Instant},
-};
 use tokio::{
     sync::{oneshot, watch},
     time::sleep,
 };
 use tracing::*;
+
+use crate::{
+    FlashBlock, FlashBlockCompleteSequence, FlashBlockCompleteSequenceRx, InProgressFlashBlockRx,
+    PendingFlashBlock, cache::SequenceManager, worker::FlashBlockBuilder,
+};
 
 const CONNECTION_BACKOUT_PERIOD: Duration = Duration::from_secs(5);
 

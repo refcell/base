@@ -55,7 +55,6 @@ pub fn scr_rollup_config_by_alloy_ident(chain: &alloy_chains::Chain) -> Option<&
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use alloy_chains::Chain as AlloyChain;
     use alloy_hardforks::{
         holesky::{HOLESKY_BPO1_TIMESTAMP, HOLESKY_BPO2_TIMESTAMP},
@@ -65,6 +64,8 @@ mod tests {
         BASE_MAINNET_JOVIAN_TIMESTAMP, BASE_SEPOLIA_JOVIAN_TIMESTAMP, OP_MAINNET_JOVIAN_TIMESTAMP,
         OP_SEPOLIA_JOVIAN_TIMESTAMP,
     };
+
+    use super::*;
 
     #[test]
     fn test_hardcoded_rollup_configs() {

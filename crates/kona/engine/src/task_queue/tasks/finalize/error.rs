@@ -1,11 +1,12 @@
 //! Contains error types for the [crate::FinalizeTask].
 
-use crate::{
-    EngineTaskError, SynchronizeTaskError, task_queue::tasks::task::EngineTaskErrorSeverity,
-};
 use alloy_transport::{RpcError, TransportErrorKind};
 use base_protocol::FromBlockError;
 use thiserror::Error;
+
+use crate::{
+    EngineTaskError, SynchronizeTaskError, task_queue::tasks::task::EngineTaskErrorSeverity,
+};
 
 #[derive(Debug, Error)]
 pub enum FinalizeTaskError {

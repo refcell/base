@@ -1,11 +1,18 @@
 //! Consensus-layer gossipsub driver for Optimism.
 
+use std::{
+    collections::HashMap,
+    sync::Arc,
+    time::{Duration, Instant},
+};
+
 use alloy_primitives::{Address, hex};
+use base_alloy_rpc_types_engine::OpNetworkPayloadEnvelope;
+use base_genesis::RollupConfig;
+use base_peers::{EnrValidation, PeerMonitoring, enr_to_multiaddr};
 use derive_more::Debug;
 use discv5::Enr;
 use futures::{AsyncReadExt, AsyncWriteExt, stream::StreamExt};
-use base_genesis::RollupConfig;
-use base_peers::{EnrValidation, PeerMonitoring, enr_to_multiaddr};
 use libp2p::{
     Multiaddr, PeerId, Swarm, TransportError,
     gossipsub::{IdentTopic, MessageId},
@@ -13,12 +20,6 @@ use libp2p::{
 };
 use libp2p_identity::Keypair;
 use libp2p_stream::IncomingStreams;
-use base_alloy_rpc_types_engine::OpNetworkPayloadEnvelope;
-use std::{
-    collections::HashMap,
-    sync::Arc,
-    time::{Duration, Instant},
-};
 use tokio::sync::Mutex;
 
 use crate::{

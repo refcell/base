@@ -1,17 +1,19 @@
-use crate::{Cli, Commands};
-use eyre::{eyre, Result};
+use std::{fmt, sync::Arc};
+
+use base_chainspec::OpChainSpec;
+use base_execution_consensus::OpBeaconConsensus;
+use base_node::{OpExecutorProvider, OpNode};
+use eyre::{Result, eyre};
 use reth_cli::chainspec::ChainSpecParser;
 use reth_cli_commands::launcher::Launcher;
 use reth_cli_runner::CliRunner;
 use reth_node_core::args::{OtlpInitStatus, OtlpLogsStatus};
 use reth_node_metrics::recorder::install_prometheus_recorder;
-use base_chainspec::OpChainSpec;
-use base_execution_consensus::OpBeaconConsensus;
-use base_node::{OpExecutorProvider, OpNode};
 use reth_rpc_server_types::RpcModuleValidator;
 use reth_tracing::{FileWorkerGuard, Layers};
-use std::{fmt, sync::Arc};
 use tracing::{info, warn};
+
+use crate::{Cli, Commands};
 
 /// A wrapper around a parsed CLI that handles command execution.
 #[derive(Debug)]

@@ -1,7 +1,13 @@
 //! Command that imports OP mainnet receipts from Bedrock datadir, exported via
 //! <https://github.com/testinprod-io/op-geth/pull/1>.
 
-use crate::receipt_file_codec::OpGethReceiptFileCodec;
+use std::{
+    path::{Path, PathBuf},
+    sync::Arc,
+};
+
+use base_chainspec::OpChainSpec;
+use base_reth_primitives::{OpPrimitives, OpReceipt, bedrock::is_dup_tx};
 use clap::Parser;
 use reth_cli::chainspec::ChainSpecParser;
 use reth_cli_commands::common::{AccessRights, CliNodeTypes, Environment, EnvironmentArgs};
@@ -13,21 +19,17 @@ use reth_downloaders::{
 use reth_execution_types::ExecutionOutcome;
 use reth_node_builder::ReceiptTy;
 use reth_node_core::version::version_metadata;
-use base_chainspec::OpChainSpec;
-use base_reth_primitives::{bedrock::is_dup_tx, OpPrimitives, OpReceipt};
 use reth_primitives_traits::NodePrimitives;
 use reth_provider::{
-    providers::ProviderNodeTypes, DBProvider, DatabaseProviderFactory, OriginalValuesKnown,
-    ProviderFactory, StageCheckpointReader, StageCheckpointWriter, StateWriteConfig, StateWriter,
-    StaticFileProviderFactory, StatsReader,
+    DBProvider, DatabaseProviderFactory, OriginalValuesKnown, ProviderFactory,
+    StageCheckpointReader, StageCheckpointWriter, StateWriteConfig, StateWriter,
+    StaticFileProviderFactory, StatsReader, providers::ProviderNodeTypes,
 };
 use reth_stages::{StageCheckpoint, StageId};
 use reth_static_file_types::StaticFileSegment;
-use std::{
-    path::{Path, PathBuf},
-    sync::Arc,
-};
 use tracing::{debug, info, trace, warn};
+
+use crate::receipt_file_codec::OpGethReceiptFileCodec;
 
 /// Initializes the database with the genesis block.
 #[derive(Debug, Parser)]
@@ -141,8 +143,8 @@ where
 
     // Ensure that receipts hasn't been initialized apart from `init_genesis`.
     if let Some(num_receipts) =
-        static_file_provider.get_highest_static_file_tx(StaticFileSegment::Receipts) &&
-        num_receipts > 0
+        static_file_provider.get_highest_static_file_tx(StaticFileSegment::Receipts)
+        && num_receipts > 0
     {
         eyre::bail!("Expected no receipts in storage, but found {num_receipts}.");
     }
@@ -174,7 +176,7 @@ where
     {
         if highest_block_receipts == highest_block_transactions {
             warn!(target: "reth::cli",  highest_block_receipts, highest_block_transactions, "Ignoring all other blocks in the file since we have reached the desired height");
-            break
+            break;
         }
 
         // create a new file client from chunk read from file
@@ -274,9 +276,9 @@ pub struct ImportReceiptsResult {
 #[cfg(test)]
 mod test {
     use alloy_primitives::hex;
-    use reth_db_common::init::init_genesis;
     use base_chainspec::OP_MAINNET;
     use base_node::OpNode;
+    use reth_db_common::init::init_genesis;
     use reth_provider::test_utils::create_test_provider_factory_with_node_types;
     use reth_stages::test_utils::TestStageDB;
     use tempfile::tempfile;
@@ -285,11 +287,10 @@ mod test {
         io::{AsyncSeekExt, AsyncWriteExt, SeekFrom},
     };
 
+    use super::*;
     use crate::receipt_file_codec::test::{
         HACK_RECEIPT_ENCODED_BLOCK_1, HACK_RECEIPT_ENCODED_BLOCK_2, HACK_RECEIPT_ENCODED_BLOCK_3,
     };
-
-    use super::*;
 
     /// No receipts for genesis block
     const EMPTY_RECEIPTS_GENESIS_BLOCK: &[u8] = &hex!("c0");

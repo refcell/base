@@ -1,4 +1,21 @@
 //! Contains the [`RollupNode`] implementation.
+use std::{ops::Not as _, sync::Arc, time::Duration};
+
+use alloy_eips::BlockNumberOrTag;
+use alloy_provider::RootProvider;
+use base_alloy_network::Optimism;
+use base_derive::StatefulAttributesBuilder;
+use base_engine::{Engine, EngineState, OpEngineClient};
+use base_genesis::{L1ChainConfig, RollupConfig};
+use base_protocol::L2BlockInfo;
+use base_providers_alloy::{
+    AlloyChainProvider, AlloyL2ChainProvider, OnlineBeaconClient, OnlineBlobProvider,
+    OnlinePipeline,
+};
+use base_rpc::RpcBuilder;
+use tokio::sync::{mpsc, watch};
+use tokio_util::sync::CancellationToken;
+
 use crate::{
     ConductorClient, DelayedL1OriginSelectorProvider, DelegateDerivationActor, DerivationActor,
     DerivationDelegateClient, DerivationError, EngineActor, EngineActorRequest, EngineConfig,
@@ -10,21 +27,6 @@ use crate::{
     SequencerConfig,
     actors::{BlockStream, NetworkInboundData, QueuedUnsafePayloadGossipClient},
 };
-use alloy_eips::BlockNumberOrTag;
-use alloy_provider::RootProvider;
-use base_derive::StatefulAttributesBuilder;
-use base_engine::{Engine, EngineState, OpEngineClient};
-use base_genesis::{L1ChainConfig, RollupConfig};
-use base_protocol::L2BlockInfo;
-use base_providers_alloy::{
-    AlloyChainProvider, AlloyL2ChainProvider, OnlineBeaconClient, OnlineBlobProvider,
-    OnlinePipeline,
-};
-use base_rpc::RpcBuilder;
-use base_alloy_network::Optimism;
-use std::{ops::Not as _, sync::Arc, time::Duration};
-use tokio::sync::{mpsc, watch};
-use tokio_util::sync::CancellationToken;
 
 const DERIVATION_PROVIDER_CACHE_SIZE: usize = 1024;
 const HEAD_STREAM_POLL_INTERVAL: u64 = 4;

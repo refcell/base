@@ -400,8 +400,6 @@ impl From<AttributesMismatch> for AttributesMatch {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::AttributesMismatch::EIP1559Parameters;
     use alloy_consensus::EMPTY_ROOT_HASH;
     use alloy_primitives::{Bytes, FixedBytes, address, b256};
     use alloy_rpc_types_eth::BlockTransactions;
@@ -410,6 +408,9 @@ mod tests {
     use base_alloy_rpc_types_engine::OpPayloadAttributes;
     use base_protocol::{BlockInfo, L2BlockInfo};
     use base_registry::ROLLUP_CONFIGS;
+
+    use super::*;
+    use crate::AttributesMismatch::EIP1559Parameters;
 
     fn default_attributes() -> OpAttributesWithParent {
         OpAttributesWithParent {

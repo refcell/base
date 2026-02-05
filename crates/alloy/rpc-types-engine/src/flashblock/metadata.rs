@@ -1,6 +1,7 @@
 //! Flashblock metadata types.
 
 use alloc::collections::BTreeMap;
+
 use alloy_primitives::{Address, B256, U256};
 use base_alloy_consensus::OpReceipt;
 
@@ -71,10 +72,12 @@ where
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use alloc::vec::Vec;
+
     use alloy_consensus::{Eip658Value, Receipt};
     use alloy_primitives::{Log, address};
+
+    use super::*;
 
     fn sample_metadata() -> OpFlashblockPayloadMetadata {
         let mut balances = BTreeMap::new();

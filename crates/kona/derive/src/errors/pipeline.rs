@@ -1,11 +1,13 @@
 //! This module contains derivation errors thrown within the pipeline.
 
-use crate::BuilderError;
 use alloc::string::String;
+
 use alloy_primitives::B256;
 use base_genesis::SystemConfigUpdateError;
 use base_protocol::{DepositError, SpanBatchError};
 use thiserror::Error;
+
+use crate::BuilderError;
 
 /// [`crate::ensure`] is a short-hand for bubbling up errors in the case of a condition not being met.
 #[macro_export]
@@ -371,8 +373,9 @@ pub enum PipelineEncodingError {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use core::error::Error;
+
+    use super::*;
 
     #[test]
     fn test_pipeline_error_kind_source() {
@@ -431,7 +434,7 @@ mod tests {
             )),
             ResetError::HoloceneActivation,
         ];
-        for error in reset_errors.into_iter() {
+        for error in reset_errors {
             let expected = PipelineErrorKind::Reset(error.clone());
             assert_eq!(error.reset(), expected);
         }

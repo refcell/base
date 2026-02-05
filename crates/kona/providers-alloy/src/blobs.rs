@@ -1,8 +1,7 @@
 //! Contains an online implementation of the `BlobProvider` trait.
 
-use crate::BeaconClient;
-#[cfg(feature = "metrics")]
-use crate::Metrics;
+use std::{boxed::Box, string::ToString, vec::Vec};
+
 use alloy_eips::eip4844::{
     Blob, BlobTransactionSidecarItem, IndexedBlobHash, env_settings::EnvKzgSettings,
 };
@@ -10,7 +9,10 @@ use alloy_primitives::FixedBytes;
 use async_trait::async_trait;
 use base_derive::{BlobProvider, BlobProviderError};
 use base_protocol::BlockInfo;
-use std::{boxed::Box, string::ToString, vec::Vec};
+
+use crate::BeaconClient;
+#[cfg(feature = "metrics")]
+use crate::Metrics;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BoxedBlobWithIndex {

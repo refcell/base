@@ -1,7 +1,3 @@
-use crate::{
-    OpPooledTransaction, TxDeposit,
-    transaction::{OpDepositInfo, OpTransactionInfo},
-};
 use alloy_consensus::{
     EthereumTxEnvelope, Extended, Sealable, Sealed, SignableTransaction, Signed,
     TransactionEnvelope, TxEip1559, TxEip2930, TxEip7702, TxEnvelope, TxLegacy,
@@ -10,6 +6,11 @@ use alloy_consensus::{
 };
 use alloy_eips::eip2718::Encodable2718;
 use alloy_primitives::{B256, Bytes, Signature, TxHash};
+
+use crate::{
+    OpPooledTransaction, TxDeposit,
+    transaction::{OpDepositInfo, OpTransactionInfo},
+};
 
 /// The Ethereum [EIP-2718] Transaction Envelope, modified for OP Stack chains.
 ///
@@ -517,7 +518,6 @@ impl alloy_consensus::transaction::SignerRecoverable for OpTxEnvelope {
 /// Bincode-compatible serde implementation for `OpTxEnvelope`.
 #[cfg(all(feature = "serde", feature = "serde-bincode-compat"))]
 pub mod serde_bincode_compat {
-    use crate::serde_bincode_compat::TxDeposit;
     use alloy_consensus::{
         Sealed, Signed,
         transaction::serde_bincode_compat::{TxEip1559, TxEip2930, TxEip7702, TxLegacy},
@@ -525,6 +525,8 @@ pub mod serde_bincode_compat {
     use alloy_primitives::{B256, Signature};
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
     use serde_with::{DeserializeAs, SerializeAs};
+
+    use crate::serde_bincode_compat::TxDeposit;
 
     /// Bincode-compatible representation of an `OpTxEnvelope`.
     #[derive(Debug, Serialize, Deserialize)]
@@ -637,13 +639,14 @@ pub mod serde_bincode_compat {
 
     #[cfg(test)]
     mod tests {
-        use super::*;
         use arbitrary::Arbitrary;
         use rand::Rng;
         use serde::{Deserialize, Serialize};
         use serde_with::serde_as;
 
-        /// Tests a bincode round-trip for OpTxEnvelope using an arbitrary instance.
+        use super::*;
+
+        /// Tests a bincode round-trip for `OpTxEnvelope` using an arbitrary instance.
         #[test]
         fn test_op_tx_envelope_bincode_roundtrip_arbitrary() {
             #[serde_as]
@@ -663,10 +666,8 @@ pub mod serde_bincode_compat {
                 .unwrap(),
             };
 
-            let encoded = bincode::serde::encode_to_vec(&data, bincode::config::legacy()).unwrap();
-            let (decoded, _) =
-                bincode::serde::decode_from_slice::<Data, _>(&encoded, bincode::config::legacy())
-                    .unwrap();
+            let encoded = bincode::serialize(&data).unwrap();
+            let decoded: Data = bincode::deserialize(&encoded).unwrap();
             assert_eq!(decoded, data);
         }
     }
@@ -674,10 +675,12 @@ pub mod serde_bincode_compat {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use alloc::vec;
+
     use alloy_consensus::{SignableTransaction, Transaction};
     use alloy_primitives::{Address, B256, Bytes, Signature, TxKind, U256, hex};
+
+    use super::*;
 
     #[test]
     fn test_tx_gas_limit() {

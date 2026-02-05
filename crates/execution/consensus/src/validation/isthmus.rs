@@ -1,14 +1,15 @@
 //! Block verification w.r.t. consensus rules new in Isthmus hardfork.
 
-use crate::OpConsensusError;
 use alloy_consensus::BlockHeader;
 use alloy_primitives::B256;
 use alloy_trie::EMPTY_ROOT_HASH;
 use base_reth_primitives::L2_TO_L1_MESSAGE_PASSER_ADDRESS;
-use reth_storage_api::{errors::ProviderResult, StorageRootProvider};
+use reth_storage_api::{StorageRootProvider, errors::ProviderResult};
 use reth_trie_common::HashedStorage;
 use revm::database::BundleState;
 use tracing::warn;
+
+use crate::OpConsensusError;
 
 /// Verifies that `withdrawals_root` (i.e. `l2tol1-msg-passer` storage root since Isthmus) field is
 /// set in block header.
@@ -86,7 +87,7 @@ where
         return Err(OpConsensusError::L2WithdrawalsRootMismatch {
             header: header_storage_root,
             exec_res: storage_root,
-        })
+        });
     }
 
     Ok(())
@@ -118,7 +119,7 @@ where
         return Err(OpConsensusError::L2WithdrawalsRootMismatch {
             header: header_storage_root,
             exec_res: storage_root,
-        })
+        });
     }
 
     Ok(())
@@ -126,23 +127,25 @@ where
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use alloc::sync::Arc;
+    use core::str::FromStr;
+
     use alloy_chains::Chain;
     use alloy_consensus::Header;
-    use alloy_primitives::{keccak256, B256, U256};
-    use core::str::FromStr;
-    use reth_db_common::init::init_genesis;
+    use alloy_primitives::{B256, U256, keccak256};
     use base_chainspec::OpChainSpecBuilder;
     use base_node::OpNode;
+    use reth_db_common::init::init_genesis;
     use reth_provider::{
-        providers::BlockchainProvider, test_utils::create_test_provider_factory_with_node_types,
-        StateWriter,
+        StateWriter, providers::BlockchainProvider,
+        test_utils::create_test_provider_factory_with_node_types,
     };
     use reth_revm::db::BundleState;
     use reth_storage_api::StateProviderFactory;
-    use reth_trie::{test_utils::storage_root_prehashed, HashedStorage};
+    use reth_trie::{HashedStorage, test_utils::storage_root_prehashed};
     use reth_trie_common::HashedPostState;
+
+    use super::*;
 
     #[test]
     fn l2tol1_message_passer_no_withdrawals() {

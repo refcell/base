@@ -86,20 +86,20 @@
 //! }
 //! ```
 
-pub use base_op_rpc::{OpEngineApi, OpEthApi, OpEthApiBuilder};
-
-use crate::OP_NAME_CLIENT;
 use alloy_rpc_types_engine::ClientVersionV1;
 use base_alloy_rpc_types_engine::OpExecutionData;
+use base_op_rpc::engine::OP_ENGINE_CAPABILITIES;
+pub use base_op_rpc::{OpEngineApi, OpEthApi, OpEthApiBuilder};
 use reth_chainspec::EthereumHardforks;
 use reth_node_api::{
     AddOnsContext, EngineApiValidator, EngineTypes, FullNodeComponents, NodeTypes,
 };
 use reth_node_builder::rpc::{EngineApiBuilder, PayloadValidatorBuilder};
-use reth_node_core::version::{version_metadata, CLIENT_CODE};
-use base_op_rpc::engine::OP_ENGINE_CAPABILITIES;
+use reth_node_core::version::{CLIENT_CODE, version_metadata};
 use reth_payload_builder::PayloadStore;
 use reth_rpc_engine_api::{EngineApi, EngineCapabilities};
+
+use crate::OP_NAME_CLIENT;
 
 /// Builder for basic [`OpEngineApi`] implementation.
 #[derive(Debug, Default, Clone)]

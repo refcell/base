@@ -1,17 +1,19 @@
-use crate::{OpBuiltPayload, OpNode as OtherOpNode, OpPayloadBuilderAttributes};
+use std::sync::Arc;
+
 use alloy_genesis::Genesis;
 use alloy_primitives::{Address, B256};
 use alloy_rpc_types_engine::PayloadAttributes;
+use base_chainspec::OpChainSpecBuilder;
 use reth_e2e_test_utils::{
-    transaction::TransactionTestContext, wallet::Wallet, NodeHelperType, TmpDB,
+    NodeHelperType, TmpDB, transaction::TransactionTestContext, wallet::Wallet,
 };
 use reth_node_api::NodeTypesWithDBAdapter;
-use base_chainspec::OpChainSpecBuilder;
 use reth_payload_builder::EthPayloadBuilderAttributes;
 use reth_provider::providers::BlockchainProvider;
 use reth_tasks::TaskManager;
-use std::sync::Arc;
 use tokio::sync::Mutex;
+
+use crate::{OpBuiltPayload, OpNode as OtherOpNode, OpPayloadBuilderAttributes};
 
 /// Optimism Node Helper type
 pub(crate) type OpNode =

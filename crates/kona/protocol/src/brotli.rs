@@ -1,9 +1,10 @@
 //! Contains brotli decompression utilities.
 
 use alloc::{vec, vec::Vec};
+use core::ops;
+
 use alloc_no_stdlib::*;
 use brotli::*;
-use core::ops;
 
 use crate::MAX_SPAN_BATCH_ELEMENTS;
 
@@ -77,9 +78,10 @@ pub fn decompress_brotli(
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use alloy_primitives::hex;
     use base_genesis::MAX_RLP_BYTES_PER_CHANNEL_FJORD;
+
+    use super::*;
 
     #[test]
     fn test_decompress_brotli() {

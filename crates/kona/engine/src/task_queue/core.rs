@@ -1,18 +1,20 @@
 //! The [`Engine`] is a task queue that receives and executes [`EngineTask`]s.
 
+use std::{collections::BinaryHeap, sync::Arc};
+
+use alloy_rpc_types_eth::Transaction;
+use base_alloy_consensus::OpTxEnvelope;
+use base_genesis::{RollupConfig, SystemConfig};
+use base_protocol::{BlockInfo, L2BlockInfo, OpBlockConversionError, to_system_config};
+use thiserror::Error;
+use tokio::sync::watch::Sender;
+
 use super::EngineTaskExt;
 use crate::{
     EngineClient, EngineState, EngineSyncStateUpdate, EngineTask, EngineTaskError,
     EngineTaskErrorSeverity, Metrics, SyncStartError, SynchronizeTask, SynchronizeTaskError,
     find_starting_forkchoice, task_queue::EngineTaskErrors,
 };
-use alloy_rpc_types_eth::Transaction;
-use base_alloy_consensus::OpTxEnvelope;
-use base_genesis::{RollupConfig, SystemConfig};
-use base_protocol::{BlockInfo, L2BlockInfo, OpBlockConversionError, to_system_config};
-use std::{collections::BinaryHeap, sync::Arc};
-use thiserror::Error;
-use tokio::sync::watch::Sender;
 
 /// The [`Engine`] task queue.
 #[derive(Debug)]

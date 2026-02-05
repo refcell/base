@@ -1,10 +1,12 @@
 //! Reth trait implementations for base-alloy-rpc-types-engine types.
 
-use crate::{OpExecutionData, OpPayloadAttributes};
 use alloc::vec::Vec;
+
 use alloy_eips::eip4895::Withdrawal;
 use alloy_primitives::{B256, Bytes};
 use reth_payload_primitives::{ExecutionPayload, PayloadAttributes};
+
+use crate::{OpExecutionData, OpPayloadAttributes};
 
 impl ExecutionPayload for OpExecutionData {
     fn parent_hash(&self) -> B256 {

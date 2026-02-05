@@ -1,11 +1,12 @@
 //! Contains the [`SystemConfig`] type.
 
+use alloy_consensus::{Eip658Value, Receipt};
+use alloy_primitives::{Address, B64, Log, U256};
+
 use crate::{
     CONFIG_UPDATE_TOPIC, RollupConfig, SystemConfigLog, SystemConfigUpdateError,
     SystemConfigUpdateKind,
 };
-use alloy_consensus::{Eip658Value, Receipt};
-use alloy_primitives::{Address, B64, Log, U256};
 
 /// System configuration.
 #[derive(Debug, Copy, Clone, Default, Hash, Eq, PartialEq)]
@@ -218,10 +219,12 @@ where
 
 #[cfg(test)]
 mod test {
+    use alloc::vec;
+
+    use alloy_primitives::{B256, LogData, address, b256, hex};
+
     use super::*;
     use crate::{CONFIG_UPDATE_EVENT_VERSION_0, HardForkConfig};
-    use alloc::vec;
-    use alloy_primitives::{B256, LogData, address, b256, hex};
 
     #[test]
     #[cfg(feature = "serde")]

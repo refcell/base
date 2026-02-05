@@ -1,17 +1,19 @@
 //! This module contains the `BatchQueue` stage implementation.
 
+use alloc::{boxed::Box, sync::Arc, vec::Vec};
+use core::fmt::Debug;
+
+use async_trait::async_trait;
+use base_genesis::RollupConfig;
+use base_protocol::{
+    Batch, BatchValidity, BatchWithInclusionBlock, BlockInfo, L2BlockInfo, SingleBatch,
+};
+
 use super::NextBatchProvider;
 use crate::{
     errors::{PipelineEncodingError, PipelineError, PipelineErrorKind, ResetError},
     traits::{AttributesProvider, L2ChainProvider, OriginAdvancer, OriginProvider, SignalReceiver},
     types::{PipelineResult, ResetSignal, Signal},
-};
-use alloc::{boxed::Box, sync::Arc, vec::Vec};
-use async_trait::async_trait;
-use core::fmt::Debug;
-use base_genesis::RollupConfig;
-use base_protocol::{
-    Batch, BatchValidity, BatchWithInclusionBlock, BlockInfo, L2BlockInfo, SingleBatch,
 };
 
 /// [`BatchQueue`] is responsible for ordering unordered batches
@@ -245,8 +247,8 @@ where
         let validity =
             data.check_batch(&self.cfg, &self.l1_blocks, parent, &mut self.fetcher).await;
         // Post-Holocene, future batches are dropped due to prevent gaps.
-        let drop = validity.is_drop() ||
-            (self.cfg.is_holocene_active(origin.timestamp) && validity.is_future());
+        let drop = validity.is_drop()
+            || (self.cfg.is_holocene_active(origin.timestamp) && validity.is_future());
         if drop {
             self.prev.flush();
             return Ok(());
@@ -462,20 +464,22 @@ where
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::test_utils::{
-        CollectingLayer, TestL2ChainProvider, TestNextBatchProvider, TraceStorage,
-    };
     use alloc::vec;
+
     use alloy_consensus::Header;
     use alloy_eips::{BlockNumHash, eip2718::Decodable2718};
     use alloy_primitives::{Address, B256, Bytes, TxKind, U256, address, b256};
     use alloy_rlp::{BytesMut, Encodable};
+    use base_alloy_consensus::{OpBlock, OpTxEnvelope, OpTxType, TxDeposit};
     use base_genesis::{ChainGenesis, HardForkConfig, MAX_RLP_BYTES_PER_CHANNEL_FJORD};
     use base_protocol::{BatchReader, L1BlockInfoBedrock, L1BlockInfoTx};
-    use base_alloy_consensus::{OpBlock, OpTxEnvelope, OpTxType, TxDeposit};
     use tracing::Level;
     use tracing_subscriber::layer::SubscriberExt;
+
+    use super::*;
+    use crate::test_utils::{
+        CollectingLayer, TestL2ChainProvider, TestNextBatchProvider, TraceStorage,
+    };
 
     fn new_batch_reader() -> BatchReader {
         let file_contents =

@@ -60,9 +60,10 @@ impl Hardforks {
 
 #[cfg(test)]
 mod tests {
+    use alloc::vec::Vec;
+
     use super::*;
     use crate::Hardfork;
-    use alloc::vec::Vec;
 
     #[test]
     fn test_hardforks() {

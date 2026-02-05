@@ -12,10 +12,12 @@
 //! [ChannelReader]: crate::stages::channel::ChannelReader
 //! [AttributesQueue]: crate::stages::attributes_queue::AttributesQueue
 
-use crate::types::PipelineResult;
 use alloc::boxed::Box;
+
 use async_trait::async_trait;
 use base_protocol::{Batch, BlockInfo, L2BlockInfo};
+
+use crate::types::PipelineResult;
 
 mod batch_stream;
 pub use batch_stream::{BatchStream, BatchStreamProvider};

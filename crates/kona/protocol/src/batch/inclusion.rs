@@ -1,7 +1,8 @@
 //! Module containing the [`BatchWithInclusionBlock`] struct.
 
-use crate::{Batch, BatchValidationProvider, BatchValidity, BlockInfo, L2BlockInfo};
 use base_genesis::RollupConfig;
+
+use crate::{Batch, BatchValidationProvider, BatchValidity, BlockInfo, L2BlockInfo};
 
 /// A batch with its inclusion block.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -45,9 +46,10 @@ impl BatchWithInclusionBlock {
 
 #[cfg(test)]
 mod tests {
+    use alloc::vec;
+
     use super::*;
     use crate::test_utils::TestBatchValidator;
-    use alloc::vec;
 
     #[tokio::test]
     async fn test_single_batch_with_inclusion_block() {

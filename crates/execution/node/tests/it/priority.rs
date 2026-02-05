@@ -1,22 +1,14 @@
 //! Node builder test that customizes priority of transactions in the block.
 
-use alloy_consensus::{transaction::Recovered, SignableTransaction, Transaction, TxEip1559};
+use std::sync::Arc;
+
+use alloy_consensus::{SignableTransaction, Transaction, TxEip1559, transaction::Recovered};
 use alloy_genesis::Genesis;
 use alloy_network::TxSignerSync;
 use alloy_primitives::{Address, ChainId, TxKind};
-use reth_chainspec::EthChainSpec;
-use reth_db::test_utils::create_test_rw_db_with_path;
-use reth_e2e_test_utils::{
-    node::NodeTestContext, transaction::TransactionTestContext, wallet::Wallet,
-};
-use reth_node_api::FullNodeTypes;
-use reth_node_builder::{
-    components::{BasicPayloadServiceBuilder, ComponentsBuilder},
-    EngineNodeLauncher, Node, NodeBuilder, NodeConfig,
-};
-use reth_node_core::args::DatadirArgs;
 use base_chainspec::OpChainSpecBuilder;
 use base_node::{
+    OpNode,
     args::RollupArgs,
     node::{
         OpConsensusBuilder, OpExecutorBuilder, OpNetworkBuilder, OpNodeComponentBuilder,
@@ -24,9 +16,19 @@ use base_node::{
     },
     txpool::OpPooledTransaction,
     utils::optimism_payload_attributes,
-    OpNode,
 };
 use base_payload_builder::builder::OpPayloadTransactions;
+use reth_chainspec::EthChainSpec;
+use reth_db::test_utils::create_test_rw_db_with_path;
+use reth_e2e_test_utils::{
+    node::NodeTestContext, transaction::TransactionTestContext, wallet::Wallet,
+};
+use reth_node_api::FullNodeTypes;
+use reth_node_builder::{
+    EngineNodeLauncher, Node, NodeBuilder, NodeConfig,
+    components::{BasicPayloadServiceBuilder, ComponentsBuilder},
+};
+use reth_node_core::args::DatadirArgs;
 use reth_payload_util::{
     BestPayloadTransactions, PayloadTransactions, PayloadTransactionsChain,
     PayloadTransactionsFixed,
@@ -34,7 +36,6 @@ use reth_payload_util::{
 use reth_provider::providers::BlockchainProvider;
 use reth_tasks::TaskManager;
 use reth_transaction_pool::PoolTransaction;
-use std::sync::Arc;
 use tokio::sync::Mutex;
 
 #[derive(Clone, Debug)]

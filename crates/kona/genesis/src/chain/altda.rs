@@ -1,6 +1,7 @@
 //! Contains the AltDA config type.
 
 use alloc::string::String;
+
 use alloy_primitives::Address;
 
 /// AltDA configuration.
@@ -23,9 +24,11 @@ pub struct AltDAConfig {
 #[cfg(test)]
 #[cfg(feature = "serde")]
 mod tests {
-    use super::*;
     use alloc::string::ToString;
+
     use alloy_primitives::address;
+
+    use super::*;
 
     #[test]
     fn test_altda_deserialize_json() {

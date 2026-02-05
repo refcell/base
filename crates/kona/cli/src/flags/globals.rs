@@ -57,9 +57,10 @@ impl GlobalArgs {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use clap::Parser;
     use rstest::rstest;
+
+    use super::*;
 
     #[rstest]
     #[case::numeric_optimism("10", 10)]
@@ -97,11 +98,14 @@ mod tests {
     #[case::numeric("10", 10)]
     #[case::string("optimism", 10)]
     fn test_l2_chain_id_env_var(#[case] env_value: &str, #[case] expected_id: u64) {
+        // SAFETY: This is a test that runs single-threaded. Modifying environment variables
+        // is safe because no other threads are reading them concurrently.
         unsafe {
             std::env::set_var("BASE_NODE_L2_CHAIN_ID", env_value);
         }
         let args = GlobalArgs::try_parse_from(["test"]).unwrap();
         assert_eq!(args.l2_chain_id.id(), expected_id);
+        // SAFETY: Same as above - test runs single-threaded.
         unsafe {
             std::env::remove_var("BASE_NODE_L2_CHAIN_ID");
         }

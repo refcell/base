@@ -2,15 +2,14 @@
 
 use std::{net::IpAddr, num::TryFromIntError, sync::Arc};
 
-use crate::{GossipDriver, GossipScores};
 use alloy_primitives::map::{HashMap, HashSet};
+use base_disc::Discv5Handler;
+use base_peers::OpStackEnr;
 use discv5::{
     enr::{NodeId, k256::ecdsa},
     multiaddr::Protocol,
 };
 use ipnet::IpNet;
-use base_disc::Discv5Handler;
-use base_peers::OpStackEnr;
 use libp2p::{Multiaddr, PeerId, gossipsub::TopicHash};
 use tokio::sync::oneshot::Sender;
 
@@ -18,7 +17,7 @@ use super::{
     PeerDump, PeerStats,
     types::{Connectedness, Direction, PeerInfo, PeerScores},
 };
-use crate::ConnectionGate;
+use crate::{ConnectionGate, GossipDriver, GossipScores};
 
 /// A p2p RPC Request.
 #[derive(Debug)]

@@ -78,12 +78,11 @@ impl EngineQueries {
                 let output_block = client.l2_block_by_label(block).await?;
                 let output_block = output_block.ok_or(EngineQueriesError::NoL2BlockFound(block))?;
                 let consensus_block = output_block.clone().into_consensus();
-                let output_block_info =
-                    L2BlockInfo::from_block_and_genesis::<OpTxEnvelope>(
-                        &consensus_block.map_transactions(|tx| tx.inner.inner.into_inner()),
-                        &rollup_config.genesis,
-                    )
-                    .map_err(|_| EngineQueriesError::NoL2BlockFound(block))?;
+                let output_block_info = L2BlockInfo::from_block_and_genesis::<OpTxEnvelope>(
+                    &consensus_block.map_transactions(|tx| tx.inner.inner.into_inner()),
+                    &rollup_config.genesis,
+                )
+                .map_err(|_| EngineQueriesError::NoL2BlockFound(block))?;
 
                 let state_root = output_block.header.state_root;
 

@@ -390,12 +390,14 @@ impl L1BlockInfoTx {
 
 #[cfg(test)]
 mod test {
-    use super::*;
-    use crate::test_utils::{RAW_BEDROCK_INFO_TX, RAW_ECOTONE_INFO_TX, RAW_ISTHMUS_INFO_TX};
     use alloc::{string::ToString, vec::Vec};
+
     use alloy_primitives::{address, b256};
     use base_genesis::HardForkConfig;
     use rstest::rstest;
+
+    use super::*;
+    use crate::test_utils::{RAW_BEDROCK_INFO_TX, RAW_ECOTONE_INFO_TX, RAW_ISTHMUS_INFO_TX};
 
     #[test]
     fn test_l1_block_info_missing_selector() {
@@ -814,7 +816,7 @@ mod test {
             },
             ..Default::default()
         };
-        let mut l1_genesis: L1ChainConfig = L1ChainConfig::default().into();
+        let mut l1_genesis: L1ChainConfig = L1ChainConfig::default();
         l1_genesis.prague_time = Some(2);
 
         let system_config = SystemConfig::default();

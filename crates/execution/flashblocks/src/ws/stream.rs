@@ -1,22 +1,23 @@
-use crate::{ws::FlashBlockDecoder, FlashBlock};
-use futures_util::{
-    stream::{SplitSink, SplitStream},
-    FutureExt, Sink, Stream, StreamExt,
-};
 use std::{
     fmt::{Debug, Formatter},
     future::Future,
     pin::Pin,
-    task::{ready, Context, Poll},
+    task::{Context, Poll, ready},
+};
+
+use futures_util::{
+    FutureExt, Sink, Stream, StreamExt,
+    stream::{SplitSink, SplitStream},
 };
 use tokio::net::TcpStream;
 use tokio_tungstenite::{
-    connect_async,
-    tungstenite::{protocol::CloseFrame, Bytes, Error, Message},
-    MaybeTlsStream, WebSocketStream,
+    MaybeTlsStream, WebSocketStream, connect_async,
+    tungstenite::{Bytes, Error, Message, protocol::CloseFrame},
 };
 use tracing::debug;
 use url::Url;
+
+use crate::{FlashBlock, ws::FlashBlockDecoder};
 
 /// An asynchronous stream of [`FlashBlock`] from a websocket connection.
 ///
@@ -106,12 +107,12 @@ where
                     let _ = ready!(sink.as_mut().poll_flush(cx));
                 }
 
-                let Some(msg) = ready!(this
-                    .stream
-                    .as_mut()
-                    .expect("Stream state should be unreachable without stream")
-                    .poll_next_unpin(cx))
-                else {
+                let Some(msg) = ready!(
+                    this.stream
+                        .as_mut()
+                        .expect("Stream state should be unreachable without stream")
+                        .poll_next_unpin(cx)
+                ) else {
                     this.state = State::Initial;
 
                     continue 'start;
@@ -119,10 +120,10 @@ where
 
                 match msg {
                     Ok(Message::Binary(bytes)) => {
-                        return Poll::Ready(Some(this.decoder.decode(bytes)))
+                        return Poll::Ready(Some(this.decoder.decode(bytes)));
                     }
                     Ok(Message::Text(bytes)) => {
-                        return Poll::Ready(Some(this.decoder.decode(bytes.into())))
+                        return Poll::Ready(Some(this.decoder.decode(bytes.into())));
                     }
                     Ok(Message::Ping(bytes)) => this.ping(bytes),
                     Ok(Message::Close(frame)) => this.close(frame),
@@ -239,14 +240,16 @@ impl WsConnect for WsConnector {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use std::{future, iter};
+
     use alloy_primitives::bytes::Bytes;
     use brotli::enc::BrotliEncoderParams;
-    use std::{future, iter};
     use tokio_tungstenite::tungstenite::{
-        protocol::frame::{coding::CloseCode, Frame},
         Error,
+        protocol::frame::{Frame, coding::CloseCode},
     };
+
+    use super::*;
 
     /// A `FakeConnector` creates [`FakeStream`].
     ///

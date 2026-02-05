@@ -1,14 +1,15 @@
-use alloy_primitives::{Address, B256, B64};
-use eyre::Result;
+use std::sync::Arc;
+
+use alloy_primitives::{Address, B64, B256};
 use base_alloy_rpc_types_engine::OpPayloadAttributes;
+use base_chainspec::{OP_MAINNET, OpChainSpecBuilder};
+use base_node::{OpEngineTypes, OpNode};
+use eyre::Result;
 use reth_e2e_test_utils::testsuite::{
+    TestBuilder,
     actions::AssertMineBlock,
     setup::{NetworkSetup, Setup},
-    TestBuilder,
 };
-use base_chainspec::{OpChainSpecBuilder, OP_MAINNET};
-use base_node::{OpEngineTypes, OpNode};
-use std::sync::Arc;
 
 #[tokio::test]
 async fn test_testsuite_op_assert_mine_block() -> Result<()> {

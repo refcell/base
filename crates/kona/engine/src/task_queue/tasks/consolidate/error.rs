@@ -1,10 +1,11 @@
 //! Contains error types for the [`crate::ConsolidateTask`].
 
+use thiserror::Error;
+
 use crate::{
     BuildTaskError, EngineTaskError, SealTaskError, SynchronizeTaskError,
     task_queue::tasks::{BuildAndSealError, task::EngineTaskErrorSeverity},
 };
-use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum ConsolidateTaskError {

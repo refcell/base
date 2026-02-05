@@ -1,18 +1,20 @@
 //! Isthmus L1 Block Info transaction types.
 
-use crate::info::{
-    bedrock_base::ambassador_impl_L1BlockInfoBedrockBaseFields,
-    ecotone_base::ambassador_impl_L1BlockInfoEcotoneBaseFields,
-};
 use alloc::vec::Vec;
+
 use alloy_primitives::{Address, B256, Bytes};
 use ambassador::{Delegate, delegatable_trait};
 
 use crate::{
     DecodeError,
     info::{
-        bedrock_base::L1BlockInfoBedrockBaseFields,
-        ecotone_base::{L1BlockInfoEcotoneBase, L1BlockInfoEcotoneBaseFields},
+        bedrock_base::{
+            L1BlockInfoBedrockBaseFields, ambassador_impl_L1BlockInfoBedrockBaseFields,
+        },
+        ecotone_base::{
+            L1BlockInfoEcotoneBase, L1BlockInfoEcotoneBaseFields,
+            ambassador_impl_L1BlockInfoEcotoneBaseFields,
+        },
     },
 };
 
@@ -229,8 +231,9 @@ impl L1BlockInfoIsthmus {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use alloc::vec;
+
+    use super::*;
 
     #[test]
     fn test_decode_calldata_isthmus_invalid_length() {

@@ -4,11 +4,11 @@ use alloc::sync::Arc;
 
 use alloy_chains::Chain;
 use alloy_primitives::U256;
-use reth_chainspec::{BaseFeeParams, BaseFeeParamsKind, ChainSpec};
 use base_forks::DEV_HARDFORKS;
+use reth_chainspec::{BaseFeeParams, BaseFeeParamsKind, ChainSpec};
 use reth_primitives_traits::SealedHeader;
 
-use crate::{make_op_genesis_header, LazyLock, OpChainSpec};
+use crate::{LazyLock, OpChainSpec, make_op_genesis_header};
 
 /// OP dev testnet specification
 ///

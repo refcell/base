@@ -1,14 +1,16 @@
 //! A task for the `engine_forkchoiceUpdated` method, with no attributes.
 
+use std::sync::Arc;
+
+use alloy_rpc_types_engine::{INVALID_FORK_CHOICE_STATE_ERROR, PayloadStatusEnum};
+use async_trait::async_trait;
+use base_genesis::RollupConfig;
+use derive_more::Constructor;
+use tokio::time::Instant;
+
 use crate::{
     EngineClient, EngineState, EngineTaskExt, SynchronizeTaskError, state::EngineSyncStateUpdate,
 };
-use alloy_rpc_types_engine::{INVALID_FORK_CHOICE_STATE_ERROR, PayloadStatusEnum};
-use async_trait::async_trait;
-use derive_more::Constructor;
-use base_genesis::RollupConfig;
-use std::sync::Arc;
-use tokio::time::Instant;
 
 #[derive(Debug, Clone, Constructor)]
 pub struct SynchronizeTask<EngineClient_: EngineClient> {
@@ -39,9 +41,7 @@ impl<EngineClient_: EngineClient> SynchronizeTask<EngineClient_> {
                 debug!(target: "engine", "Attempting to update forkchoice state while EL syncing");
                 Ok(())
             }
-            s => {
-                Err(SynchronizeTaskError::UnexpectedPayloadStatus(s.clone()))
-            }
+            s => Err(SynchronizeTaskError::UnexpectedPayloadStatus(s.clone())),
         }
     }
 }
@@ -59,8 +59,8 @@ impl<EngineClient_: EngineClient> EngineTaskExt for SynchronizeTask<EngineClient
             return Ok(());
         }
 
-        if new_sync_state.unsafe_head().block_info.number <
-            new_sync_state.finalized_head().block_info.number
+        if new_sync_state.unsafe_head().block_info.number
+            < new_sync_state.finalized_head().block_info.number
         {
             return Err(SynchronizeTaskError::FinalizedAheadOfUnsafe(
                 new_sync_state.unsafe_head().block_info.number,

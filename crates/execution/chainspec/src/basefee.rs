@@ -4,9 +4,11 @@ use core::cmp::max;
 
 use alloy_consensus::BlockHeader;
 use alloy_eips::calc_next_block_base_fee;
-use base_alloy_consensus::{decode_holocene_extra_data, decode_jovian_extra_data, EIP1559ParamError};
-use reth_chainspec::{BaseFeeParams, EthChainSpec};
+use base_alloy_consensus::{
+    EIP1559ParamError, decode_holocene_extra_data, decode_jovian_extra_data,
+};
 use base_forks::OpHardforks;
+use reth_chainspec::{BaseFeeParams, EthChainSpec};
 
 /// Extracts the Holocene 1599 parameters from the encoded extra data from the parent header.
 ///
@@ -79,12 +81,11 @@ mod tests {
     use alloc::sync::Arc;
 
     use base_alloy_consensus::encode_jovian_extra_data;
-    use reth_chainspec::{ChainSpec, ForkCondition, Hardfork};
     use base_forks::OpHardfork;
-
-    use crate::{OpChainSpec, BASE_SEPOLIA};
+    use reth_chainspec::{ChainSpec, ForkCondition, Hardfork};
 
     use super::*;
+    use crate::{BASE_SEPOLIA, OpChainSpec};
 
     const JOVIAN_TIMESTAMP: u64 = 1900000000;
 

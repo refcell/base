@@ -13,7 +13,7 @@ use base_genesis::{
     HardForkConfig, RollupConfig, SystemConfig,
 };
 
-/// The [RollupConfig] for Base Mainnet.
+/// The [`RollupConfig`] for Base Mainnet.
 pub const BASE_MAINNET_CONFIG: RollupConfig = RollupConfig {
     genesis: ChainGenesis {
         l1: BlockNumHash {

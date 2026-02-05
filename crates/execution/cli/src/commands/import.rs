@@ -1,5 +1,10 @@
 //! Command that initializes the node by importing OP Mainnet chain segment below Bedrock, from a
 //! file.
+use std::{path::PathBuf, sync::Arc};
+
+use base_chainspec::OpChainSpec;
+use base_evm::OpExecutorProvider;
+use base_reth_primitives::{OpPrimitives, bedrock::is_dup_tx};
 use clap::Parser;
 use reth_cli::chainspec::ChainSpecParser;
 use reth_cli_commands::{
@@ -11,14 +16,10 @@ use reth_db_api::{tables, transaction::DbTx};
 use reth_downloaders::file_client::{ChunkedFileReader, DEFAULT_BYTE_LEN_CHUNK_CHAIN_FILE};
 use reth_node_builder::BlockTy;
 use reth_node_core::version::version_metadata;
-use base_chainspec::OpChainSpec;
-use base_evm::OpExecutorProvider;
-use base_reth_primitives::{bedrock::is_dup_tx, OpPrimitives};
 use reth_provider::{BlockNumReader, ChainSpecProvider, HeaderProvider, StageCheckpointReader};
 use reth_prune::PruneModes;
 use reth_stages::StageId;
 use reth_static_file::StaticFileProducer;
-use std::{path::PathBuf, sync::Arc};
 use tracing::{debug, error, info};
 
 /// Syncs RLP encoded blocks from a file.
@@ -92,7 +93,7 @@ impl<C: ChainSpecParser<ChainSpec = OpChainSpec>> ImportOpCommand<C> {
                 body.transactions.retain(|_| {
                     if is_dup_tx(block_number) {
                         total_filtered_out_dup_txns += 1;
-                        return false
+                        return false;
                     }
                     true
                 })
@@ -135,8 +136,8 @@ impl<C: ChainSpecParser<ChainSpec = OpChainSpec>> ImportOpCommand<C> {
         let total_imported_blocks = provider.tx_ref().entries::<tables::HeaderNumbers>()?;
         let total_imported_txns = provider.tx_ref().entries::<tables::TransactionHashNumbers>()?;
 
-        if total_decoded_blocks != total_imported_blocks ||
-            total_decoded_txns != total_imported_txns + total_filtered_out_dup_txns
+        if total_decoded_blocks != total_imported_blocks
+            || total_decoded_txns != total_imported_txns + total_filtered_out_dup_txns
         {
             error!(target: "reth::cli",
                 total_decoded_blocks,

@@ -1,13 +1,15 @@
 //! Contains the forkchoice state for the L2.
 
-use crate::{EngineClient, SyncStartError};
+use std::fmt::Display;
+
 use alloy_eips::{BlockId, BlockNumberOrTag};
 use alloy_provider::Network;
 use alloy_transport::TransportResult;
 use base_alloy_network::Optimism;
 use base_genesis::RollupConfig;
 use base_protocol::L2BlockInfo;
-use std::fmt::Display;
+
+use crate::{EngineClient, SyncStartError};
 
 /// An unsafe, safe, and finalized [L2BlockInfo] returned by the [crate::find_starting_forkchoice]
 /// function.

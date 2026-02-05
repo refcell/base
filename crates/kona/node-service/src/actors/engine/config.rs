@@ -1,4 +1,5 @@
-use crate::NodeMode;
+use std::{sync::Arc, time::Duration};
+
 use alloy_provider::RootProvider;
 use alloy_rpc_types_engine::JwtSecret;
 use base_alloy_network::Optimism;
@@ -6,8 +7,9 @@ use base_engine::{
     EngineClientBuilder, EngineClientBuilderError, OpEngineClient, RollupBoostServerArgs,
 };
 use base_genesis::RollupConfig;
-use std::{sync::Arc, time::Duration};
 use url::Url;
+
+use crate::NodeMode;
 
 /// Configuration for the Engine Actor.
 #[derive(Debug, Clone)]

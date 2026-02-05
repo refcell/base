@@ -1,6 +1,7 @@
 //! Traits for resetting stages.
 
 use alloc::boxed::Box;
+
 use async_trait::async_trait;
 use base_genesis::SystemConfig;
 use base_protocol::BlockInfo;

@@ -1,25 +1,27 @@
 //! Loads and formats OP receipt RPC response.
 
-use crate::{eth::RpcNodeCore, OpEthApi, OpEthApiError};
+use std::fmt::Debug;
+
 use alloy_consensus::{BlockHeader, Receipt, ReceiptWithBloom, TxReceipt};
 use alloy_eips::eip2718::Encodable2718;
 use alloy_rpc_types_eth::{Log, TransactionReceipt};
 use base_alloy_consensus::{OpReceipt, OpTransaction};
 use base_alloy_rpc_types::{L1BlockInfo, OpTransactionReceipt, OpTransactionReceiptFields};
+use base_evm::RethL1BlockInfo;
+use base_forks::OpHardforks;
 use op_revm::estimate_tx_compressed_size;
 use reth_chainspec::{ChainSpecProvider, EthChainSpec};
 use reth_node_api::NodePrimitives;
-use base_evm::RethL1BlockInfo;
-use base_forks::OpHardforks;
 use reth_primitives_traits::SealedBlock;
 use reth_rpc_eth_api::{
+    RpcConvert,
     helpers::LoadReceipt,
     transaction::{ConvertReceiptInput, ReceiptConverter},
-    RpcConvert,
 };
-use reth_rpc_eth_types::{receipt::build_receipt, EthApiError};
+use reth_rpc_eth_types::{EthApiError, receipt::build_receipt};
 use reth_storage_api::BlockReader;
-use std::fmt::Debug;
+
+use crate::{OpEthApi, OpEthApiError, eth::RpcNodeCore};
 
 impl<N, Rpc> LoadReceipt for OpEthApi<N, Rpc>
 where
@@ -340,17 +342,18 @@ impl OpReceiptBuilder {
 
 #[cfg(test)]
 mod test {
-    use super::*;
-    use alloy_consensus::{transaction::TransactionMeta, Block, BlockBody, Eip658Value, TxEip7702};
+    use alloy_consensus::{Block, BlockBody, Eip658Value, TxEip7702, transaction::TransactionMeta};
     use alloy_op_hardforks::{
-        OpChainHardforks, OP_MAINNET_ISTHMUS_TIMESTAMP, OP_MAINNET_JOVIAN_TIMESTAMP,
+        OP_MAINNET_ISTHMUS_TIMESTAMP, OP_MAINNET_JOVIAN_TIMESTAMP, OpChainHardforks,
     };
-    use alloy_primitives::{hex, Address, Bytes, Signature, U256};
+    use alloy_primitives::{Address, Bytes, Signature, U256, hex};
     use base_alloy_consensus::OpTypedTransaction;
     use base_alloy_network::eip2718::Decodable2718;
     use base_chainspec::{BASE_MAINNET, OP_MAINNET};
     use base_reth_primitives::{OpPrimitives, OpTransactionSigned};
     use reth_primitives_traits::Recovered;
+
+    use super::*;
 
     /// OP Mainnet transaction at index 0 in block 124665056.
     ///

@@ -1,9 +1,10 @@
 //! Contains error types for the [crate::SynchronizeTask].
 
-use crate::{EngineTaskError, task_queue::tasks::task::EngineTaskErrorSeverity};
 use alloy_rpc_types_engine::PayloadStatusEnum;
 use alloy_transport::{RpcError, TransportErrorKind};
 use thiserror::Error;
+
+use crate::{EngineTaskError, task_queue::tasks::task::EngineTaskErrorSeverity};
 
 #[derive(Debug, Error)]
 pub enum SynchronizeTaskError {

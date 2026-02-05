@@ -1,5 +1,5 @@
-use derive_more::PartialEq;
 use base_protocol::{L2BlockInfo, OpAttributesWithParent};
+use derive_more::PartialEq;
 use thiserror::Error;
 use tracing::info;
 
@@ -71,9 +71,11 @@ fn transition(
         // NB: initial state. Once we transition away from this, we never go back.
         DerivationState::AwaitingELSyncCompletion => match update {
             DerivationStateUpdate::ELSyncCompleted(_) => Ok(DerivationState::Deriving),
-            DerivationStateUpdate::NewAttributesConfirmed(_) |
-            DerivationStateUpdate::SignalProcessed |
-            DerivationStateUpdate::L1DataReceived => Ok(DerivationState::AwaitingELSyncCompletion),
+            DerivationStateUpdate::NewAttributesConfirmed(_)
+            | DerivationStateUpdate::SignalProcessed
+            | DerivationStateUpdate::L1DataReceived => {
+                Ok(DerivationState::AwaitingELSyncCompletion)
+            }
             _ => Err(DerivationStateTransitionError::InvalidTransition {
                 state: *state,
                 update: update.clone(),
@@ -115,8 +117,8 @@ fn transition(
             }),
         },
         DerivationState::AwaitingUpdateAfterSignal => match update {
-            DerivationStateUpdate::L1DataReceived |
-            DerivationStateUpdate::NewAttributesConfirmed(_) => Ok(DerivationState::Deriving),
+            DerivationStateUpdate::L1DataReceived
+            | DerivationStateUpdate::NewAttributesConfirmed(_) => Ok(DerivationState::Deriving),
             DerivationStateUpdate::SignalProcessed => {
                 Ok(DerivationState::AwaitingUpdateAfterSignal)
             }
@@ -195,9 +197,10 @@ impl DerivationStateMachine {
         state_update: &DerivationStateUpdate,
     ) -> Result<(), DerivationStateTransitionError> {
         if let DerivationStateUpdate::NewAttributesConfirmed(safe_head) = state_update
-            && safe_head.block_info.hash == self.confirmed_safe_head.block_info.hash {
-                info!(target: "derivation", ?safe_head, "Re-received safe head. Skipping state transition.");
-            }
+            && safe_head.block_info.hash == self.confirmed_safe_head.block_info.hash
+        {
+            info!(target: "derivation", ?safe_head, "Re-received safe head. Skipping state transition.");
+        }
 
         info!(target: "derivation", state=?self.state, ?state_update, "Executing derivation state update.");
         self.state = transition(&self.state, state_update)?;
@@ -214,17 +217,18 @@ impl DerivationStateMachine {
 
 #[cfg(test)]
 mod tests {
+    use alloy_eips::BlockNumHash;
+    use alloy_primitives::{BlockHash, b256};
+    use base_alloy_rpc_types_engine::OpPayloadAttributes;
+    use base_protocol::{BlockInfo, OpAttributesWithParent};
+    use rstest::rstest;
+
     use super::{
         DerivationState::*, DerivationStateMachine, DerivationStateTransitionError,
         DerivationStateUpdate::*, L2BlockInfo, transition,
     };
-    use alloy_eips::BlockNumHash;
-    use alloy_primitives::{BlockHash, b256};
-    use base_protocol::{BlockInfo, OpAttributesWithParent};
-    use base_alloy_rpc_types_engine::OpPayloadAttributes;
-    use rstest::rstest;
 
-    /// Creates a dummy L2BlockInfo for testing
+    /// Creates a dummy `L2BlockInfo` for testing
     fn dummy_l2_block_info() -> L2BlockInfo {
         L2BlockInfo {
             block_info: BlockInfo {
@@ -238,7 +242,7 @@ mod tests {
         }
     }
 
-    /// Creates a dummy OpAttributesWithParent for testing
+    /// Creates a dummy `OpAttributesWithParent` for testing
     fn dummy_op_attributes() -> OpAttributesWithParent {
         OpAttributesWithParent {
             attributes: OpPayloadAttributes::default(),

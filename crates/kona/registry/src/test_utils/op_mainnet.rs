@@ -13,7 +13,7 @@ use base_genesis::{
     OP_MAINNET_BASE_FEE_CONFIG, RollupConfig, SystemConfig,
 };
 
-/// The [RollupConfig] for OP Mainnet.
+/// The [`RollupConfig`] for OP Mainnet.
 pub const OP_MAINNET_CONFIG: RollupConfig = RollupConfig {
     genesis: ChainGenesis {
         l1: BlockNumHash {

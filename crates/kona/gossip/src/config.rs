@@ -1,10 +1,11 @@
 //! Gossipsub Config
 
+use std::time::Duration;
+
 use lazy_static::lazy_static;
 use libp2p::gossipsub::{Config, ConfigBuilder, Message, MessageId};
 use openssl::sha::sha256;
 use snap::raw::Decoder;
-use std::time::Duration;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // GossipSub Constants

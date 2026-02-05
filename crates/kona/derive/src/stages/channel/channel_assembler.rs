@@ -1,19 +1,21 @@
 //! This module contains the [`ChannelAssembler`] stage.
 
+use alloc::{boxed::Box, sync::Arc};
+use core::fmt::Debug;
+
+use alloy_primitives::{Bytes, hex};
+use async_trait::async_trait;
+use base_genesis::{
+    MAX_RLP_BYTES_PER_CHANNEL_BEDROCK, MAX_RLP_BYTES_PER_CHANNEL_FJORD, RollupConfig,
+};
+use base_protocol::{BlockInfo, Channel};
+
 use super::{ChannelReaderProvider, NextFrameProvider};
 use crate::{
     errors::PipelineError,
     traits::{OriginAdvancer, OriginProvider, SignalReceiver},
     types::{PipelineResult, Signal},
 };
-use alloc::{boxed::Box, sync::Arc};
-use alloy_primitives::{Bytes, hex};
-use async_trait::async_trait;
-use core::fmt::Debug;
-use base_genesis::{
-    MAX_RLP_BYTES_PER_CHANNEL_BEDROCK, MAX_RLP_BYTES_PER_CHANNEL_FJORD, RollupConfig,
-};
-use base_protocol::{BlockInfo, Channel};
 
 /// The [`ChannelAssembler`] stage is responsible for assembling the [`Frame`]s from the
 /// [`FrameQueue`] stage into a raw compressed [`Channel`].
@@ -68,16 +70,17 @@ where
 
         // Time out the channel if it has timed out.
         if let Some(channel) = self.channel.as_ref()
-            && self.is_timed_out()? {
-                warn!(
-                    target: "channel_assembler",
-                    "Channel (ID: {}) timed out at L1 origin #{}, open block #{}. Discarding channel.",
-                    hex::encode(channel.id()),
-                    origin.number,
-                    channel.open_block_number()
-                );
-                self.channel = None;
-            }
+            && self.is_timed_out()?
+        {
+            warn!(
+                target: "channel_assembler",
+                "Channel (ID: {}) timed out at L1 origin #{}, open block #{}. Discarding channel.",
+                hex::encode(channel.id()),
+                origin.number,
+                channel.open_block_number()
+            );
+            self.channel = None;
+        }
 
         // Grab the next frame from the previous stage.
         let next_frame = self.prev.next_frame().await?;
@@ -212,12 +215,8 @@ where
 
 #[cfg(test)]
 mod test {
-    use super::ChannelAssembler;
-    use crate::{
-        ChannelReaderProvider, PipelineError,
-        test_utils::{CollectingLayer, TestNextFrameProvider, TraceStorage},
-    };
     use alloc::{sync::Arc, vec};
+
     use base_genesis::{
         HardForkConfig, MAX_RLP_BYTES_PER_CHANNEL_BEDROCK, MAX_RLP_BYTES_PER_CHANNEL_FJORD,
         RollupConfig,
@@ -225,6 +224,12 @@ mod test {
     use base_protocol::BlockInfo;
     use tracing::Level;
     use tracing_subscriber::layer::SubscriberExt;
+
+    use super::ChannelAssembler;
+    use crate::{
+        ChannelReaderProvider, PipelineError,
+        test_utils::{CollectingLayer, TestNextFrameProvider, TraceStorage},
+    };
 
     #[tokio::test]
     async fn test_assembler_channel_timeout() {

@@ -1,8 +1,8 @@
 use alloy_rpc_types_engine::PayloadId;
+use base_alloy_rpc_types_engine::OpExecutionPayloadEnvelope;
 use base_engine::{BuildTaskError, ConsolidateInput, EngineQueries, SealTaskError};
 use base_protocol::OpAttributesWithParent;
 use base_rpc::{RollupBoostAdminQuery, RollupBoostHealthQuery};
-use base_alloy_rpc_types_engine::OpExecutionPayloadEnvelope;
 use thiserror::Error;
 use tokio::sync::mpsc;
 

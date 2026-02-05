@@ -1,6 +1,13 @@
 //! An Engine API Client.
 
-use crate::{Metrics, RollupBoostServerArgs, RollupBoostServerError};
+use std::{
+    future::Future,
+    net::{AddrParseError, IpAddr, SocketAddr},
+    str::FromStr,
+    sync::Arc,
+    time::{Duration, Instant},
+};
+
 use alloy_eips::{BlockId, eip1898::BlockNumberOrTag};
 use alloy_network::{Ethereum, Network};
 use alloy_primitives::{Address, B256, BlockHash, Bytes, StorageKey};
@@ -38,16 +45,11 @@ use rollup_boost::{
     RpcClientError,
 };
 use rollup_boost_types::payload::PayloadSource;
-use std::{
-    future::Future,
-    net::{AddrParseError, IpAddr, SocketAddr},
-    str::FromStr,
-    sync::Arc,
-    time::{Duration, Instant},
-};
 use thiserror::Error;
 use tower::ServiceBuilder;
 use url::Url;
+
+use crate::{Metrics, RollupBoostServerArgs, RollupBoostServerError};
 
 /// An error that occurred in the [`EngineClient`].
 #[derive(Error, Debug)]
@@ -359,12 +361,8 @@ where
         parent_beacon_block_root: B256,
     ) -> TransportResult<PayloadStatus> {
         let op_payload = rollup_boost_compat::to_op_payload_v4(&payload);
-        let call = self.rollup_boost.new_payload_v4(
-            op_payload,
-            vec![],
-            parent_beacon_block_root,
-            vec![],
-        );
+        let call =
+            self.rollup_boost.new_payload_v4(op_payload, vec![], parent_beacon_block_root, vec![]);
 
         record_call_time(call, Metrics::NEW_PAYLOAD_METHOD)
             .await
@@ -514,8 +512,9 @@ async fn record_call_time<T, Err>(
 }
 
 mod rollup_boost_compat {
-    use super::*;
     use serde::{Serialize, de::DeserializeOwned};
+
+    use super::*;
 
     fn convert<From: Serialize, To: DeserializeOwned>(from: &From) -> To {
         let json = serde_json::to_value(from).expect("serialization should not fail");

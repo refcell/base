@@ -24,13 +24,13 @@ pub mod primitives {
 #[cfg(feature = "cli")]
 pub mod cli {
     #[doc(inline)]
+    pub use base_op_cli::*;
+    #[doc(inline)]
     pub use reth_cli_util::{
         allocator, get_secret_key, hash_or_num_value_parser, load_secret_key,
         parse_duration_from_secs, parse_duration_from_secs_or_ms, parse_ether_value,
         parse_socket_address, sigsegv_handler,
     };
-    #[doc(inline)]
-    pub use base_op_cli::*;
 }
 
 /// Re-exported pool types
@@ -45,9 +45,9 @@ pub mod consensus {
     /// Consensus rule checks.
     pub mod validation {
         #[doc(inline)]
-        pub use reth_consensus_common::validation::*;
-        #[doc(inline)]
         pub use base_execution_consensus::validation::*;
+        #[doc(inline)]
+        pub use reth_consensus_common::validation::*;
     }
 }
 
@@ -55,9 +55,9 @@ pub mod consensus {
 #[allow(ambiguous_glob_reexports)]
 pub mod chainspec {
     #[doc(inline)]
-    pub use reth_chainspec::*;
-    #[doc(inline)]
     pub use base_chainspec::*;
+    #[doc(inline)]
+    pub use reth_chainspec::*;
 }
 
 /// Re-exported evm types
@@ -65,10 +65,8 @@ pub mod chainspec {
 pub mod evm {
     #[doc(inline)]
     pub use base_evm::*;
-
     #[doc(inline)]
     pub use reth_evm as primitives;
-
     #[doc(inline)]
     pub use reth_revm as revm;
 }
@@ -98,10 +96,9 @@ pub mod network {
 #[cfg(feature = "provider")]
 pub mod provider {
     #[doc(inline)]
-    pub use reth_provider::*;
-
-    #[doc(inline)]
     pub use reth_db as db;
+    #[doc(inline)]
+    pub use reth_provider::*;
 }
 
 /// Re-exported codec crate
@@ -118,23 +115,23 @@ pub mod storage {
 /// Re-exported optimism node
 #[cfg(feature = "node-api")]
 pub mod node {
+    #[cfg(feature = "node")]
+    pub use base_node::*;
     #[doc(inline)]
     pub use reth_node_api as api;
     #[cfg(feature = "node")]
     pub use reth_node_builder as builder;
     #[doc(inline)]
     pub use reth_node_core as core;
-    #[cfg(feature = "node")]
-    pub use base_node::*;
 }
 
 /// Re-exported  engine types
 #[cfg(feature = "node")]
 pub mod engine {
     #[doc(inline)]
-    pub use reth_engine_local as local;
-    #[doc(inline)]
     pub use base_node::engine::*;
+    #[doc(inline)]
+    pub use reth_engine_local as local;
 }
 
 /// Re-exported reth trie types
@@ -142,7 +139,6 @@ pub mod engine {
 pub mod trie {
     #[doc(inline)]
     pub use reth_trie::*;
-
     #[cfg(feature = "trie-db")]
     #[doc(inline)]
     pub use reth_trie_db::*;
@@ -155,7 +151,6 @@ pub mod rpc {
     pub use base_op_rpc::*;
     #[doc(inline)]
     pub use reth_rpc::*;
-
     #[doc(inline)]
     pub use reth_rpc_api as api;
     #[doc(inline)]

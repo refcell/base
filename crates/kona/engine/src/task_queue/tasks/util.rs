@@ -1,10 +1,12 @@
 //! Utility functions for task execution.
 
-use super::{BuildTask, BuildTaskError, EngineTaskExt, SealTask, SealTaskError};
-use crate::{EngineClient, EngineState};
+use std::sync::Arc;
+
 use base_genesis::RollupConfig;
 use base_protocol::OpAttributesWithParent;
-use std::sync::Arc;
+
+use super::{BuildTask, BuildTaskError, EngineTaskExt, SealTask, SealTaskError};
+use crate::{EngineClient, EngineState};
 
 /// Error type for build and seal operations.
 #[derive(Debug, thiserror::Error)]

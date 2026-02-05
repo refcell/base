@@ -1,8 +1,9 @@
 //! Commonly used types for interop.
 
 use alloc::string::{String, ToString};
-use alloy_primitives::{Address, address};
 use core::str::FromStr;
+
+use alloy_primitives::{Address, address};
 use derive_more::Display;
 
 /// The address of the L2 cross chain inbox predeploy proxy.

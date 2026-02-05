@@ -11,10 +11,12 @@
 //! [FrameQueue]: crate::stages::FrameQueue
 //! [BatchQueue]: crate::stages::BatchQueue
 
-use crate::types::PipelineResult;
 use alloc::boxed::Box;
+
 use async_trait::async_trait;
 use base_protocol::Frame;
+
+use crate::types::PipelineResult;
 
 pub(crate) mod channel_provider;
 pub use channel_provider::ChannelProvider;

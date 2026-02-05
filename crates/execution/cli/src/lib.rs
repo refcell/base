@@ -32,16 +32,15 @@ pub mod receipt_file_codec;
 /// Enables decoding and encoding `Block` types within file contexts.
 pub mod ovm_file_codec;
 
-pub use app::CliApp;
-pub use commands::{import::ImportOpCommand, import_receipts::ImportReceiptsOpCommand};
-use base_chainspec::OpChainSpec;
-use reth_rpc_server_types::{DefaultRpcModuleValidator, RpcModuleValidator};
-
 use std::{ffi::OsString, fmt, marker::PhantomData, sync::Arc};
 
+pub use app::CliApp;
+use base_chainspec::OpChainSpec;
+use base_node::args::RollupArgs;
 use chainspec::OpChainSpecParser;
 use clap::Parser;
 use commands::Commands;
+pub use commands::{import::ImportOpCommand, import_receipts::ImportReceiptsOpCommand};
 use futures_util::Future;
 use reth_cli::chainspec::ChainSpecParser;
 use reth_cli_commands::launcher::FnLauncher;
@@ -52,11 +51,10 @@ use reth_node_core::{
     args::{LogArgs, TraceArgs},
     version::version_metadata,
 };
-use base_node::args::RollupArgs;
-
 // This allows us to manually enable node metrics features, required for proper jemalloc metric
 // reporting
 use reth_node_metrics as _;
+use reth_rpc_server_types::{DefaultRpcModuleValidator, RpcModuleValidator};
 
 /// The main op-reth cli interface.
 ///
@@ -143,11 +141,12 @@ where
 
 #[cfg(test)]
 mod test {
-    use crate::{chainspec::OpChainSpecParser, commands::Commands, Cli};
-    use clap::Parser;
-    use reth_cli_commands::{node::NoArgs, NodeCommand};
     use base_chainspec::{BASE_MAINNET, OP_DEV};
     use base_node::args::RollupArgs;
+    use clap::Parser;
+    use reth_cli_commands::{NodeCommand, node::NoArgs};
+
+    use crate::{Cli, chainspec::OpChainSpecParser, commands::Commands};
 
     #[test]
     fn parse_dev() {

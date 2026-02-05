@@ -1,14 +1,16 @@
 //! A task for finalizing an L2 block.
 
+use std::{sync::Arc, time::Instant};
+
+use async_trait::async_trait;
+use base_genesis::RollupConfig;
+use base_protocol::L2BlockInfo;
+use derive_more::Constructor;
+
 use crate::{
     EngineClient, EngineState, EngineTaskExt, FinalizeTaskError, SynchronizeTask,
     state::EngineSyncStateUpdate,
 };
-use async_trait::async_trait;
-use derive_more::Constructor;
-use base_genesis::RollupConfig;
-use base_protocol::L2BlockInfo;
-use std::{sync::Arc, time::Instant};
 
 #[derive(Debug, Clone, Constructor)]
 pub struct FinalizeTask<EngineClient_: EngineClient> {

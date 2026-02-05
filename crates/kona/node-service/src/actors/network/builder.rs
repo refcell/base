@@ -1,14 +1,15 @@
 //! Network Builder Module.
 
+use std::time::Duration;
+
 use alloy_primitives::Address;
-use discv5::Config as Discv5Config;
 use base_disc::{Discv5Builder, LocalNode};
 use base_genesis::RollupConfig;
 use base_gossip::{GaterConfig, GossipDriverBuilder};
 use base_peers::{BootNodes, BootStoreFile, PeerMonitoring, PeerScoreLevel};
 use base_sources::BlockSigner;
+use discv5::Config as Discv5Config;
 use libp2p::{Multiaddr, identity::Keypair};
-use std::time::Duration;
 
 use crate::{
     NetworkBuilderError,
@@ -175,11 +176,13 @@ impl NetworkBuilder {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use std::net::{IpAddr, Ipv4Addr, SocketAddr};
+
     use alloy_chains::Chain;
     use discv5::{ConfigBuilder, ListenConfig, enr::CombinedKey};
     use libp2p::gossipsub::IdentTopic;
-    use std::net::{IpAddr, Ipv4Addr, SocketAddr};
+
+    use super::*;
 
     #[derive(Debug)]
     struct NetworkBuilderParams {

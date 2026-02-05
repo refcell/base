@@ -1,6 +1,7 @@
-use reth_cli::chainspec::{parse_genesis, ChainSpecParser};
-use base_chainspec::{generated_chain_value_parser, OpChainSpec, SUPPORTED_CHAINS};
 use std::sync::Arc;
+
+use base_chainspec::{OpChainSpec, SUPPORTED_CHAINS, generated_chain_value_parser};
+use reth_cli::chainspec::{ChainSpecParser, parse_genesis};
 
 /// Optimism chain specification parser.
 #[derive(Debug, Clone, Default)]

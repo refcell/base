@@ -4,12 +4,13 @@
 //! from `alloy-evm` for `base-alloy-consensus` types, enabling seamless integration with
 //! EVM execution environments like `revm`.
 
-use crate::{OpTxEnvelope, TxDeposit};
 use alloy_eips::{Encodable2718, Typed2718};
 use alloy_evm::{FromRecoveredTx, FromTxWithEncoded};
 use alloy_primitives::{Address, Bytes};
 use op_revm::{OpTransaction, transaction::deposit::DepositTransactionParts};
 use revm::context::TxEnv;
+
+use crate::{OpTxEnvelope, TxDeposit};
 
 /// Implements `FromRecoveredTx<OpTxEnvelope>` for `TxEnv`
 ///
@@ -30,7 +31,7 @@ impl FromRecoveredTx<OpTxEnvelope> for TxEnv {
 /// Implements `FromRecoveredTx<TxDeposit>` for `TxEnv`
 ///
 /// Converts a `TxDeposit` into a `TxEnv`, extracting standard transaction fields
-/// and discarding deposit-specific fields (source_hash, mint, is_system_transaction).
+/// and discarding deposit-specific fields (`source_hash`, mint, `is_system_transaction`).
 impl FromRecoveredTx<TxDeposit> for TxEnv {
     fn from_recovered_tx(tx: &TxDeposit, caller: Address) -> Self {
         let TxDeposit {
@@ -79,7 +80,7 @@ impl FromRecoveredTx<OpTxEnvelope> for OpTransaction<TxEnv> {
 /// Implements `FromTxWithEncoded<OpTxEnvelope>` for `OpTransaction<TxEnv>`
 ///
 /// Converts an encoded `OpTxEnvelope` into an `OpTransaction<TxEnv>` by extracting
-/// the base TxEnv from each variant and creating an OpTransaction with the encoded bytes.
+/// the base `TxEnv` from each variant and creating an `OpTransaction` with the encoded bytes.
 impl FromTxWithEncoded<OpTxEnvelope> for OpTransaction<TxEnv> {
     fn from_encoded_tx(tx: &OpTxEnvelope, caller: Address, encoded: Bytes) -> Self {
         let base = match tx {
@@ -107,7 +108,7 @@ impl FromRecoveredTx<TxDeposit> for OpTransaction<TxEnv> {
 /// Implements `FromTxWithEncoded<TxDeposit>` for `OpTransaction<TxEnv>`
 ///
 /// Converts an encoded `TxDeposit` into an `OpTransaction<TxEnv>`, preserving
-/// all deposit-specific metadata (source_hash, mint, is_system_transaction).
+/// all deposit-specific metadata (`source_hash`, mint, `is_system_transaction`).
 impl FromTxWithEncoded<TxDeposit> for OpTransaction<TxEnv> {
     fn from_encoded_tx(tx: &TxDeposit, caller: Address, encoded: Bytes) -> Self {
         let base = TxEnv::from_recovered_tx(tx, caller);

@@ -1,16 +1,18 @@
 //! Contains an online implementation of the `BeaconClient` trait.
 
-#[cfg(feature = "metrics")]
-use crate::Metrics;
-use crate::blobs::BoxedBlobWithIndex;
+use std::{boxed::Box, collections::HashMap, format, string::String, vec::Vec};
+
 use alloy_eips::eip4844::{IndexedBlobHash, env_settings::EnvKzgSettings, kzg_to_versioned_hash};
 use alloy_primitives::{B256, FixedBytes};
 use alloy_rpc_types_beacon::sidecar::GetBlobsResponse;
 use async_trait::async_trait;
 use c_kzg::Blob;
 use reqwest::Client;
-use std::{boxed::Box, collections::HashMap, format, string::String, vec::Vec};
 use thiserror::Error;
+
+#[cfg(feature = "metrics")]
+use crate::Metrics;
+use crate::blobs::BoxedBlobWithIndex;
 
 const SPEC_METHOD: &str = "eth/v1/config/spec";
 
@@ -209,11 +211,12 @@ impl BeaconClient for OnlineBeaconClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use alloy_consensus::Blob;
     use alloy_primitives::{FixedBytes, hex::FromHex};
     use httpmock::prelude::*;
     use serde_json::json;
+
+    use super::*;
 
     const TEST_BLOB_DATA: Blob = FixedBytes::repeat_byte(1);
     const TEST_BLOB_HASH_HEX: &str =

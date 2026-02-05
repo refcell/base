@@ -1,16 +1,18 @@
 //! Contains the [`BatchValidator`] stage.
 
+use alloc::{boxed::Box, sync::Arc, vec::Vec};
+use core::fmt::Debug;
+
+use async_trait::async_trait;
+use base_genesis::RollupConfig;
+use base_protocol::{Batch, BatchValidity, BlockInfo, L2BlockInfo, SingleBatch};
+
 use super::NextBatchProvider;
 use crate::{
     errors::{PipelineError, PipelineErrorKind, ResetError},
     traits::{AttributesProvider, OriginAdvancer, OriginProvider, SignalReceiver},
     types::{PipelineResult, ResetSignal, Signal},
 };
-use alloc::{boxed::Box, sync::Arc, vec::Vec};
-use async_trait::async_trait;
-use core::fmt::Debug;
-use base_genesis::RollupConfig;
-use base_protocol::{Batch, BatchValidity, BlockInfo, L2BlockInfo, SingleBatch};
 
 /// The [`BatchValidator`] stage is responsible for validating the [`SingleBatch`]es from
 /// the [`BatchStream`] [`AttributesQueue`]'s consumption.
@@ -325,18 +327,20 @@ where
 
 #[cfg(test)]
 mod test {
-    use crate::{
-        AttributesProvider, BatchValidator, NextBatchProvider, OriginAdvancer, PipelineError,
-        PipelineErrorKind, PipelineResult, ResetError, ResetSignal, Signal, SignalReceiver,
-        test_utils::{CollectingLayer, TestNextBatchProvider, TraceStorage},
-    };
     use alloc::{sync::Arc, vec, vec::Vec};
+
     use alloy_eips::{BlockNumHash, NumHash};
     use alloy_primitives::B256;
     use base_genesis::{HardForkConfig, RollupConfig};
     use base_protocol::{Batch, BlockInfo, L2BlockInfo, SingleBatch, SpanBatch};
     use tracing::Level;
     use tracing_subscriber::layer::SubscriberExt;
+
+    use crate::{
+        AttributesProvider, BatchValidator, NextBatchProvider, OriginAdvancer, PipelineError,
+        PipelineErrorKind, PipelineResult, ResetError, ResetSignal, Signal, SignalReceiver,
+        test_utils::{CollectingLayer, TestNextBatchProvider, TraceStorage},
+    };
 
     #[tokio::test]
     async fn test_batch_validator_origin_behind_eof() {

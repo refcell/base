@@ -4,19 +4,20 @@ pub mod canyon;
 pub mod isthmus;
 
 // Re-export the decode_holocene_base_fee function for compatibility
-use reth_execution_types::BlockExecutionResult;
-pub use base_chainspec::decode_holocene_base_fee;
-
-use crate::proof::calculate_receipt_root_optimism;
 use alloc::vec::Vec;
-use alloy_consensus::{BlockHeader, TxReceipt, EMPTY_OMMER_ROOT_HASH};
+
+use alloy_consensus::{BlockHeader, EMPTY_OMMER_ROOT_HASH, TxReceipt};
 use alloy_eips::Encodable2718;
-use alloy_primitives::{Bloom, Bytes, B256};
+use alloy_primitives::{B256, Bloom, Bytes};
 use alloy_trie::EMPTY_ROOT_HASH;
-use reth_consensus::ConsensusError;
+pub use base_chainspec::decode_holocene_base_fee;
 use base_forks::OpHardforks;
 use base_reth_primitives::DepositReceipt;
-use reth_primitives_traits::{receipt::gas_spent_by_transactions, BlockBody, GotExpected};
+use reth_consensus::ConsensusError;
+use reth_execution_types::BlockExecutionResult;
+use reth_primitives_traits::{BlockBody, GotExpected, receipt::gas_spent_by_transactions};
+
+use crate::proof::calculate_receipt_root_optimism;
 
 /// Ensures the block response data matches the header.
 ///
@@ -41,14 +42,14 @@ where
                 expected: header.ommers_hash(),
             }
             .into(),
-        ))
+        ));
     }
 
     let tx_root = body.calculate_tx_root();
     if header.transactions_root() != tx_root {
         return Err(ConsensusError::BodyTransactionRootDiff(
             GotExpected { got: tx_root, expected: header.transactions_root() }.into(),
-        ))
+        ));
     }
 
     match (header.withdrawals_root(), body.calculate_withdrawals_root()) {
@@ -60,7 +61,7 @@ where
                 if withdrawals_root != EMPTY_ROOT_HASH {
                     return Err(ConsensusError::BodyWithdrawalsRootDiff(
                         GotExpected { got: withdrawals_root, expected: EMPTY_ROOT_HASH }.into(),
-                    ))
+                    ));
                 }
             } else {
                 // before isthmus we ensure that the header root matches the body
@@ -68,7 +69,7 @@ where
                     return Err(ConsensusError::BodyWithdrawalsRootDiff(
                         GotExpected { got: withdrawals_root, expected: header_withdrawals_root }
                             .into(),
-                    ))
+                    ));
                 }
             }
         }
@@ -138,7 +139,7 @@ pub fn validate_block_post_execution<R: DepositReceipt>(
                 .map(|r| Bytes::from(r.with_bloom_ref().encoded_2718()))
                 .collect::<Vec<_>>();
             tracing::debug!(%error, ?receipts, "receipts verification failed");
-            return Err(error)
+            return Err(error);
         }
     }
 
@@ -149,7 +150,7 @@ pub fn validate_block_post_execution<R: DepositReceipt>(
         return Err(ConsensusError::BlockGasUsed {
             gas: GotExpected { got: cumulative_gas_used, expected: header.gas_used() },
             gas_spent_by_tx: gas_spent_by_transactions(receipts),
-        })
+        });
     }
 
     Ok(())
@@ -192,13 +193,13 @@ fn compare_receipts_root_and_logs_bloom(
     if calculated_receipts_root != expected_receipts_root {
         return Err(ConsensusError::BodyReceiptRootDiff(
             GotExpected { got: calculated_receipts_root, expected: expected_receipts_root }.into(),
-        ))
+        ));
     }
 
     if calculated_logs_bloom != expected_logs_bloom {
         return Err(ConsensusError::BodyBloomLogDiff(
             GotExpected { got: calculated_logs_bloom, expected: expected_logs_bloom }.into(),
-        ))
+        ));
     }
 
     Ok(())
@@ -206,16 +207,18 @@ fn compare_receipts_root_and_logs_bloom(
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use std::sync::Arc;
+
     use alloy_consensus::Header;
     use alloy_eips::eip7685::Requests;
-    use alloy_primitives::{b256, hex, Bytes, U256};
+    use alloy_primitives::{Bytes, U256, b256, hex};
     use base_alloy_consensus::OpTxEnvelope;
-    use reth_chainspec::{BaseFeeParams, ChainSpec, EthChainSpec, ForkCondition, Hardfork};
-    use base_chainspec::{OpChainSpec, BASE_SEPOLIA};
-    use base_forks::{OpHardfork, BASE_SEPOLIA_HARDFORKS};
+    use base_chainspec::{BASE_SEPOLIA, OpChainSpec};
+    use base_forks::{BASE_SEPOLIA_HARDFORKS, OpHardfork};
     use base_reth_primitives::OpReceipt;
-    use std::sync::Arc;
+    use reth_chainspec::{BaseFeeParams, ChainSpec, EthChainSpec, ForkCondition, Hardfork};
+
+    use super::*;
 
     const HOLOCENE_TIMESTAMP: u64 = 1700000000;
     const ISTHMUS_TIMESTAMP: u64 = 1750000000;
@@ -267,8 +270,7 @@ mod tests {
             gas_limit: 144000000,
             ..Default::default()
         };
-        let base_fee =
-            base_chainspec::OpChainSpec::next_block_base_fee(&op_chain_spec, &parent, 0);
+        let base_fee = base_chainspec::OpChainSpec::next_block_base_fee(&op_chain_spec, &parent, 0);
         assert_eq!(
             base_fee.unwrap(),
             op_chain_spec.next_block_base_fee(&parent, 0).unwrap_or_default()
@@ -333,12 +335,9 @@ mod tests {
             ..Default::default()
         };
 
-        let base_fee = base_chainspec::OpChainSpec::next_block_base_fee(
-            &*BASE_SEPOLIA,
-            &parent,
-            1735315546,
-        )
-        .unwrap();
+        let base_fee =
+            base_chainspec::OpChainSpec::next_block_base_fee(&*BASE_SEPOLIA, &parent, 1735315546)
+                .unwrap();
         assert_eq!(base_fee, 507);
     }
 
@@ -362,11 +361,8 @@ mod tests {
             ..Default::default()
         };
 
-        let base_fee = base_chainspec::OpChainSpec::next_block_base_fee(
-            &*BASE_SEPOLIA,
-            &parent,
-            1735315546,
-        );
+        let base_fee =
+            base_chainspec::OpChainSpec::next_block_base_fee(&*BASE_SEPOLIA, &parent, 1735315546);
         assert_eq!(base_fee, None);
     }
 

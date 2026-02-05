@@ -1,6 +1,7 @@
-use futures::StreamExt;
-use base_node::utils::{advance_chain, setup};
 use std::sync::Arc;
+
+use base_node::utils::{advance_chain, setup};
+use futures::StreamExt;
 use tokio::sync::Mutex;
 
 #[tokio::test]

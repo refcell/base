@@ -1,8 +1,9 @@
+use base_derive::PipelineErrorKind;
+use base_engine::BuildTaskError;
+
 use crate::{
     L1OriginSelectorError, UnsafePayloadGossipClientError, actors::engine::EngineClientError,
 };
-use base_derive::PipelineErrorKind;
-use base_engine::BuildTaskError;
 
 /// An error produced by the [`crate::SequencerActor`].
 #[derive(Debug, thiserror::Error)]

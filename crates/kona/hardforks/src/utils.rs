@@ -14,9 +14,10 @@ pub(crate) fn upgrade_to_calldata(addr: Address) -> Bytes {
 
 #[cfg(test)]
 mod tests {
+    use alloy_primitives::keccak256;
+
     use super::*;
     use crate::{Ecotone, Fjord, Isthmus};
-    use alloy_primitives::keccak256;
 
     #[test]
     fn test_upgrade_to_selector_is_valid() {

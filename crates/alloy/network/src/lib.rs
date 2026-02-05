@@ -3,9 +3,8 @@
 #![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
 #![cfg_attr(not(test), warn(unused_crate_dependencies))]
 
-pub use alloy_network::*;
-
 use alloy_consensus::{ReceiptWithBloom, TxEnvelope, TxType, TypedTransaction};
+pub use alloy_network::*;
 use alloy_primitives::{Address, Bytes, ChainId, TxKind, U256};
 use alloy_rpc_types_eth::AccessList;
 use base_alloy_consensus::{OpReceipt, OpTxEnvelope, OpTxType, OpTypedTransaction};

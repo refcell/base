@@ -4,8 +4,8 @@ pub mod error;
 pub mod v3;
 pub mod v4;
 
-use crate::{OpExecutionPayloadSidecar, OpExecutionPayloadV4};
 use alloc::vec::Vec;
+
 use alloy_consensus::{Block, BlockHeader, HeaderInfo, Transaction};
 use alloy_eips::{Decodable2718, Encodable2718, Typed2718, eip7685::EMPTY_REQUESTS_HASH};
 use alloy_primitives::{Address, B256, Bytes, Sealable, U256};
@@ -14,6 +14,8 @@ use alloy_rpc_types_engine::{
     ExecutionPayloadV3, PayloadError,
 };
 use error::OpPayloadError;
+
+use crate::{OpExecutionPayloadSidecar, OpExecutionPayloadV4};
 
 /// An execution payload, which can be either [`ExecutionPayloadV2`], [`ExecutionPayloadV3`], or
 /// [`OpExecutionPayloadV4`].
@@ -53,6 +55,7 @@ impl<'de> serde::Deserialize<'de> for OpExecutionPayload {
                 A: serde::de::MapAccess<'de>,
             {
                 use alloc::string::String;
+
                 use alloy_primitives::{U64, map::HashMap};
                 use alloy_rpc_types_engine::ExecutionPayloadV1;
 

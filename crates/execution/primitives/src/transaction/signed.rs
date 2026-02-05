@@ -1,38 +1,41 @@
 //! This file contains the legacy reth `OpTransactionSigned` type that has been replaced with
 //! op-alloy's OpTransactionSigned To test for consistency this is kept
 
-use crate::transaction::OpTransaction;
 use alloc::vec::Vec;
+use core::{
+    hash::{Hash, Hasher},
+    mem,
+    ops::Deref,
+};
+
 use alloy_consensus::{
-    transaction::{RlpEcdsaDecodableTx, RlpEcdsaEncodableTx, SignerRecoverable, TxHashRef},
     Sealed, SignableTransaction, Signed, Transaction, TxEip1559, TxEip2930, TxEip7702, TxLegacy,
     Typed2718,
+    transaction::{RlpEcdsaDecodableTx, RlpEcdsaEncodableTx, SignerRecoverable, TxHashRef},
 };
 use alloy_eips::{
     eip2718::{Decodable2718, Eip2718Error, Eip2718Result, Encodable2718, IsTyped2718},
     eip2930::AccessList,
     eip7702::SignedAuthorization,
 };
-use alloy_primitives::{keccak256, Address, Bytes, Signature, TxHash, TxKind, Uint, B256};
+use alloy_primitives::{Address, B256, Bytes, Signature, TxHash, TxKind, Uint, keccak256};
 use alloy_rlp::Header;
-use core::{
-    hash::{Hash, Hasher},
-    mem,
-    ops::Deref,
-};
 use base_alloy_consensus::{OpPooledTransaction, OpTxEnvelope, OpTypedTransaction, TxDeposit};
 #[cfg(any(test, feature = "reth-codec"))]
 use reth_primitives_traits::{
+    InMemorySize, SignedTransaction,
     crypto::secp256k1::{recover_signer, recover_signer_unchecked},
     sync::OnceLock,
     transaction::{error::TransactionConversionError, signed::RecoveryError},
-    InMemorySize, SignedTransaction,
 };
+
+use crate::transaction::OpTransaction;
 
 /// Signed transaction.
 #[cfg_attr(any(test, feature = "reth-codec"), reth_codecs::add_arbitrary_tests(rlp))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Clone, Eq)]
+#[allow(unnameable_types)]
 pub struct OpTransactionSigned {
     /// Transaction hash
     #[cfg_attr(feature = "serde", serde(skip))]
@@ -108,7 +111,7 @@ impl SignerRecoverable for OpTransactionSigned {
         // Optimism's Deposit transaction does not have a signature. Directly return the
         // `from` address.
         if let OpTypedTransaction::Deposit(TxDeposit { from, .. }) = self.transaction {
-            return Ok(from)
+            return Ok(from);
         }
 
         let Self { transaction, signature, .. } = self;
@@ -120,7 +123,7 @@ impl SignerRecoverable for OpTransactionSigned {
         // Optimism's Deposit transaction does not have a signature. Directly return the
         // `from` address.
         if let OpTypedTransaction::Deposit(TxDeposit { from, .. }) = &self.transaction {
-            return Ok(*from)
+            return Ok(*from);
         }
 
         let Self { transaction, signature, .. } = self;
@@ -237,11 +240,7 @@ impl alloy_rlp::Decodable for OpTransactionSigned {
 
 impl Encodable2718 for OpTransactionSigned {
     fn type_flag(&self) -> Option<u8> {
-        if Typed2718::is_legacy(self) {
-            None
-        } else {
-            Some(self.ty())
-        }
+        if Typed2718::is_legacy(self) { None } else { Some(self.ty()) }
     }
 
     fn encode_2718_len(&self) -> usize {
@@ -401,9 +400,9 @@ impl Typed2718 for OpTransactionSigned {
 
 impl PartialEq for OpTransactionSigned {
     fn eq(&self, other: &Self) -> bool {
-        self.signature == other.signature &&
-            self.transaction == other.transaction &&
-            self.tx_hash() == other.tx_hash()
+        self.signature == other.signature
+            && self.transaction == other.transaction
+            && self.tx_hash() == other.tx_hash()
     }
 }
 
@@ -529,10 +528,11 @@ fn signature_hash(tx: &OpTypedTransaction) -> B256 {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use proptest::proptest;
     use proptest_arbitrary_interop::arb;
     use reth_codecs::Compact;
+
+    use super::*;
 
     proptest! {
         #[test]

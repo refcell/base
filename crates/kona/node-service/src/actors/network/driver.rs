@@ -1,11 +1,11 @@
 use std::net::{IpAddr, SocketAddr};
 
 use alloy_primitives::Address;
-use discv5::multiaddr::Protocol;
-use futures::future::OptionFuture;
 use base_disc::Discv5Driver;
 use base_gossip::{ConnectionGater, GossipDriver, PEER_SCORE_INSPECT_FREQUENCY};
 use base_sources::{BlockSigner, BlockSignerStartError};
+use discv5::multiaddr::Protocol;
+use futures::future::OptionFuture;
 use libp2p::{Multiaddr, TransportError};
 use tokio::sync::watch;
 

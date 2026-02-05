@@ -26,8 +26,9 @@
 //! - Data length mismatches
 //! - Unsupported versions
 
-use crate::ChannelId;
 use alloc::vec::Vec;
+
+use crate::ChannelId;
 
 /// Version identifier for the current derivation pipeline format.
 ///
@@ -265,8 +266,9 @@ impl Frame {
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use alloc::vec;
+
+    use super::*;
 
     #[test]
     fn test_encode_frame_roundtrip() {

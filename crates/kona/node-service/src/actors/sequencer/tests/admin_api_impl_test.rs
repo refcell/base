@@ -1,13 +1,14 @@
-use crate::{
-    ConductorError, EngineClientError, SequencerAdminQuery,
-    actors::{MockConductor, MockSequencerEngineClient, sequencer::tests::test_util::test_actor},
-};
 use alloy_primitives::B256;
 use alloy_transport::RpcError;
 use base_protocol::{BlockInfo, L2BlockInfo};
 use base_rpc::SequencerAdminAPIError;
 use rstest::rstest;
 use tokio::sync::oneshot;
+
+use crate::{
+    ConductorError, EngineClientError, SequencerAdminQuery,
+    actors::{MockConductor, MockSequencerEngineClient, sequencer::tests::test_util::test_actor},
+};
 
 #[rstest]
 #[tokio::test]

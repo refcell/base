@@ -1,32 +1,34 @@
 //! Loads and formats OP transaction RPC response.
 
-use crate::{OpEthApi, OpEthApiError, SequencerClient};
-use alloy_primitives::{Bytes, B256};
-use alloy_rpc_types_eth::TransactionInfo;
-use futures::StreamExt;
-use base_alloy_consensus::{
-    transaction::{OpDepositInfo, OpTransactionInfo},
-    OpTransaction,
-};
-use reth_chain_state::CanonStateSubscriptions;
-use base_reth_primitives::DepositReceipt;
-use reth_primitives_traits::{Recovered, SignedTransaction, SignerRecoverable, WithEncoded};
-use reth_rpc_eth_api::{
-    helpers::{spec::SignersForRpc, EthTransactions, LoadReceipt, LoadTransaction, SpawnBlocking},
-    EthApiTypes as _, FromEthApiError, FromEvmError, RpcConvert, RpcNodeCore,
-    RpcReceipt, TxInfoMapper,
-};
-use reth_rpc_eth_types::{block::convert_transaction_receipt, EthApiError, TransactionSource};
-use reth_storage_api::{errors::ProviderError, ProviderTx, ReceiptProvider, TransactionsProvider};
-use reth_transaction_pool::{
-    AddedTransactionOutcome, PoolPooledTx, PoolTransaction, TransactionOrigin, TransactionPool,
-};
 use std::{
     fmt::{Debug, Formatter},
     future::Future,
     time::Duration,
 };
+
+use alloy_primitives::{B256, Bytes};
+use alloy_rpc_types_eth::TransactionInfo;
+use base_alloy_consensus::{
+    OpTransaction,
+    transaction::{OpDepositInfo, OpTransactionInfo},
+};
+use base_reth_primitives::DepositReceipt;
+use futures::StreamExt;
+use reth_chain_state::CanonStateSubscriptions;
+use reth_primitives_traits::{Recovered, SignedTransaction, SignerRecoverable, WithEncoded};
+use reth_rpc_eth_api::{
+    EthApiTypes as _, FromEthApiError, FromEvmError, RpcConvert, RpcNodeCore, RpcReceipt,
+    TxInfoMapper,
+    helpers::{EthTransactions, LoadReceipt, LoadTransaction, SpawnBlocking, spec::SignersForRpc},
+};
+use reth_rpc_eth_types::{EthApiError, TransactionSource, block::convert_transaction_receipt};
+use reth_storage_api::{ProviderTx, ReceiptProvider, TransactionsProvider, errors::ProviderError};
+use reth_transaction_pool::{
+    AddedTransactionOutcome, PoolPooledTx, PoolTransaction, TransactionOrigin, TransactionPool,
+};
 use tokio_stream::wrappers::WatchStream;
+
+use crate::{OpEthApi, OpEthApiError, SequencerClient};
 
 impl<N, Rpc> EthTransactions for OpEthApi<N, Rpc>
 where
@@ -66,7 +68,7 @@ where
                 tracing::warn!(target: "rpc::eth", %err, %hash, "successfully sent tx to sequencer, but failed to persist in local tx pool");
             });
 
-            return Ok(hash)
+            return Ok(hash);
         }
 
         // submit the transaction to the pool with a `Local` origin
@@ -170,9 +172,9 @@ where
 
             if tx_receipt.is_none() {
                 // if flashblocks are supported, attempt to find id from the pending block
-                if let Ok(Some(pending_block)) = this.pending_flashblock().await &&
-                    let Some(Ok(receipt)) = pending_block
-                        .find_and_convert_transaction_receipt(hash, this.converter())
+                if let Ok(Some(pending_block)) = this.pending_flashblock().await
+                    && let Some(Ok(receipt)) =
+                        pending_block.find_and_convert_transaction_receipt(hash, this.converter())
                 {
                     return Ok(Some(receipt));
                 }
@@ -216,8 +218,8 @@ where
         }
 
         // 2. check flashblocks (sequencer preconfirmations)
-        if let Ok(Some(pending_block)) = self.pending_flashblock().await &&
-            let Some(indexed_tx) = pending_block.block().find_indexed(hash)
+        if let Ok(Some(pending_block)) = self.pending_flashblock().await
+            && let Some(indexed_tx) = pending_block.block().find_indexed(hash)
         {
             let meta = indexed_tx.meta();
             return Ok(Some(TransactionSource::Block {

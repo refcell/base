@@ -1,21 +1,22 @@
 //! Command that initializes the node from a genesis file.
 
+use std::{io::BufReader, sync::Arc};
+
 use alloy_consensus::Header;
+use base_chainspec::OpChainSpec;
+use base_reth_primitives::{
+    OpPrimitives,
+    bedrock::{BEDROCK_HEADER, BEDROCK_HEADER_HASH},
+};
 use clap::Parser;
 use reth_cli::chainspec::ChainSpecParser;
 use reth_cli_commands::common::{AccessRights, CliNodeTypes, Environment};
 use reth_db_common::init::init_from_state_dump;
-use base_chainspec::OpChainSpec;
-use base_reth_primitives::{
-    bedrock::{BEDROCK_HEADER, BEDROCK_HEADER_HASH},
-    OpPrimitives,
-};
-use reth_primitives_traits::{header::HeaderMut, SealedHeader};
+use reth_primitives_traits::{SealedHeader, header::HeaderMut};
 use reth_provider::{
     BlockNumReader, DBProvider, DatabaseProviderFactory, StaticFileProviderFactory,
     StaticFileWriter,
 };
-use std::{io::BufReader, sync::Arc};
 use tracing::info;
 
 /// Initializes the database with the genesis block.
@@ -91,7 +92,7 @@ impl<C: ChainSpecParser<ChainSpec = OpChainSpec>> InitStateCommandOp<C> {
         } else if last_block_number > 0 && last_block_number < BEDROCK_HEADER.number {
             return Err(eyre::eyre!(
                 "Data directory should be empty when calling init-state with --without-ovm."
-            ))
+            ));
         }
 
         info!(target: "reth::cli", "Initiating state dump");

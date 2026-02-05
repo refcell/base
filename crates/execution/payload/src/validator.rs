@@ -1,11 +1,12 @@
 //! Validates execution payload wrt Optimism consensus rules
 
 use alloc::sync::Arc;
+
 use alloy_consensus::Block;
 use alloy_rpc_types_engine::PayloadError;
-use derive_more::{Constructor, Deref};
 use base_alloy_rpc_types_engine::{OpExecutionData, OpPayloadError};
 use base_forks::OpHardforks;
+use derive_more::{Constructor, Deref};
 use reth_payload_validator::{cancun, prague, shanghai};
 use reth_primitives_traits::{Block as _, SealedBlock, SignedTransaction};
 
@@ -73,10 +74,7 @@ where
 
     // Ensure the hash included in the payload matches the block hash
     if expected_hash != sealed_block.hash() {
-        return Err(PayloadError::BlockHash {
-            execution: sealed_block.hash(),
-            consensus: expected_hash,
-        })?
+        Err(PayloadError::BlockHash { execution: sealed_block.hash(), consensus: expected_hash })?;
     }
 
     shanghai::ensure_well_formed_fields(
