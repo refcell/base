@@ -9,7 +9,7 @@
 #     just load-test run validity-devnet
 #
 # Or directly:
-#   cargo run -p base-load-tester-bin --bin base-load-tester -- \
+#   cargo run -p base -- load-test \
 #     crates/infra/load-tests/examples/validity-devnet.yaml
 #
 # For predicates to be ENFORCED (not merely transported), the target devnet must run:

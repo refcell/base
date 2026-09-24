@@ -59,11 +59,13 @@ jobs:
         run: |
           cargo build --locked --bin base-builder --release
           cp target/release/base-builder ~/bin/base-builder
-      - name: Build base-load-test
+      - name: Build unified base load-test command
         if: steps.cache-binaries.outputs.cache-hit != 'true'
         run: |
-          cargo build --locked -p base-load-tester-bin --bin base-load-tester --release
-          cp target/release/base-load-tester ~/bin/base-load-test
+          cargo build --locked -p base --bin base --release
+          cp target/release/base ~/bin/base
+          printf '#!/usr/bin/env bash\nexec "$(dirname "$0")/base" load-test "$@"\n' > ~/bin/base-load-test
+          chmod +x ~/bin/base-load-test
       - name: Verify binaries exist
         run: |
           echo "Binaries in ~/bin:"

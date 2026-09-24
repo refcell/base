@@ -3,6 +3,7 @@
 use base_batcher_cli::BatcherArgs;
 use base_cli_utils::RuntimeManager;
 use base_execution_cli::{chainspec::BaseChainSpecParser, commands::base_proofs};
+use base_load_tests_cli::LoadTestCommand;
 use base_node_core::BaseNode;
 use clap::Subcommand;
 use reth_cli_runner::CliRunner;
@@ -25,6 +26,9 @@ pub(crate) enum BaseCommand {
     /// Run consensus and execution discovery-only bootnodes.
     #[command(name = "bootnode")]
     Bootnode(Box<BootnodeCommand>),
+    /// Run a configured load test or recover load-test funds.
+    #[command(name = "load-test")]
+    LoadTest(Box<LoadTestCommand>),
     /// Run the integrated node in RPC mode.
     #[command(name = "rpc")]
     Rpc(Box<RpcCommand>),
@@ -59,6 +63,10 @@ impl BaseCommand {
                 chain_resolver.reject_for_reth_command("base batcher")?;
                 RuntimeManager::new().run_until_ctrl_c((*batcher).exec(metrics_enabled))
             }
+            Self::LoadTest(load_test) => {
+                chain_resolver.reject_for_reth_command("base load-test")?;
+                (*load_test).run_with_existing_tracing()
+            }
             Self::Bootnode(bootnode) => (*bootnode).run(chain_resolver.resolve()?, metrics_enabled),
             Self::Rpc(rpc) => (*rpc).run(chain_resolver.resolve()?),
             Self::Follow(follow) => (*follow).run(chain_resolver.resolve()?),
@@ -88,7 +96,12 @@ mod tests {
 
     use clap::Parser;
 
-    use crate::{cli::BaseCli, config::ChainResolver};
+    use crate::{cli::BaseCli, commands::BaseCommand, config::ChainResolver};
+
+    // Anvil's public default test key; not a credential.
+    const PUBLIC_TEST_FUNDER_KEY: &str =
+        "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d";
+    const PUBLIC_TEST_SEED: &str = "88001";
 
     #[test]
     fn rejects_legacy_node_rpc_path() {
@@ -136,6 +149,91 @@ mod tests {
 
         assert!(err.to_string().contains("base reth"));
         assert!(err.to_string().contains("base --chain"));
+    }
+
+    #[test]
+    fn unified_parser_accepts_normal_load_test() {
+        let cli = BaseCli::try_parse_from(["base", "load-test", "config.yaml"]).unwrap();
+
+        assert!(matches!(cli.command, BaseCommand::LoadTest(_)));
+    }
+
+    #[test]
+    fn unified_parser_rejects_normal_load_test_without_config() {
+        let error = BaseCli::try_parse_from(["base", "load-test"]).unwrap_err();
+
+        assert_eq!(error.kind(), clap::error::ErrorKind::MissingRequiredArgument);
+    }
+
+    #[test]
+    fn unified_parser_accepts_rescue_without_load_config() {
+        let cli = BaseCli::try_parse_from([
+            "base",
+            "load-test",
+            "rescue",
+            "--rpc-url",
+            "http://localhost:8545",
+            "--seed",
+            PUBLIC_TEST_SEED,
+            "--count",
+            "4",
+            "--funder-key",
+            PUBLIC_TEST_FUNDER_KEY,
+        ])
+        .unwrap();
+
+        assert!(matches!(cli.command, BaseCommand::LoadTest(_)));
+    }
+
+    #[test]
+    fn unified_parser_rejects_conflicting_load_modes() {
+        let error = BaseCli::try_parse_from([
+            "base",
+            "load-test",
+            "--drain-only",
+            "--recover-real-tokens",
+            "config.yaml",
+        ])
+        .unwrap_err();
+
+        assert_eq!(error.kind(), clap::error::ErrorKind::ArgumentConflict);
+    }
+
+    #[test]
+    fn unified_parser_rejects_incomplete_benchmark_handshake() {
+        for args in [
+            vec!["base", "load-test", "--separate-setup", "/tmp/control", "config.yaml"],
+            vec!["base", "load-test", "--block-gas-limit", "30", "config.yaml"],
+        ] {
+            let error = BaseCli::try_parse_from(args).unwrap_err();
+            assert_eq!(error.kind(), clap::error::ErrorKind::MissingRequiredArgument);
+        }
+    }
+
+    #[test]
+    fn unified_parser_rejects_rescue_without_account_source() {
+        let error = BaseCli::try_parse_from([
+            "base",
+            "load-test",
+            "rescue",
+            "--rpc-url",
+            "http://localhost:8545",
+            "--funder-key",
+            PUBLIC_TEST_FUNDER_KEY,
+        ])
+        .unwrap_err();
+
+        assert_eq!(error.kind(), clap::error::ErrorKind::MissingRequiredArgument);
+    }
+
+    #[test]
+    fn rejects_top_level_chain_for_load_test() {
+        let cli =
+            BaseCli::try_parse_from(["base", "--chain", "sepolia", "load-test", "config.yaml"])
+                .unwrap();
+        let error = cli.command.run(ChainResolver::new(cli.chain), false).unwrap_err();
+        assert!(error.to_string().contains("base load-test"));
+        assert!(error.to_string().contains("base --chain"));
     }
 
     #[test]

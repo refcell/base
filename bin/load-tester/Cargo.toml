@@ -16,25 +16,6 @@ path = "src/main.rs"
 workspace = true
 
 [dependencies]
-# alloy
-alloy-network.workspace = true
-alloy-rpc-types.workspace = true
-alloy-primitives.workspace = true
-alloy-provider = { workspace = true }
-alloy-signer-local = { workspace = true }
-
-# base
+clap.workspace = true
 base-cli-utils.workspace = true
-base-load-tests.workspace = true
-
-# display
-indicatif.workspace = true
-tracing-subscriber = { workspace = true, features = ["env-filter", "fmt"] }
-
-# misc
-url.workspace = true
-eyre.workspace = true
-tracing.workspace = true
-futures.workspace = true
-clap = { workspace = true, features = ["derive", "env"] }
-tokio = { workspace = true, features = ["macros", "rt", "signal", "time"] }
+base-load-tests-cli.workspace = true
