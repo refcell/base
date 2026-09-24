@@ -2918,6 +2918,7 @@ dependencies = [
  "base-execution-cli",
  "base-execution-consensus",
  "base-execution-evm",
+ "base-load-tests-cli",
  "base-node-core",
  "base-node-runner",
  "base-reth-cli",
@@ -4897,21 +4898,9 @@ dependencies = [
 name = "base-load-tester-bin"
 version = "0.0.0"
 dependencies = [
- "alloy-network 2.4.1",
- "alloy-primitives",
- "alloy-provider",
- "alloy-rpc-types",
- "alloy-signer-local 2.4.1",
  "base-cli-utils",
- "base-load-tests",
+ "base-load-tests-cli",
  "clap",
- "eyre",
- "futures",
- "indicatif 0.18.6",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "url",
 ]
 
 [[package]]
@@ -4951,6 +4940,28 @@ dependencies = [
  "tokio-util",
  "tracing",
  "tracing-indicatif",
+ "tracing-subscriber",
+ "url",
+]
+
+[[package]]
+name = "base-load-tests-cli"
+version = "0.0.0"
+dependencies = [
+ "alloy-network 2.4.1",
+ "alloy-primitives",
+ "alloy-provider",
+ "alloy-rpc-types",
+ "alloy-signer-local 2.4.1",
+ "base-cli-utils",
+ "base-load-tests",
+ "clap",
+ "eyre",
+ "futures",
+ "indicatif 0.18.6",
+ "tempfile",
+ "tokio",
+ "tracing",
  "tracing-subscriber",
  "url",
 ]

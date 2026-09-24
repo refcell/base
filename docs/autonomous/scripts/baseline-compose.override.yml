@@ -1,0 +1,160 @@
+services:
+  setup-devnet:
+    image: devnet-setup:base-autonomous-20260924
+    container_name: base-autonomous-20260924-setup-devnet
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l2/configs:/devnet/l2/configs
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l1/configs:/output
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l1/reth:/data/l1-reth
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l1/lighthouse:/data/l1-lighthouse
+
+  l1-el:
+    container_name: base-autonomous-20260924-l1-el
+    ports: !override
+      - 127.0.0.1:4545:4545
+      - 127.0.0.1:4546:4546
+      - 127.0.0.1:4551:4551
+      - 127.0.0.1:4303:4303
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l1/reth:/data
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l1/configs:/genesis:ro
+
+  l1-cl:
+    container_name: base-autonomous-20260924-l1-cl
+    ports: !override
+      - 127.0.0.1:4052:4052
+      - 127.0.0.1:4900:4900
+      - 127.0.0.1:4900:4900/udp
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l1/lighthouse:/data
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l1/configs:/genesis:ro
+
+  l1-vc:
+    container_name: base-autonomous-20260924-l1-vc
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l1/configs:/genesis
+
+  base-bootnode:
+    image: base:base-autonomous-20260924
+    container_name: base-autonomous-20260924-base-bootnode
+    ports: !override
+      - 127.0.0.1:9303:9303/udp
+      - 127.0.0.1:9003:9003
+      - 127.0.0.1:9003:9003/udp
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l2/el-bootnode:/data
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l2/cl-bootnode-enr:/bootnodes
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l2/configs:/genesis/l2:ro
+
+  base-builder:
+    image: base:base-autonomous-20260924
+    container_name: base-autonomous-20260924-base-builder
+    ports: !override
+      - 127.0.0.1:7545:7545
+      - 127.0.0.1:7546:7546
+      - 127.0.0.1:7551:7551
+      - 127.0.0.1:7303:7303
+      - 127.0.0.1:7303:7303/udp
+      - 127.0.0.1:7111:7111
+      - 127.0.0.1:7090:7090
+      - 127.0.0.1:7549:7549
+      - 127.0.0.1:7003:7003
+      - 127.0.0.1:7003:7003/udp
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l2/builder:/data
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l2/cl-bootnode-enr:/bootnodes:ro
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l1/configs:/genesis:ro
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l2/configs:/genesis/l2:ro
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/transaction-events:/var/log/transaction-events
+
+  op-batcher:
+    image: op-batcher:base-autonomous-20260924
+    container_name: base-autonomous-20260924-op-batcher
+    ports: !override
+      - 127.0.0.1:6060:6060
+
+  base-batcher:
+    image: base:base-autonomous-20260924
+    container_name: base-autonomous-20260924-base-batcher
+    ports: !override
+      - 127.0.0.1:6061:6061
+
+  base-client:
+    image: base:base-autonomous-20260924
+    container_name: base-autonomous-20260924-base-client
+    ports: !override
+      - 127.0.0.1:8545:8545
+      - 127.0.0.1:8546:8546
+      - 127.0.0.1:8551:8551
+      - 127.0.0.1:8303:8303
+      - 127.0.0.1:8303:8303/udp
+      - 127.0.0.1:18090:8090
+      - 127.0.0.1:8549:8549
+      - 127.0.0.1:8003:8003
+      - 127.0.0.1:8003:8003/udp
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l2/client:/data
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l2/cl-bootnode-enr:/bootnodes:ro
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l1/configs:/genesis:ro
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l2/configs:/genesis/l2:ro
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/transaction-events:/var/log/transaction-events
+
+  base-rpc:
+    image: base:base-autonomous-20260924
+    container_name: base-autonomous-20260924-base-rpc
+    ports: !override
+      - 127.0.0.1:8645:8645
+      - 127.0.0.1:8646:8646
+      - 127.0.0.1:8651:8651
+      - 127.0.0.1:8403:8403
+      - 127.0.0.1:8403:8403/udp
+      - 127.0.0.1:8190:8190
+      - 127.0.0.1:8649:8649
+      - 127.0.0.1:8103:8103
+      - 127.0.0.1:8103:8103/udp
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l2/base-rpc:/data
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l2/cl-bootnode-enr:/bootnodes:ro
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l1/configs:/genesis:ro
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l2/configs:/genesis/l2:ro
+
+  base-shadow-validator:
+    image: base:base-autonomous-20260924
+    container_name: base-autonomous-20260924-base-shadow-validator
+    ports: !override
+      - 127.0.0.1:8845:8845
+      - 127.0.0.1:8846:8846
+      - 127.0.0.1:8851:8851
+      - 127.0.0.1:8803:8803
+      - 127.0.0.1:8803:8803/udp
+      - 127.0.0.1:8890:8890
+      - 127.0.0.1:8849:8849
+      - 127.0.0.1:8203:8203
+      - 127.0.0.1:8203:8203/udp
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l2/shadow-validator:/data
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l2/cl-bootnode-enr:/bootnodes:ro
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l1/configs:/genesis:ro
+      - /home/refcell/base-autonomous-20260924/state/baseline-devnet/l2/configs:/genesis/l2:ro
+
+  jaeger:
+    container_name: base-autonomous-20260924-jaeger
+    ports: !override
+      - 127.0.0.1:3001:16686
+      - 127.0.0.1:4317:4317
+      - 127.0.0.1:4318:4318
+
+  prometheus:
+    container_name: base-autonomous-20260924-prometheus
+    ports: !override
+      - 127.0.0.1:9090:9090
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/integration/etc/scripts/devnet/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  grafana:
+    container_name: base-autonomous-20260924-grafana
+    ports: !override
+      - 127.0.0.1:3000:3000
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/integration/etc/scripts/devnet/grafana/provisioning:/etc/grafana/provisioning:ro
+      - /home/refcell/base-autonomous-20260924/integration/etc/scripts/devnet/grafana/dashboards:/var/lib/grafana/dashboards:ro

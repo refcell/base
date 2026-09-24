@@ -25,7 +25,7 @@ run network='devnet' *args:
     if [ -z "${FUNDER_KEY:-}" ] && [ "{{network}}" = "devnet" ]; then
         export FUNDER_KEY=0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
     fi
-    cargo run -p base-load-tester-bin --bin base-load-tester -- crates/infra/load-tests/examples/{{network}}.yaml {{args}}
+    cargo run -p base -- load-test crates/infra/load-tests/examples/{{network}}.yaml {{args}}
 
 # Devnet deploys a local WETH/USDC harness and renders dynamic addresses.
 # Other networks use examples/real-token-<network>.yaml and expect contracts
@@ -45,7 +45,7 @@ real-token network='devnet' *args:
             echo "real-token config not found: $config" >&2
             exit 1
         fi
-        cargo run -p base-load-tester-bin --bin base-load-tester -- "$config" {{args}}
+        cargo run -p base -- load-test "$config" {{args}}
         exit 0
     fi
 
@@ -82,7 +82,7 @@ real-token network='devnet' *args:
         "$template" > "$rendered_config"
 
     echo "Running real-token devnet load test with rendered config: $rendered_config"
-    cargo run -p base-load-tester-bin --bin base-load-tester -- "$rendered_config" {{args}}
+    cargo run -p base -- load-test "$rendered_config" {{args}}
 
 # Deploy DoubleCounter and run the local 64-predicate validity stress profile.
 validity-stress *args:
@@ -152,7 +152,7 @@ validity-stress *args:
     mutator_pid=$!
 
     echo "Running validity stress test with rendered config: $rendered_config"
-    cargo run -p base-load-tester-bin --bin base-load-tester -- "$rendered_config" {{args}}
+    cargo run -p base -- load-test "$rendered_config" {{args}}
 
 # Run load test against a network indefinitely (Ctrl-C to stop)
 continuous network='devnet':
@@ -172,4 +172,4 @@ real-token-recover network='sepolia':
         echo "real-token config not found: $config" >&2
         exit 1
     fi
-    cargo run -p base-load-tester-bin --bin base-load-tester -- "$config" --recover-real-tokens
+    cargo run -p base -- load-test "$config" --recover-real-tokens

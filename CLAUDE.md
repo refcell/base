@@ -89,3 +89,17 @@ let bal = wallet.account.balance();
 - Preserve historical fork behavior and parity across execution paths; test both old and new fork behavior.
 - Avoid unnecessary I/O, cloning, and allocation on hot paths; benchmark production code when claiming performance gains.
 - Make async lifetimes explicit: bound waits, distinguish retryable from terminal errors, and clean up tasks on failure and shutdown.
+
+## Autonomous Factory Bootstrap
+
+Read [`docs/autonomous/README.md`](docs/autonomous/README.md) before factory work: it records the
+charter, acceptance matrix, ownership, ADRs, behavior map and append-only evidence index.
+It supplements, never replaces, the rules above.
+
+- Supervisor owns SSH through the existing `gene` alias; never inspect or print credential
+  configuration, alias expansion or secrets. Reasoning agents stay on the Mac; source/builds/devnets
+  stay on gene. Worker/reviewer profiles have file-only tools and scoped transport snapshots.
+- Push and PR operations must explicitly target `refcell/base`; upstream is fetch-only.
+- Use experiment-scoped Compose resources; never invoke shared default cleanup. Persistence tests
+  must not regenerate genesis or delete state. Record exact source/image identity and failed checks.
+- Format with `cargo +nightly fmt --all -- --check`; stable rustfmt ignores required settings.

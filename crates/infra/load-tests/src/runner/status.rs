@@ -129,6 +129,14 @@ impl LoadTestDisplay {
         Ok(multi_progress)
     }
 
+    /// Creates an interactive progress footer without installing a tracing subscriber.
+    ///
+    /// Unified binaries use this after their shared tracing stack is initialized.
+    pub fn progress_for_existing_tracing() -> Option<MultiProgress> {
+        Self::terminal_supported(io::stderr().is_terminal())
+            .then(|| MultiProgress::with_draw_target(ProgressDrawTarget::stderr_with_hz(10)))
+    }
+
     /// Returns whether an attended terminal can render the live footer.
     pub const fn terminal_supported(stderr_is_terminal: bool) -> bool {
         stderr_is_terminal
@@ -358,11 +366,20 @@ fn fmt_num(n: u64) -> String {
 
 #[cfg(test)]
 mod tests {
+    use std::io::IsTerminal;
+
     use super::LoadTestDisplay;
 
     #[test]
     fn terminal_support_requires_a_real_terminal() {
         assert!(LoadTestDisplay::terminal_supported(true));
         assert!(!LoadTestDisplay::terminal_supported(false));
+    }
+
+    #[test]
+    fn existing_tracing_progress_respects_non_terminal_stderr() {
+        if !std::io::stderr().is_terminal() {
+            assert!(LoadTestDisplay::progress_for_existing_tracing().is_none());
+        }
     }
 }

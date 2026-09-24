@@ -7,7 +7,7 @@ Load testing and benchmarking framework for Base infrastructure.
 | Crate | Description |
 |-------|-------------|
 | `base-load-tests` | Core library with workload generation, transaction submission, and metrics collection |
-| `base-load-tester-bin` | Binary crate for running load tests and rescue/drain commands |
+| `base-load-tests-cli` | Reusable CLI used by `base load-test` and the temporary standalone migration wrapper |
 
 ## Goals
 
@@ -41,13 +41,13 @@ Or run directly with cargo:
 
 ```bash
 # Build the crates
-cargo build -p base-load-tests -p base-load-tester-bin
+cargo build -p base-load-tests -p base-load-tests-cli -p base
 
 # Run tests
-cargo test -p base-load-tests
+cargo test -p base-load-tests -p base-load-tests-cli
 
 # Run the load test binary with a config file
-cargo run -p base-load-tester-bin --bin base-load-tester -- path/to/config.yaml
+cargo run -p base -- load-test path/to/config.yaml
 ```
 
 ## 200ms devnet profile
@@ -60,8 +60,7 @@ change chain configuration.
 
 ```bash
 # Use a funded local-devnet account, never a production key.
-FUNDER_KEY=0x... LOAD_TEST_OUTPUT=denim-results.json \
-  cargo run -p base-load-tester-bin --bin base-load-tester -- \
+LOAD_TEST_OUTPUT=denim-results.json cargo run -p base -- load-test \
   crates/infra/load-tests/examples/denim-devnet.yaml
 ```
 

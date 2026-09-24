@@ -1,6 +1,6 @@
 # `base-load-tester-bin`
 
-Load testing and benchmarking binary for Base infrastructure.
-
-Parses CLI arguments and delegates to the `base-load-tests` library, which
-provides the load testing and benchmarking framework for the Base network.
+Temporary migration wrapper for the reusable `base-load-tests-cli` library.
+Keep this standalone binary only for differential validation against `base load-test`;
+remove it after real load, drain, recovery, rescue, signal, metrics, and output equivalence
+has been validated.
