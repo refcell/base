@@ -1,49 +1,42 @@
-# Blockers and Next-Action Queue
+# Blockers and next actions
 
-Canonical live checkpoint is the absolute remote path
-`/home/refcell/base-autonomous-20260924/state/RESUME.md` (non-Git, rewritten across sessions), not
-a repo-relative `state/RESUME.md` — that path does not resolve consistently from every worktree.
-This file is the durable, Git-tracked summary kept in sync with it. If the two disagree, the
-absolute `RESUME.md` wins and this file should be updated to match.
+Canonical live checkpoint: `/home/refcell/base-autonomous-20260924/state/RESUME.md`, mirrored in the
+Mac supervisor's `factory-control/RESUME.md`. Recheck Git/worktree status, actual tmux commands and
+exclusive ownership before resuming; the remote process state and source identity outrank stale
+status prose. The Mac runs agents; gene runs source/build/test/devnet commands.
 
-## Current blockers
+## Current state
 
-- None blocking this docs deliverable itself. `worktrees/factory-docs` is unblocked and docs-only.
-  The prior docs commit (`b024152ff684f0b3e3220917df68bd0e235b6b8b`) was rejected pending correction
-  (see `/home/refcell/base-autonomous-20260924/state/DECISIONS-AND-EVIDENCE.md`, 2026-09-24
-  "bootstrap documentation rejected pending corrections"); this commit is that correction.
-- Baseline build and source-built images pass. Nextest: 8,620 passed, 23 failed, 83 skipped; not green. Twenty failures are MinIO image pull401, two crash-backtrace failures reproduce, one fixed8080 RPC test conflicts with unrelated Java. Full devnet inclusion, validator receipt agreement, graceful restart/persistence and bounded canonical-head/finality observations pass. Adversarial finality, reorgs and real zk proving remain unverified; see ledger and ADR-0002.
-- M1 (architecture inventory) is in progress but not yet complete; several rows in
-  `BEHAVIOR_INVENTORY.md` are marked not-yet-inventoried pending its output.
-- Accepted directions: [ADR-0001](adr/0001-staged-consolidation-and-state.md) and [ADR-0002 baseline disposition](adr/0002-baseline-failure-disposition.md).
-  (D2, and the target durable-authority model informing D3). D1, the remainder of D3 (concrete
-  storage/fencing atomicity, tracked as D8), and D4–D7 remain open in `adr/DECISIONS.md` and block
-  their respective milestones (see `ROADMAP.md`). Do not implement against an open item.
+- Code450b4d7b60a74194c4196283b85d500e1392f946 is integrated on the experiment branch and fork-only
+  [draft PR #1](https://github.com/refcell/base/pull/1). `base load-test` is real functionality; the
+  thin standalone wrapper remains temporary, with removal criteria in its README and feature map.
+- Fresh source-built candidate devnet, runtime image identity, receipt/block/validator agreement,
+  graceful stop/start persistence, load/SIGINT checks and17focused tests pass. Independent code
+  review found no correctness blocker; independent failure triage found no extraction-caused defect.
+- Full suites are NOT green. Baseline:8620pass/23fail/83skip. Candidate:8635pass/25fail/83skip.
+  Corrected baseline breakdown is19image401 failures,2SIGSEGV tests,1RPC port collision,1metering
+  teardown abort. The earlier20image classification is corrected in append-only event0007.
+- Candidate adds an intermittently failing preexisting pacing fixture and two different metering
+  teardown abort cases while the original metering abort case passes. A baseline artifact reproduced
+  the pacing failure; affected source/features/dependency edges are unchanged. Isolated passes do
+  not erase full-run failures or prove statistical equivalence. Preserve all checks and evidence.
+- Fork review CI cannot start because `BaseRunnerGroup` is unavailable. Do not provision paid
+  infrastructure, copy credentials or weaken checks to manufacture green. Local review continues.
+- Real zk proving is not covered by `BASE_SUCCINCT_ELF_STUB=1`. Real-token/mnemonic/TTY migration
+  checks, broad sync/reorg/corruption/finality/adversarial/performance coverage remain incomplete.
 
-## Exact next-action queue
+## Next queue
 
-1. Finish baseline restart/persistence observations and append exact-tree evidence. Preserve and investigate all 23 baseline failures; do not weaken checks. Supervisor owns all remote execution.
-2. Council pass 1 is complete for D2: [ADR-0001](adr/0001-staged-consolidation-and-state.md) is
-   accepted; no second pass was needed for it. D1, D3's remaining atomicity/fencing design (D8), and
-   D4–D7 remain open — do not begin their implementation ahead of an accepted ADR.
-3. Evidence validator corrections passed 17 tests on gene and independent review. Commit the reviewed bootstrap candidate, run its exact-tree full devnet cycle, and open the draft PR only on the fork.
-4. Proceed with isolated M4 development under [ADR-0002](adr/0002-baseline-failure-disposition.md), which records the baseline failures without calling them passes. Keep the standalone load-test wrapper only until differential validation.
-5. Before M4 integration require focused tests, full exact-candidate devnet/verify-base, restart/interruption/recovery evidence and independent review. Investigate every new failure.
-6. Integrator creates one draft PR once an appropriate bootstrap commit exists:
-   `gh pr create --repo refcell/base --base main --head refcell:experiment/base-autonomous-20260924
-   --draft`, conventional title, Toshi-generated attribution, no upstream PR.
-7. Repeat the milestone loop (tests → fresh full devnet/`verify-base` → restart/fault checks →
-   independent different-family review → validated commit/push → feature-map/PR/bdoc update) for
-   each milestone from M4 onward. Resolve D3/D8 (ownership invariants) before starting D4/M5
-   (Engine API removal) — ownership comes before Engine changes, not after.
+1. Fix the verified pacing fixture mismatch in its isolated worktree: both block-time values should
+   be200ms as documented, not2s. Keep the210ms deadline and `safety_cycles >= 2` assertion. Validate
+   and independently review; this is not permission to weaken a check.
+2. Finish positive real-token/mnemonic and interactive-TTY checks for M4-B; document shared logging
+   behavior and benchmark shim sibling dependency. Then remove the standalone migration product.
+3. Continue the code/dependency/license inventory and accepted ADR roadmap. Resolve concrete
+   durable ownership, fencing and recovery before Engine/derivation changes; no hidden CL-sync or
+   transport fallback may remain at final acceptance.
+4. Every code milestone needs focused tests, exact-candidate full devnet, relevant fault/recovery
+   checks, independent challenge and traceable signed commits. Supervisor alone integrates/pushes,
+   updates the draft PR, feature map, evidence ledger and private bdoc. Never merge automatically.
 
-## Recovery notes
-
-- Before resuming any step, read `/home/refcell/base-autonomous-20260924/state/RESUME.md`, remote
-  Git/worktree status (`git worktree list`, `git status` in each), tmux windows/logs, and
-  active-agent status; do not assume prior evidence still applies after source changes.
-- The Mac keep-awake task (`base-factory-keep-awake`) is not durable supervision; a restarted
-  supervisor must re-establish it if actively running, and must not claim indefinite execution after
-  the local session ends.
-- Stop only for external/authorization/safety blockers; checkpoint the exact next action and
-  disclose all unverified goals rather than assuming completion.
+All end-state goals remain open; neither the bootstrap nor one CLI slice closes the mission.

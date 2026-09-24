@@ -1,0 +1,19 @@
+# Local fixture funding exceeds rescue's existing 0.001 ETH L1-fee reserve.
+transaction_submission_rpcs:
+  - http://127.0.0.1:7545
+query_rpc: http://127.0.0.1:7545
+chain_id: 84538453
+sender_count: 4
+sender_offset: 0
+in_flight_per_sender: 4
+max_total_in_flight: 16
+max_concurrent_submit_requests: 4
+batch_size: 4
+block_time: 200ms
+target_gps: 210000
+duration: 5s
+seed: 88011
+funding_amount: "10000000000000000"
+transactions:
+  - weight: 100
+    type: transfer

@@ -10,9 +10,9 @@ At unchanged commit `539605ce58aaf02fe5c0382fcd9139c1ee4207e9`, tree
 
 - Workspace/all-target build passes after required contract generation and Go PATH setup.
 - Workspace/all-feature nextest (excluding the separate system-test package) runs 8,643 tests:
-  8,620 pass, 23 fail, 83 skip. Twenty failures cannot pull the pinned public MinIO image (401);
-  two crash-backtrace tests fail reproducibly; one RPC test binds fixed port 8080 occupied by an
-  unrelated Java process and fails reproducibly. Leave that process untouched. Do not remove,
+  8,620 pass, 23 fail, 83 skip. Nineteen failures cannot pull the pinned public MinIO image (401);
+  two crash-backtrace tests fail reproducibly, one metering test aborts during teardown, and one RPC
+  test binds port 8080 occupied by unrelated Java. Leave that process untouched. Do not remove,
   disable, or soften these tests. Logs are indexed in `../evidence/evidence.jsonl`.
 - Source-built full Compose devnet runs with all long-lived services present. Sequencer transaction
   `0x49a7f1a4aa93da00e7250fb8d314f755476d33510d47f37ae31b8595405a0bcf` has successful receipt,
@@ -46,3 +46,12 @@ Blocking all isolated work on a public registry outage does not improve evidence
 Ignoring/removing checks would weaken safety and is rejected. Changing host services or registry
 credentials is not authorized by this decision. This exception does not license high-risk
 Engine/state/derivation/Commonware changes before their own invariants and behavioral baselines exist.
+
+## Evidence correction and follow-up
+The initial classification counted 20 image failures and missed a SIGABRT row. Event0007 records
+the corrected breakdown above; the total and failed status did not change. Candidate450b4d has
+25 failures, including the preexisting pacing fixture mismatch and differing metering teardown
+abort cases. Original baseline pacing also reproduced intermittently; affected source/features
+are unchanged. Isolated reruns and independent triage support this bounded disposition, not a
+green-suite or statistical-equivalence claim. Fix the pacing fixture separately without changing
+its deadline/assertion; broader metering lifetime recovery remains open.

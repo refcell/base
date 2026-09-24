@@ -2,7 +2,7 @@
 # Disposable local chain only. Never print private keys or shell environment.
 set -euo pipefail
 root=/home/refcell/base-autonomous-20260924
-repo="$root/integration"
+repo="${BASE_FACTORY_REPO:-$root/integration}"
 run="${1:-baseline-verify1}"
 [[ "$run" =~ ^baseline-[a-zA-Z0-9-]+$ ]]
 evidence="$root/logs/$run"
@@ -21,6 +21,9 @@ trap finish EXIT
 printf 'BASELINE_VERIFY_START %s\n' "$(date -u +%FT%TZ)"
 git rev-parse HEAD HEAD^{tree}
 test -z "$(git status --porcelain --untracked-files=no)"
+if [[ -n "${BASE_FACTORY_EXPECTED_REV:-}" ]]; then
+  test "$(git rev-parse HEAD)" = "$BASE_FACTORY_EXPECTED_REV"
+fi
 # Readiness polling is bounded and never broadcasts transactions.
 for port in 7545 8545 8645 8845; do
   ready=0
@@ -37,8 +40,17 @@ for port in 7545 8545 8645 8845; do
   test "$ready" = 1 || { echo "RPC readiness failed at port $port"; exit 1; }
 done
 compose=(docker compose --env-file etc/docker/devnet-env -f etc/docker/docker-compose.yml -f "$root/state/baseline-compose.override.yml")
+if [[ -n "${BASE_FACTORY_EXTRA_OVERRIDE:-}" ]]; then
+  compose+=(-f "$BASE_FACTORY_EXTRA_OVERRIDE")
+fi
 "${compose[@]}" ps --all --format json > "$evidence/containers.json"
 jq -s -e '[.[] | if type == "array" then .[] else . end] | length == 14 and all(.[]; (.Service == "setup-devnet" and .ExitCode == 0) or .State == "running")' "$evidence/containers.json"
+if [[ -n "${BASE_FACTORY_EXPECTED_IMAGE:-}" ]]; then
+  for service in base-bootnode base-builder base-client base-rpc base-shadow-validator base-batcher; do
+    test "$(docker inspect --format '{{.Image}}' "base-autonomous-20260924-$service")" = "$BASE_FACTORY_EXPECTED_IMAGE"
+  done
+  printf 'RUNTIME_IMAGE_MATCH=true\n'
+fi
 # No retry if cast fails or times out after broadcast; inspect this run's files first.
 timeout 120 cast send "$ANVIL_ACCOUNT_2_ADDR" --value 0.001ether \
   --private-key "$ANVIL_ACCOUNT_1_KEY" --rpc-url http://127.0.0.1:7545 \

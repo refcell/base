@@ -1,0 +1,64 @@
+# Layer over the reviewed baseline isolation override. Fresh state; baseline data retained.
+services:
+  setup-devnet:
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l2/configs:/devnet/l2/configs
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l1/configs:/output
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l1/reth:/data/l1-reth
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l1/lighthouse:/data/l1-lighthouse
+  l1-el:
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l1/reth:/data
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l1/configs:/genesis:ro
+  l1-cl:
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l1/lighthouse:/data
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l1/configs:/genesis:ro
+  l1-vc:
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l1/configs:/genesis
+  base-bootnode:
+    image: base:base-autonomous-load-20260924
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l2/el-bootnode:/data
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l2/cl-bootnode-enr:/bootnodes
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l2/configs:/genesis/l2:ro
+  base-builder:
+    image: base:base-autonomous-load-20260924
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l2/builder:/data
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l2/cl-bootnode-enr:/bootnodes:ro
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l1/configs:/genesis:ro
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l2/configs:/genesis/l2:ro
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/transaction-events:/var/log/transaction-events
+  base-batcher:
+    image: base:base-autonomous-load-20260924
+  base-client:
+    image: base:base-autonomous-load-20260924
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l2/client:/data
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l2/cl-bootnode-enr:/bootnodes:ro
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l1/configs:/genesis:ro
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l2/configs:/genesis/l2:ro
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/transaction-events:/var/log/transaction-events
+  base-rpc:
+    image: base:base-autonomous-load-20260924
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l2/base-rpc:/data
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l2/cl-bootnode-enr:/bootnodes:ro
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l1/configs:/genesis:ro
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l2/configs:/genesis/l2:ro
+  base-shadow-validator:
+    image: base:base-autonomous-load-20260924
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l2/shadow-validator:/data
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l2/cl-bootnode-enr:/bootnodes:ro
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l1/configs:/genesis:ro
+      - /home/refcell/base-autonomous-20260924/state/candidate-load-devnet/l2/configs:/genesis/l2:ro
+  prometheus:
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/worktrees/load-test/etc/scripts/devnet/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  grafana:
+    volumes: !override
+      - /home/refcell/base-autonomous-20260924/worktrees/load-test/etc/scripts/devnet/grafana/provisioning:/etc/grafana/provisioning:ro
+      - /home/refcell/base-autonomous-20260924/worktrees/load-test/etc/scripts/devnet/grafana/dashboards:/var/lib/grafana/dashboards:ro
