@@ -89,3 +89,11 @@ let bal = wallet.account.balance();
 - Preserve historical fork behavior and parity across execution paths; test both old and new fork behavior.
 - Avoid unnecessary I/O, cloning, and allocation on hot paths; benchmark production code when claiming performance gains.
 - Make async lifetimes explicit: bound waits, distinguish retryable from terminal errors, and clean up tasks on failure and shutdown.
+
+## Autonomous Factory Bootstrap
+
+This experiment branch (`experiment/factory-bootstrap-20260924`) tracks the unified-Base autonomous
+mission in [`docs/autonomous/`](docs/autonomous/README.md): charter and measurable end-state goals,
+dependency-aware roadmap, worktree ownership, ADR template/decision backlog, behavior/verification
+inventory, and the append-only evidence log schema. Read `docs/autonomous/README.md` before starting
+or resuming factory work; it supplements, and never replaces, the rules above.
